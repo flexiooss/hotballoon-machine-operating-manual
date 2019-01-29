@@ -1,0 +1,26 @@
+{
+  "css": {
+    "allowed_file_extensions": ["css", "scss", "sass", "less"],
+    "end_with_newline": true,
+    "newline_between_rules": true,
+    "selector_separator": " ",
+    "selector_separator_newline": true,
+    "preserve_newlines": true,
+    "max_preserve_newlines": 3
+  },
+  "brace_style": "collapse",
+  "indent_size": 2,
+  "indent_char": " ",
+  "indent_level": 0,
+  "indent_with_tabs": false,
+  "preserve_newlines": true,
+  "max_preserve_newlines": 2,
+  "jslint_happy": true,
+  "keep_array_indentation": false,
+  "keep_function_indentation": true,
+  "space_before_conditional": true,
+  "break_chained_methods": false,
+  "eval_code": false,
+  "unescape_strings": false,
+  "wrap_line_length": 0
+}
