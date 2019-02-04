@@ -1,7 +1,7 @@
 /* global Blob:false */
 import {View, ViewStoresParameters, HtmlParams} from 'hotballoon'
 
-const COUNT_STORE = 'COUNT_STORE'
+const COUNT_STORE = 'RESULT_STORE'
 
 export default class Peer extends View {
   /**
@@ -39,7 +39,7 @@ export default class Peer extends View {
 export class PeerStoreParameters extends ViewStoresParameters {
   /**
    *
-   * @param {CounterStore} countStore
+   * @param {ResultStore} countStore
    */
   constructor(countStore) {
     super()

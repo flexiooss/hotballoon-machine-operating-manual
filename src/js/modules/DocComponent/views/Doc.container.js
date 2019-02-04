@@ -24,6 +24,10 @@ export class DocContainer extends ViewContainer {
   getSubViewDemoNode() {
     return this.main.getSubViewDemoDiv()
   }
+
+  getCalculatorDemoNode() {
+    return this.main.getCalculatorDiv()
+  }
 }
 
 /**

@@ -15,7 +15,7 @@ export const ADD_NUMBER_EVENT = 'ADD_NUMBER_EVENT'
 
 const PEER_SUBVIEW = 'PEER_SUBVIEW'
 
-const COUNT_STORE = 'COUNT_STORE'
+const COUNT_STORE = 'RESULT_STORE'
 
 export default class Main extends View {
   /**
@@ -64,7 +64,7 @@ export default class Main extends View {
                     })
                     .build()
                 )
-                .addStyles( {visibility: (this._addCounter() < 1 ? "hidden" : "visible") })
+                .addStyles( {visibility: (this._addCounter() < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -77,7 +77,7 @@ export default class Main extends View {
                     })
                     .build()
                 )
-              ),
+            ),
             this.html('input#sum',
               HtmlParams
                 .withAttributes(
@@ -95,8 +95,8 @@ export default class Main extends View {
                 .withAttributes(
                   { src: balloon })
                 .addStyles({
-                  'marginLeft':this._addCounter() +'em',
-                  'position':'relative'
+                  'marginLeft':this._addCounter() + 'em',
+                  'position': 'relative'
                 })
             )
           ])

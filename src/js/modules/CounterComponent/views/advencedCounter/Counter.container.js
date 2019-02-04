@@ -11,7 +11,7 @@ import '../../assets/css/style.css'
 import {CounterAddNumberPayload} from '../../actions/CounterAddNumberPayload'
 import {CounterAddNumberAction} from '../../actions/CounterAddNumberAction'
 
-const COUNT_STORE = 'COUNT_STORE'
+const COUNT_STORE = 'RESULT_STORE'
 export const COUNTER_VIEWCONTAINER = 'COUNTER_VIEWCONTAINER'
 
 const MAIN_VIEW = Symbol('MAIN_VIEW')
@@ -83,7 +83,7 @@ export class CounterContainer extends ViewContainer {
 export class CounterContainerStores extends ViewStoresParameters {
   /**
    *
-   * @param {CounterStore} counterStore
+   * @param {ResultStore} counterStore
    */
   constructor(counterStore) {
     super()

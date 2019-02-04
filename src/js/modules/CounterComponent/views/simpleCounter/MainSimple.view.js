@@ -13,7 +13,7 @@ export const ADD_NUMBER_EVENT = 'ADD_NUMBER_EVENT'
 
 const PEER_SUBVIEW = 'PEER_SUBVIEW'
 
-const COUNT_STORE = 'COUNT_STORE'
+const COUNT_STORE = 'RESULT_STORE'
 
 export default class MainSimple extends View {
   /**

@@ -3,10 +3,10 @@ import {Component, DispatcherEventListenerFactory, ViewContainerParameters} from
 import {isNode, assert} from 'flexio-jshelpers'
 
 import {AppInitializedAction} from '../../MainComponent/actions/AppInitializedAction'
-import {InitCounterComponent} from '../../MainComponent/component/InitCounterComponent'
+import {InitCounterComponent} from './InitCounterComponent'
 import {DOC_VIEWCONTAINER, MAIN_VIEW, DocContainer, DocContainerStores} from '../views/Doc.container'
 import {CounterContainerPO} from '../../CounterComponent/component/CounterComponent'
-
+import {InitCalculatorComponent} from './InitCalculatorComponent'
 
 export class DocComponent extends Component {
   constructor(hotBalloonApplication, parentNode) {
@@ -83,6 +83,7 @@ export class DocComponent extends Component {
             console.log(this.viewContainer)
             InitCounterComponent.create(payload, this.APP(), this.viewContainer.getSimpleDemoNode(), new CounterContainerPO('SIMPLE'))
             InitCounterComponent.create(payload, this.APP(), this.viewContainer.getSubViewDemoNode(), new CounterContainerPO('SUB_VIEW'))
+            InitCalculatorComponent.create(payload, this.APP(), this.viewContainer.getCalculatorDemoNode())
           })
         .build()
     )

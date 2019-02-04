@@ -9,7 +9,7 @@ export class CounterAddNumberPayload extends ActionPayload {
    */
   constructor(sum = 0, component = null) {
     super()
-    assert(isNumber(sum), 'hotballoon:CounterAddNumberPayload:constructor: `sum` argument should be a number')
+    assert(isNumber(sum), 'hotballoon:NumberInputPayload:constructor: `sum` argument should be a number')
     this.sum = sum
     this.component = component
   }
