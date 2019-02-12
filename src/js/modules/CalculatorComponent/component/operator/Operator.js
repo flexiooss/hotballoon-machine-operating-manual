@@ -1,15 +1,17 @@
-import {CoreException} from 'hotballoon'
+// import {CoreException} from 'hotballoon'
 
+/**
+ * @interface
+ */
 export class Operator {
   constructor(symbol = '') {
     this.symbol = symbol
   }
 
   /**
-   * Main method
+   * CounterView method
    * @return {Node}
    */
   operation(a, b) {
-    throw new CoreException('view should be override', 'METHOD_NOT_OVERRIDE')
   }
 }

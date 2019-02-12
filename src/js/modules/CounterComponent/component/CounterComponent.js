@@ -1,23 +1,26 @@
 'use strict'
-import {Component, ViewContainerParameters} from 'hotballoon'
-import {COUNT_STORE} from '../stores/CounterStore'
+import {ViewContainerParameters} from 'hotballoon'
 import {initStores} from './initStores'
 import {initActionsListeners} from './initActionsListeners'
 import {isNode, assert} from 'flexio-jshelpers'
 
-import {CounterContainerStores, COUNTER_VIEWCONTAINER, CounterContainer} from '../views/advencedCounter/Counter.container'
-import {
-  SimpleCounterContainer,
-  SIMPLE_COUNTER_VIEWCONTAINER,
-  SimpleCounterContainerStores
-} from '../views/simpleCounter/SimpleCounter.container'
+import {CounterContainerStores, CounterContainer} from '../views/advencedCounter/Counter.container'
+import {SimpleCounterContainer, SimpleCounterContainerStores} from '../views/simpleCounter/SimpleCounter.container'
 
-export class CounterComponent extends Component {
-  constructor(hotBalloonApplication, parentNode, mode) {
-    super(hotBalloonApplication)
+export class CounterComponent {
+  constructor(componentContext, parentNode, mode) {
+    /**
+     * @name CounterComponent#_componentContext
+     * @type {ComponentContext}
+     */
+    Object.defineProperty(this, '_componentContext', {
+      value: componentContext,
+      enumerable: false,
+      configurable: false
+    })
 
-    initStores(this)
-    initActionsListeners(this)
+    this.counterStore = initStores(this._componentContext)
+    initActionsListeners(this._componentContext, this.counterStore)
     this._mode = mode
     this._setParentNode(parentNode)
   }
@@ -41,15 +44,31 @@ export class CounterComponent extends Component {
 
   /**
    *
-   * @param {HotballoonApplication} hotballoonApplication
+   * @return {ComponentContext}
+   */
+  get componentContext() {
+    return this._componentContext
+  }
+
+  /**
+   *
+   * @return {ComponentContext}
+   */
+  get store() {
+    return this.counterStore
+  }
+
+  /**
+   *
+   * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    * @param mode
    * @return {CounterComponent}
    * @constructor
    * @static
    */
-  static create(hotballoonApplication, parentNode, mode) {
-    return new this(hotballoonApplication, parentNode, mode)
+  static create(componentContext, parentNode, mode) {
+    return new this(componentContext, parentNode, mode)
   }
 
   createRenderMountView() {
@@ -57,50 +76,40 @@ export class CounterComponent extends Component {
   }
 
   _addCounterViewContainer() {
-    const COUNTER_VIEWCONTAINER_ID = this.nextID()
-    var COUNTER_VIEWCONTAINER_INST
-    console.log(this._mode)
-    if (this._mode.option !== "SIMPLE") {
-      COUNTER_VIEWCONTAINER_INST = this.addViewContainer(
+    const COUNTER_VIEWCONTAINER_ID = this._componentContext.nextID()
+    let COUNTER_VIEWCONTAINER_INST
+    if (this._mode.option !== 'SIMPLE') {
+      COUNTER_VIEWCONTAINER_INST = this._componentContext.addViewContainer(
         new CounterContainer(
           new ViewContainerParameters(
-            this,
+            this._componentContext,
             COUNTER_VIEWCONTAINER_ID,
             this._parentNode
           ),
           new CounterContainerStores(
-            this.StoreByRegister(COUNT_STORE)
+            this.counterStore
           )
         )
       )
-      this.viewContainersKey.set(COUNTER_VIEWCONTAINER, COUNTER_VIEWCONTAINER_ID)
-    }
-    else if(this._mode.option !== "SUB_VIEW") {
-      COUNTER_VIEWCONTAINER_INST = this.addViewContainer(
+    } else if (this._mode.option !== 'SUB_VIEW') {
+      COUNTER_VIEWCONTAINER_INST = this._componentContext.addViewContainer(
         new SimpleCounterContainer(
           new ViewContainerParameters(
-            this,
+            this._componentContext,
             COUNTER_VIEWCONTAINER_ID,
             this._parentNode
           ),
           new SimpleCounterContainerStores(
-            this.StoreByRegister(COUNT_STORE)
+            this.counterStore
           )
         )
       )
-      this.viewContainersKey.set(SIMPLE_COUNTER_VIEWCONTAINER, COUNTER_VIEWCONTAINER_ID)
     }
 
-    this.debug.log('COUNTER_VIEWCONTAINER_INST')
-    this.debug.object(COUNTER_VIEWCONTAINER_INST)
-    this.debug.print()
+    this._componentContext.debug.log('COUNTER_VIEWCONTAINER_INST')
+    this._componentContext.debug.object(COUNTER_VIEWCONTAINER_INST)
+    this._componentContext.debug.print()
 
     return COUNTER_VIEWCONTAINER_INST
-  }
-}
-
-export class CounterContainerPO {
-  constructor(option){
-    this.option = option
   }
 }

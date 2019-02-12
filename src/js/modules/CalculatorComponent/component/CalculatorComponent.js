@@ -1,17 +1,24 @@
 'use strict'
-import {Component, ViewContainerParameters} from 'hotballoon'
-import {RESULT_STORE} from '../stores/ResultStore'
+import {ViewContainerParameters} from 'hotballoon'
 import {initStores} from './initStores'
 import {initActionsListeners} from './initActionsListeners'
 import {isNode, assert} from 'flexio-jshelpers'
-import {CALCULATOR_VIEWCONTAINER, CalculatorContainer, CalculatorContainerStores} from '../views/CalculatorContainer'
+import {CalculatorContainer, CalculatorContainerStores} from '../views/CalculatorContainer'
 
-export class CalculatorComponent extends Component {
-  constructor(hotBalloonApplication, parentNode) {
-    super(hotBalloonApplication)
+export class CalculatorComponent {
+  constructor(componentContext, parentNode) {
+    /**
+     * @name CalculatorComponent#_componentContext
+     * @type {ComponentContext}
+     */
+    Object.defineProperty(this, '_componentContext', {
+      value: componentContext,
+      enumerable: false,
+      configurable: false
+    })
 
-    initStores(this)
-    initActionsListeners(this)
+    this.store = initStores(this._componentContext)
+    initActionsListeners(componentContext, this.store)
     this._setParentNode(parentNode)
   }
 
@@ -23,10 +30,6 @@ export class CalculatorComponent extends Component {
     Object.defineProperties(this, {
       _parentNode: {
         enumerable: false,
-        /**
-         * @property {Node} _parentNode
-         * @name CalculatorComponent#_parentNode
-         */
         value: parentNode
       }
     })
@@ -34,15 +37,14 @@ export class CalculatorComponent extends Component {
 
   /**
    *
-   * @param {HotballoonApplication} hotballoonApplication
+   * @param {ComponentContext} componentContext
    * @param {Node} parentNode
-   * @param mode
    * @return {CalculatorComponent}
    * @constructor
    * @static
    */
-  static create(hotballoonApplication, parentNode) {
-    return new this(hotballoonApplication, parentNode)
+  static create(componentContext, parentNode) {
+    return new this(componentContext, parentNode)
   }
 
   createRenderMountView() {
@@ -50,26 +52,25 @@ export class CalculatorComponent extends Component {
   }
 
   _addCounterViewContainer() {
-    const CALCULATOR_VIEWCONTAINER_ID = this.nextID()
+    const CALCULATOR_VIEWCONTAINER_ID = this._componentContext.nextID()
     var CALCULATOR_VIEWCONTAINER_INST
     console.log(this._mode)
-    CALCULATOR_VIEWCONTAINER_INST = this.addViewContainer(
+    CALCULATOR_VIEWCONTAINER_INST = this._componentContext.addViewContainer(
       new CalculatorContainer(
         new ViewContainerParameters(
-          this,
+          this._componentContext,
           CALCULATOR_VIEWCONTAINER_ID,
           this._parentNode
         ),
         new CalculatorContainerStores(
-          this.StoreByRegister(RESULT_STORE)
+          this.store
         )
       )
     )
-    this.viewContainersKey.set(CALCULATOR_VIEWCONTAINER, CALCULATOR_VIEWCONTAINER_ID)
 
-    this.debug.log('CALCULATOR_VIEWCONTAINER_INST')
-    this.debug.object(CALCULATOR_VIEWCONTAINER_INST)
-    this.debug.print()
+    this._componentContext.debug.log('CALCULATOR_VIEWCONTAINER_INST')
+    this._componentContext.debug.object(CALCULATOR_VIEWCONTAINER_INST)
+    this._componentContext.debug.print()
 
     return CALCULATOR_VIEWCONTAINER_INST
   }

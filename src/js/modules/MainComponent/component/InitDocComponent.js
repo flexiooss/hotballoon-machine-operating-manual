@@ -1,20 +1,20 @@
 import {DocComponent} from '../../DocComponent'
+import {ComponentContext} from 'hotballoon'
 
 export class InitDocComponent {
   constructor(payload, APP, parentNode) {
     console.log(payload.message)
-    const DOC_COMPONENT_ID = APP.addComponent(
-      DocComponent.create(
-        APP, parentNode)
-    )
 
-    APP.Component(DOC_COMPONENT_ID).createRenderMountView()
+    DocComponent.create(
+      APP.addComponentContext(new ComponentContext(APP)),
+      parentNode
+    ).createRenderMountView()
   }
 
   /**
    *
    * @param {Object} payload
-   * @param {HotballoonApplication} APP
+   * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @return {InitDocComponent}
    * @constructor

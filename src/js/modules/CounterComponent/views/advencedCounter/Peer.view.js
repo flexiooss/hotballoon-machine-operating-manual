@@ -18,7 +18,7 @@ export default class Peer extends View {
    *
    * @return {Node}
    */
-  view() {
+  template() {
     return this.html('div#peer.peer', HtmlParams
       .withStyles({ background: this._checkCounter(), padding: '5em' })
     )
@@ -39,7 +39,7 @@ export default class Peer extends View {
 export class PeerStoreParameters extends ViewStoresParameters {
   /**
    *
-   * @param {ResultStore} countStore
+   * @param {StoreInterface} countStore
    */
   constructor(countStore) {
     super()

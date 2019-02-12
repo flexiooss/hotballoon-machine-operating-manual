@@ -5,7 +5,7 @@ import {
   ViewParameters,
   ViewEventListenerFactory
 } from 'hotballoon'
-import { default as Main, MainStores, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT } from './Main.view'
+import { default as Main, MainStores, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT } from './Counter.view'
 
 import '../../assets/css/style.css'
 import {CounterAddNumberPayload} from '../../actions/CounterAddNumberPayload'
@@ -17,12 +17,6 @@ export const COUNTER_VIEWCONTAINER = 'COUNTER_VIEWCONTAINER'
 const MAIN_VIEW = Symbol('MAIN_VIEW')
 
 export class CounterContainer extends ViewContainer {
-
-  constructor(viewContainerParameters, stores) {
-    super(viewContainerParameters, stores)
-    console.log(Object.isExtensible(this))
-  }
-
   /**
    * @override
    */
@@ -31,7 +25,7 @@ export class CounterContainer extends ViewContainer {
       Main.create(
         new ViewParameters(MAIN_VIEW, this),
         new MainStores(
-          this.Store(COUNT_STORE)
+          this.store(COUNT_STORE)
         )
       )
     )
@@ -39,40 +33,40 @@ export class CounterContainer extends ViewContainer {
   }
 
   _handleEvents() {
-    this.View(MAIN_VIEW).on(
+    this.view(MAIN_VIEW).on(
       ViewEventListenerFactory
         .listen(INCREMENT_EVENT)
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(1, this.Component())
+              new CounterAddNumberPayload(1, this.componentContext())
             )
           )
-        }).build(this)
+        }).build()
     )
 
-    this.View(MAIN_VIEW).on(
+    this.view(MAIN_VIEW).on(
       ViewEventListenerFactory
         .listen(DECREMENT_EVENT)
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(-1, this.Component())
+              new CounterAddNumberPayload(-1, this.componentContext())
             )
           )
-        }).build(this)
+        }).build()
     )
 
-    this.View(MAIN_VIEW).on(
+    this.view(MAIN_VIEW).on(
       ViewEventListenerFactory
         .listen(ADD_NUMBER_EVENT)
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(payload.value, this.Component())
+              new CounterAddNumberPayload(payload.value, this.componentContext())
             )
           )
-        }).build(this)
+        }).build()
     )
   }
 }
@@ -83,7 +77,7 @@ export class CounterContainer extends ViewContainer {
 export class CounterContainerStores extends ViewStoresParameters {
   /**
    *
-   * @param {ResultStore} counterStore
+   * @param {Store} counterStore
    */
   constructor(counterStore) {
     super()

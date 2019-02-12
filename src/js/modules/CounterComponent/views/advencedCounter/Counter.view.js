@@ -17,7 +17,7 @@ const PEER_SUBVIEW = 'PEER_SUBVIEW'
 
 const COUNT_STORE = 'RESULT_STORE'
 
-export default class Main extends View {
+export default class CounterView extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
@@ -38,7 +38,7 @@ export default class Main extends View {
       Peer.create(
         new ViewParameters(PEER_SUBVIEW, this),
         new PeerStoreParameters(
-          this.Store(COUNT_STORE)
+          this.store(COUNT_STORE)
         )
       )
     )
@@ -47,7 +47,7 @@ export default class Main extends View {
    *
    * @return {Node}
    */
-  view() {
+  template() {
     return this.html(
       'div', HtmlParams.withChildNodes([
         this.html(
@@ -64,7 +64,7 @@ export default class Main extends View {
                     })
                     .build()
                 )
-                .addStyles( {visibility: (this._addCounter() < 1 ? 'hidden' : 'visible') })
+                .addStyles({ visibility: (this._addCounter() < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -95,7 +95,7 @@ export default class Main extends View {
                 .withAttributes(
                   { src: balloon })
                 .addStyles({
-                  'marginLeft':this._addCounter() + 'em',
+                  'marginLeft': this._addCounter() + 'em',
                   'position': 'relative'
                 })
             )
@@ -104,10 +104,11 @@ export default class Main extends View {
         this.html('div#field.field',
           HtmlParams
             .withAttributes({ margin: '1em' })
-            .addReconciliationRules([RECONCILIATION_RULES.BYPATH])
         ),
         this.html('section#' + PEER_SUBVIEW + '.section',
-          HtmlParams.withViews([this.View(PEER_SUBVIEW)])
+          HtmlParams
+            .withViews([this.view(PEER_SUBVIEW)])
+            .addReconciliationRules([RECONCILIATION_RULES.BYPATH])
         )
       ])
     )

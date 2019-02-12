@@ -1,32 +1,39 @@
 'use strict'
-import {ViewStoresParameters, ViewContainer, ViewParameters, ViewEventListenerFactory, ActionPayload} from 'hotballoon'
-import { default as Main, MainStores } from './Main.view'
+import {ViewStoresParameters, ViewContainer, ViewParameters, ViewEventListenerFactory} from 'hotballoon'
+import {CHANGE_ROUTE_EVENT, default as Main} from './Main.view'
 
 import '../assets/css/style.css'
-
-export const DOC_VIEWCONTAINER = 'COUNTER_VIEWCONTAINER'
+import {ChangeRouteAction} from '../../MainComponent/actions/ChangeRouteAction'
+import {ChangeRoutePayload} from '../../MainComponent/actions/ChangeRoutePayload'
 
 const MAIN_VIEW = Symbol('MAIN_VIEW')
-
 export class DocContainer extends ViewContainer {
   /**
    * @override
    */
   registerViews() {
+    // this.main =
     this.main = Main.create(new ViewParameters(MAIN_VIEW, this))
     this.addView(this.main)
+    this._handleEvents()
   }
 
-  getSimpleDemoNode() {
-    return this.main.getSimpleDemoDiv()
+  _handleEvents() {
+    this.view(MAIN_VIEW).on(
+      ViewEventListenerFactory
+        .listen(CHANGE_ROUTE_EVENT)
+        .callback((payload) => {
+          this.dispatchAction(
+            ChangeRouteAction.withPayload(
+              new ChangeRoutePayload(payload.route, payload.option)
+            )
+          )
+        }).build()
+    )
   }
 
-  getSubViewDemoNode() {
-    return this.main.getSubViewDemoDiv()
-  }
-
-  getCalculatorDemoNode() {
-    return this.main.getCalculatorDiv()
+  getDemoNode() {
+    return this.main.getDemoDiv()
   }
 }
 
@@ -34,7 +41,4 @@ export class DocContainer extends ViewContainer {
  * @extends ViewStoresParameters
  */
 export class DocContainerStores extends ViewStoresParameters {
-  constructor() {
-    super()
-  }
 }

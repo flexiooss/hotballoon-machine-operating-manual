@@ -1,29 +1,54 @@
 'use strict'
 import {isNode, assert} from 'flexio-jshelpers'
-import {Component, DispatcherEventListenerFactory} from 'hotballoon'
+import {DispatcherEventListenerFactory, TypeCheck} from 'hotballoon'
 import {AppInitializedAction} from '../actions/AppInitializedAction'
 import {InitDocComponent} from './InitDocComponent'
+import {ChangeRouteAction} from '../actions/ChangeRouteAction'
+import {ChangeRouteDocAction} from '../../DocComponent/actions/ChangeRouteDocAction'
+import {ChangeRouteDocPayload} from '../../DocComponent/actions/ChangeRouteDocPayload'
 
-export class MainComponent extends Component {
+export class MainComponent {
   /**
    *
-   * @param {HotBalloonApplication} hotBallonApplication
+   * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    */
-  constructor(hotBallonApplication, parentNode) {
-    super(hotBallonApplication)
+  constructor(componentContext, parentNode) {
+    assert(
+      TypeCheck.isComponentContext(componentContext),
+      'BootstrapComponent:constructor: `parentNode` argument should be NodeType, %s given',
+      typeof parentNode)
+
+    /**
+     * @name CounterComponent#_componentContext
+     * @type {ComponentContext}
+     */
+    Object.defineProperty(this, '_componentContext', {
+      value: componentContext,
+      enumerable: false,
+      configurable: false
+    })
+    this.initMain()
     this._setParentNode(parentNode)
   }
 
   /**
    *
-   * @param {HotBalloonApplication} hotBallonApplication
+   * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    * @return {MainComponent}
    * @static
    */
-  static create(hotBallonApplication, parentNode) {
-    return new this(hotBallonApplication, parentNode)
+  static create(componentContext, parentNode) {
+    return new this(componentContext, parentNode)
+  }
+
+  /**
+   *
+   * @return {ComponentContext}
+   */
+  get componentContext() {
+    return this._componentContext
   }
 
   /**
@@ -32,7 +57,6 @@ export class MainComponent extends Component {
    * @private
    */
   _setParentNode(parentNode) {
-
     assert(!!isNode(parentNode),
       'MainComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
@@ -45,23 +69,32 @@ export class MainComponent extends Component {
 
   /**
    *
-   * @private
+   * @return {MainComponent}
    */
-  _initDispatcherListeners() {
-    this.listenAction(
-      /**
-       * @param {AppActionPayload} payload
-       */
+  initMain() {
+    this.componentContext.listenAction(
       DispatcherEventListenerFactory.listen(new AppInitializedAction())
         .callback(
-          /**
-           * @param {AppActionPayload} payload
-           */
           (payload) => {
-            InitDocComponent.create(payload, this.APP(), this._parentNode)
+            InitDocComponent.create(payload, this.componentContext.APP(), this._parentNode)
           })
         .build()
     )
-  }
 
+    this.componentContext.listenAction(
+      DispatcherEventListenerFactory.listen(
+        new ChangeRouteAction())
+        .callback((payload) => {
+          if (payload.route === 'Doc') {
+            this.componentContext.dispatchAction(
+              ChangeRouteDocAction.withPayload(
+                new ChangeRouteDocPayload(payload.option.component, payload.option.option)
+              )
+            )
+          }
+        })
+        .build()
+    )
+    return this
+  }
 }

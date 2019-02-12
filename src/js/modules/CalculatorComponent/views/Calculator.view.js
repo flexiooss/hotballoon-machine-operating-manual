@@ -1,7 +1,6 @@
 import {
   View,
   HtmlParams,
-  ViewParameters,
   ViewStoresParameters,
   NodeEventListenerFactory
 } from 'hotballoon'
@@ -32,7 +31,7 @@ export default class MainSimple extends View {
    *
    * @return {Node}
    */
-  view() {
+  template() {
     return this.html('div#calculator.calculator',
       HtmlParams.withChildNodes([
         this.html('input#lexp.lexp',
@@ -50,8 +49,8 @@ export default class MainSimple extends View {
    * @private
    */
   _digitsButtons() {
-    var i
-    var res = Array(8)
+    let i
+    let res = Array(8)
     for (i = 0; i < 3; i++) {
       res[i] = this.html('tr#line' + (i + 1) + '.line',
         HtmlParams.withChildNodes(this._addDigitButtons(i))

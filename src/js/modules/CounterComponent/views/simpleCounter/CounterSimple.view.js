@@ -1,7 +1,6 @@
 import {
   View,
   HtmlParams,
-  ViewParameters,
   ViewStoresParameters,
   NodeEventListenerFactory
 } from 'hotballoon'
@@ -11,11 +10,9 @@ export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
 export const ADD_NUMBER_EVENT = 'ADD_NUMBER_EVENT'
 
-const PEER_SUBVIEW = 'PEER_SUBVIEW'
-
 const COUNT_STORE = 'RESULT_STORE'
 
-export default class MainSimple extends View {
+export default class CounterViewSimple extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
@@ -30,7 +27,7 @@ export default class MainSimple extends View {
    *
    * @return {Node}
    */
-  view() {
+  template() {
     return this.html(
       'div', HtmlParams.withChildNodes([
         this.html(
@@ -47,7 +44,7 @@ export default class MainSimple extends View {
                     })
                     .build()
                 )
-                .addStyles( {visibility: (this._addCounter() < 1 ? "hidden" : "visible") })
+                .addStyles({ visibility: (this._addCounter() < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -77,8 +74,8 @@ export default class MainSimple extends View {
                 .withAttributes(
                   { src: balloon })
                 .addStyles({
-                  'marginLeft':this._addCounter() +'em',
-                  'position':'relative'
+                  'marginLeft': this._addCounter() + 'em',
+                  'position': 'relative'
                 })
             )
           ])

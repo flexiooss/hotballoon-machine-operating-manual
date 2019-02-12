@@ -1,27 +1,25 @@
 import {CalculatorComponent} from '../../CalculatorComponent'
+import {ComponentContext} from 'hotballoon'
 
 export class InitCalculatorComponent {
-  constructor(payload, APP, parentNode, mode) {
-    console.log(payload.message)
-    const CALCULATOR_COMPONENT_ID = APP.addComponent(
-      CalculatorComponent.create(
-        APP, parentNode, mode)
-    )
-
-    APP.Component(CALCULATOR_COMPONENT_ID).createRenderMountView()
+  constructor(payload, APP, parentNode) {
+    CalculatorComponent.create(
+      APP.addComponentContext(new ComponentContext(APP)),
+      parentNode
+    ).createRenderMountView()
   }
 
   /**
    *
    * @param {Object} payload
-   * @param {HotballoonApplication} APP
+   * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @param mode
-   * @return {InitCounterComponent}
+   * @return {InitCalculatorComponent}
    * @constructor
    * @static
    */
   static create(payload, APP, parentNode, mode) {
-    return new this(payload, APP, parentNode, mode)
+    return new this(payload, APP, parentNode)
   }
 }

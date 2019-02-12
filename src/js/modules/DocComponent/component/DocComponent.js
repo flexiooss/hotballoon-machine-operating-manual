@@ -1,20 +1,25 @@
 'use strict'
-import {Component, DispatcherEventListenerFactory, ViewContainerParameters} from 'hotballoon'
+import {DispatcherEventListenerFactory, ViewContainerParameters} from 'hotballoon'
 import {isNode, assert} from 'flexio-jshelpers'
 
 import {AppInitializedAction} from '../../MainComponent/actions/AppInitializedAction'
 import {InitCounterComponent} from './InitCounterComponent'
-import {DOC_VIEWCONTAINER, MAIN_VIEW, DocContainer, DocContainerStores} from '../views/Doc.container'
-import {CounterContainerPO} from '../../CounterComponent/component/CounterComponent'
+import {DocContainer, DocContainerStores} from '../views/Doc.container'
 import {InitCalculatorComponent} from './InitCalculatorComponent'
+import {ChangeRouteDocAction} from '../actions/ChangeRouteDocAction'
 
-export class DocComponent extends Component {
-  constructor(hotBalloonApplication, parentNode) {
-    super(hotBalloonApplication)
-
-    // initStores(this)
-    // initActionsListeners(this)
-
+export class DocComponent {
+  constructor(componentContext, parentNode) {
+    /**
+     * @name CounterComponent#_componentContext
+     * @type {ComponentContext}
+     */
+    Object.defineProperty(this, '_componentContext', {
+      value: componentContext,
+      enumerable: false,
+      configurable: false
+    })
+    this._initDispatcherListeners()
     this._setParentNode(parentNode)
   }
 
@@ -37,40 +42,50 @@ export class DocComponent extends Component {
 
   /**
    *
-   * @param {HotballoonApplication} hotballoonApplication
+   * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    * @return {DocComponent}
    * @constructor
    * @static
    */
-  static create(hotballoonApplication, parentNode) {
-    return new this(hotballoonApplication, parentNode)
+  static create(componentContext, parentNode) {
+    return new this(componentContext, parentNode)
+  }
+
+  /**
+   *
+   * @return {ComponentContext}
+   */
+  get componentContext() {
+    return this._componentContext
   }
 
   createRenderMountView() {
+    // this.viewContainer = this._addDocViewContainer()
+    // this.viewContainer.renderAndMount(this._parentNode)
     this.viewContainer = this._addDocViewContainer()
     this.viewContainer.renderAndMount(this._parentNode)
   }
 
   _addDocViewContainer() {
-    const DOC_VIEWCONTAINER_ID = this.nextID()
+    const DOC_VIEWCONTAINER_ID = this.componentContext.nextID()
 
-    const DOC_VIEWCONTAINER_INST = this.addViewContainer(
+    return this.componentContext.addViewContainer(
       new DocContainer(
         new ViewContainerParameters(
-          this,
+          this.componentContext,
           DOC_VIEWCONTAINER_ID,
           this._parentNode
         ),
         new DocContainerStores()
       )
     )
-    this.viewContainersKey.set(DOC_VIEWCONTAINER, DOC_VIEWCONTAINER_ID)
-    return DOC_VIEWCONTAINER_INST
   }
 
   _initDispatcherListeners() {
-    this.listenAction(
+    var eee = new CounterViewModeParameterObject('SIMPLE')
+    console.log(eee)
+    this.componentContext.listenAction(
       /**
        * @param {AppActionPayload} payload
        */
@@ -80,12 +95,32 @@ export class DocComponent extends Component {
            * @param {AppActionPayload} payload
            */
           (payload) => {
-            console.log(this.viewContainer)
-            InitCounterComponent.create(payload, this.APP(), this.viewContainer.getSimpleDemoNode(), new CounterContainerPO('SIMPLE'))
-            InitCounterComponent.create(payload, this.APP(), this.viewContainer.getSubViewDemoNode(), new CounterContainerPO('SUB_VIEW'))
-            InitCalculatorComponent.create(payload, this.APP(), this.viewContainer.getCalculatorDemoNode())
+            InitCounterComponent.create(payload, this.componentContext.APP(), this.viewContainer.getDemoNode(), new CounterViewModeParameterObject('SIMPLE'))
           })
         .build()
     )
+
+    this.componentContext.listenAction(
+      DispatcherEventListenerFactory.listen(
+        new ChangeRouteDocAction())
+        .callback((payload) => {
+          if (payload.component === 'Counter') {
+            if (payload.option === 'SIMPLE') {
+              InitCounterComponent.create(payload, this.componentContext.APP(), this.viewContainer.getDemoNode(), new CounterViewModeParameterObject('SIMPLE'))
+            } else if (payload.option === 'SUB_VIEW') {
+              InitCounterComponent.create(payload, this.componentContext.APP(), this.viewContainer.getDemoNode(), new CounterViewModeParameterObject('SUB_VIEW'))
+            }
+          } else if (payload.component === 'Calculator') {
+            InitCalculatorComponent.create(payload, this.componentContext.APP(), this.viewContainer.getDemoNode())
+          }
+        })
+        .build()
+    )
+  }
+}
+
+export class CounterViewModeParameterObject {
+  constructor(option) {
+    this.option = option
   }
 }
