@@ -1,2 +1,2 @@
-# hotballoon-basket-visit
+# hotballoon-machine-operating-manual
 documentation of hotballoon library
