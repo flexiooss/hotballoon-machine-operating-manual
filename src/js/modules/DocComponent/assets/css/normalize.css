@@ -1,0 +1,53 @@
+* {
+  box-sizing: content-box;
+}
+
+html {
+  font-size: 62.5%;
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #666;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.4rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+header,
+main,
+footer {
+  left: 18em;
+  position: relative;
+}
+
+header {
+  color: #fff;
+  position: fixed;
+  width: 100%;
+  background-color: #23303d;
+  z-index: 1;
+  padding: 10px;
+}
+
+footer {
+  box-shadow: 0 -2px 3px #f1f1f1;
+  margin: 10rem 0 0;
+  padding: 1rem 0 0;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
