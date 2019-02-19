@@ -1,6 +1,6 @@
 'use strict'
 import {ViewStoresParameters, ViewContainer, ViewParameters, ViewEventListenerFactory} from 'hotballoon'
-import { default as Main, ResultStores, INPUT_NUMBER_EVENT, INPUT_OPERATOR_EVENT, INPUT_RESULT_EVENT } from './Calculator.view'
+import { default as Main, INPUT_NUMBER_EVENT, INPUT_OPERATOR_EVENT, INPUT_RESULT_EVENT } from './Calculator.view'
 
 import '../assets/css/style.css'
 import {NumberInputAction} from '../actions/NumberInputAction'
@@ -9,21 +9,29 @@ import {ResultInputAction} from '../actions/ResultInputAction'
 import {NumberInputPayload} from '../actions/NumberInputPayload'
 import {OperatorInputPayload} from '../actions/OperatorInputPayload'
 
-const RESULT_STORE = 'RESULT_STORE'
-
 const CALCULATOR_VIEW = Symbol('CALCULATOR_VIEW')
 
 export class CalculatorContainer extends ViewContainer {
   /**
-   * @override
+   *
+   * @param {ViewContainerParameters} viewContainerParameters
+   * @param {CalculatorContainerStoresParameters} calculatorContainerStoresParameters
    */
-  registerViews() {
+  constructor(viewContainerParameters, calculatorContainerStoresParameters) {
+    super(viewContainerParameters)
+    this.__resultStore = calculatorContainerStoresParameters.resultStore
+    this.__registerViews()
+  }
+
+  /**
+   *
+   * @private
+   */
+  __registerViews() {
     this.addView(
       Main.create(
         new ViewParameters(CALCULATOR_VIEW, this),
-        new ResultStores(
-          this.store(RESULT_STORE)
-        )
+        new CalculatorContainerStoresParameters(this.__resultStore)
       )
     )
     this.__handleEvents()
@@ -72,13 +80,21 @@ export class CalculatorContainer extends ViewContainer {
 /**
  * @extends ViewStoresParameters
  */
-export class CalculatorContainerStores extends ViewStoresParameters {
+export class CalculatorContainerStoresParameters extends ViewStoresParameters {
   /**
    *
    * @param {StoreInterface} resultStore
    */
   constructor(resultStore) {
     super()
-    this.setStore(RESULT_STORE, resultStore)
+    this.__resultSotre = this.validate(resultStore)
+  }
+
+  /**
+   *
+   * @return {ResultStore}
+   */
+  get resultStore() {
+    return this.__resultSotre
   }
 }

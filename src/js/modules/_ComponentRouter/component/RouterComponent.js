@@ -6,7 +6,6 @@ import {RouterBuilder} from 'flexio-jsrouter'
 import {UrlConfiguration} from 'flexio-jsrouter/src/UrlConfiguration'
 import {PublicRouteHandler} from 'flexio-jsrouter/src/Route/PublicRouteHandler'
 import {Route} from 'flexio-jsrouter/src/Route/Route'
-import {PathName} from 'flexio-jsrouter/src/URL/PathName'
 
 export class RouterComponent {
   /**
@@ -41,22 +40,6 @@ export class RouterComponent {
    */
   static create(componentContext) {
     return new this(componentContext)
-  }
-
-  /**
-   *
-   * @param {Route} route
-   */
-  addRoute(route) {
-    this.__routeHandler.addRoute(route)
-  }
-
-  /**
-   *
-   * @param {string} routeName
-   */
-  removeRoute(routeName) {
-    this.__routeHandler.removeRoute(routeName)
   }
 
   /**

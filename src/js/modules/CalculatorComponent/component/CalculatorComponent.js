@@ -3,7 +3,7 @@ import {ViewContainerParameters} from 'hotballoon'
 import {initStores} from './initStores'
 import {initActionsListeners} from './initActionsListeners'
 import {isNode, assert} from 'flexio-jshelpers'
-import {CalculatorContainer, CalculatorContainerStores} from '../views/CalculatorContainer'
+import {CalculatorContainer, CalculatorContainerStoresParameters} from '../views/CalculatorContainer'
 
 export class CalculatorComponent {
   /**
@@ -62,7 +62,7 @@ export class CalculatorComponent {
           CALCULATOR_VIEWCONTAINER_ID,
           this.__parentNode
         ),
-        new CalculatorContainerStores(this.__store)
+        new CalculatorContainerStoresParameters(this.__store)
       )
     )
 

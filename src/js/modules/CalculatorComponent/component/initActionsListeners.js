@@ -1,5 +1,5 @@
 import {DispatcherEventListenerFactory} from 'hotballoon'
-import {ResultStore} from '../stores/ResultStore'
+import {DataResultStore} from '../stores/DataResultStore'
 import {OperatorInputAction} from '../actions/OperatorInputAction'
 import {NumberInputAction} from '../actions/NumberInputAction'
 import {ResultInputAction} from '../actions/ResultInputAction'
@@ -19,13 +19,13 @@ export const initActionsListeners = (componentContext, resultStore) => {
       new NumberInputAction())
       .callback((payload) => {
         if (resultStore.data().operator instanceof OperatorNull) {
-          resultStore.set(new ResultStore(
+          resultStore.set(new DataResultStore(
             resultStore.data().lexp.concat(payload.number),
             resultStore.data().operator,
             resultStore.data().rexp)
           )
         } else {
-          resultStore.set(new ResultStore(
+          resultStore.set(new DataResultStore(
             resultStore.data().lexp,
             resultStore.data().operator,
             resultStore.data().rexp.concat(payload.number))
@@ -41,7 +41,7 @@ export const initActionsListeners = (componentContext, resultStore) => {
       .callback((payload) => {
         if (resultStore.data().lexp !== '') {
           if (resultStore.data().operator instanceof OperatorNull) {
-            resultStore.set(new ResultStore(
+            resultStore.set(new DataResultStore(
               resultStore.data().lexp,
               payload.operator,
               resultStore.data().rexp)
@@ -63,7 +63,7 @@ export const initActionsListeners = (componentContext, resultStore) => {
       new ResultInputAction())
       .callback((payload) => {
         if (resultStore.data().operator instanceof OperatorDiv && resultStore.data().rexp === '0') {
-          resultStore.set(new ResultStore())
+          resultStore.set(new DataResultStore())
         } else {
           if (resultStore.data().lexp !== '' &&
             resultStore.data().rexp !== '' &&

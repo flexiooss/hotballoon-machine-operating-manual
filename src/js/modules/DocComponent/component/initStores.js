@@ -1,12 +1,13 @@
-import {Store, State, InMemoryStorage} from 'hotballoon'
-import {NAVBAR_STORE, NavbarStore} from '../stores/NavbarStore'
+import {State, InMemoryStorage} from 'hotballoon'
+import {NAVBAR_STORE, DataNavbarStore} from '../stores/DataNavbarStore'
 import {Link} from '../stores/Link'
+import {NavbarStore} from '../stores/NavbarStore'
 
 /**
  *
  * @param componentContext
  * @param {PublicRouteHandler} routeHandler
- * @return {Store}
+ * @return {NavbarStore}
  */
 export const initStores = (componentContext, routeHandler) => {
   let linkCollection = [
@@ -17,11 +18,11 @@ export const initStores = (componentContext, routeHandler) => {
 
   console.log(linkCollection[2])
   return componentContext.addStore(
-    new Store(
+    new NavbarStore(
       NAVBAR_STORE,
       new InMemoryStorage(
-        new State(NAVBAR_STORE, new NavbarStore(linkCollection, 0)),
-        new NavbarStore()
+        new State(NAVBAR_STORE, new DataNavbarStore(linkCollection, 0)),
+        new DataNavbarStore()
       )
     )
   )

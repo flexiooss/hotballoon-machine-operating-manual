@@ -1,6 +1,7 @@
-import {RESULT_STORE, ResultStore} from '../stores/ResultStore'
+import {RESULT_STORE, DataResultStore} from '../stores/DataResultStore'
 import {Store, State, InMemoryStorage} from 'hotballoon'
 import {OperatorNull} from './operator/OperatorNull'
+import {ResultStore} from '../stores/ResultStore'
 
 /**
  *
@@ -9,9 +10,9 @@ import {OperatorNull} from './operator/OperatorNull'
  */
 export const initStores = (componentContext) => {
   return componentContext.addStore(
-    new Store(RESULT_STORE, new InMemoryStorage(
-      new State(RESULT_STORE, new ResultStore('', new OperatorNull(), '')),
-      new ResultStore())
+    new ResultStore(RESULT_STORE, new InMemoryStorage(
+      new State(RESULT_STORE, new DataResultStore('', new OperatorNull(), '')),
+      new DataResultStore())
     )
   )
 }

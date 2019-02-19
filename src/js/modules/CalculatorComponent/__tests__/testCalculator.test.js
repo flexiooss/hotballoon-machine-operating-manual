@@ -4,7 +4,7 @@ import {TestCase} from 'code-altimeter-js'
 import {HotBalloonApplication as App, ComponentContext, Dispatcher as AppDispatcher} from 'hotballoon'
 import {NumberInputAction} from '../actions/NumberInputAction'
 import {NumberInputPayload} from '../actions/NumberInputPayload'
-import {ResultStore} from '../stores/ResultStore'
+import {DataResultStore} from '../stores/DataResultStore'
 import {OperatorInputPayload} from '../actions/OperatorInputPayload'
 import {OperatorInputAction} from '../actions/OperatorInputAction'
 import {OperatorPlus} from '../component/operator/OperatorPlus'
@@ -30,7 +30,7 @@ class TestCounter extends TestCase {
     this.calculatorComponent.componentContext.dispatchAction(
       NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
     )
-    let expectedStore = new ResultStore('1', new OperatorNull())
+    let expectedStore = new DataResultStore('1', new OperatorNull())
     assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
   }
 
@@ -41,7 +41,7 @@ class TestCounter extends TestCase {
     this.calculatorComponent.componentContext.dispatchAction(
       OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
     )
-    let expectedStore = new ResultStore('1', new OperatorPlus())
+    let expectedStore = new DataResultStore('1', new OperatorPlus())
     assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
   }
 
@@ -55,7 +55,7 @@ class TestCounter extends TestCase {
     this.calculatorComponent.componentContext.dispatchAction(
       NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
     )
-    let expectedStore = new ResultStore('1', new OperatorPlus(), '1')
+    let expectedStore = new DataResultStore('1', new OperatorPlus(), '1')
     assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
   }
 
@@ -72,7 +72,7 @@ class TestCounter extends TestCase {
     this.calculatorComponent.componentContext.dispatchAction(
       OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
     )
-    let expectedStore = new ResultStore('2', OperatorNull)
+    let expectedStore = new DataResultStore('2', OperatorNull)
     assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
   }
 
@@ -89,7 +89,7 @@ class TestCounter extends TestCase {
     this.calculatorComponent.componentContext.dispatchAction(
       OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
     )
-    let expectedStore = new ResultStore()
+    let expectedStore = new DataResultStore()
     assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
   }
 }

@@ -8,12 +8,10 @@ import '../assets/css/navbar.css'
 import Header from './header.view'
 import Footer from './footer.view'
 import Head from './Head.view'
-import Navbar, {CHANGE_COMPONENT_EVENT, NavbarStores} from './Navbar.view'
+import Navbar, {CHANGE_COMPONENT_EVENT} from './Navbar.view'
 import Main from './Main.view'
 import {ChangeRouteAction} from '../../_ComponentRouter/actions/ChangeRouteAction'
 import {ChangeRoutePayload} from '../../_ComponentRouter/actions/ChangeRoutePayload'
-
-const NAVBAR_STORE = 'NAVBAR_STORE'
 
 const HEAD_VIEW = Symbol('HEAD_VIEW')
 const HEADER_VIEW = Symbol('HEADER_VIEW')
@@ -26,9 +24,20 @@ const NAVBAR_VIEW = Symbol('NAVBAR_VIEW')
  */
 export class DocContainer extends ViewContainer {
   /**
-   * @override
+   *
+   * @param {ViewContainerParameters} viewContainerParameters
+   * @param {DocContainerStoresParameters } DocContainerStoresParameters
    */
-  registerViews() {
+  constructor(viewContainerParameters, DocContainerStoresParameters) {
+    super(viewContainerParameters)
+    this.__navbarStore = DocContainerStoresParameters.navbarStore
+    this.__registerViews()
+  }
+  /**
+   *
+   * @private
+   */
+  __registerViews() {
     this.addView(Head.createWithParentNode(new ViewParameters(HEAD_VIEW, this), new ViewStoresParameters(),
       document.getElementsByTagName('head')[0])
     )
@@ -36,9 +45,7 @@ export class DocContainer extends ViewContainer {
     this.addView(
       Navbar.create(
         new ViewParameters(NAVBAR_VIEW, this),
-        new NavbarStores(
-          this.store(NAVBAR_STORE)
-        )
+        new DocContainerStoresParameters(this.__navbarStore)
       )
     )
     this.__main = Main.create(new ViewParameters(MAIN_VIEW, this))
@@ -81,13 +88,21 @@ export class DocContainer extends ViewContainer {
 /**
  * @extends ViewStoresParameters
  */
-export class DocContainerStores extends ViewStoresParameters {
+export class DocContainerStoresParameters extends ViewStoresParameters {
   /**
    *
-   * @param {Store} navbarStore
+   * @param {NavbarStore} navbarStore
    */
   constructor(navbarStore) {
     super()
-    this.setStore(NAVBAR_STORE, navbarStore)
+    this.__navbarStore = this.validate(navbarStore)
+  }
+
+  /**
+   *
+   * @returns {NavbarStore}
+   */
+  get navbarStore() {
+    return this.__navbarStore
   }
 }

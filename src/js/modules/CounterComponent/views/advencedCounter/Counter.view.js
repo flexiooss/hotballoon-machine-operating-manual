@@ -1,7 +1,8 @@
 import {View, HtmlParams, ViewParameters, ViewStoresParameters, NodeEventListenerFactory} from 'hotballoon'
-// import balloon from '../../assets/img/balloon.svg'
-import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
-import {PeerView, PeerStoreParameters} from './Peer.view'
+import balloon from '../../assets/img/balloon.svg'
+import {PeerView} from './Peer.view'
+import {CounterContainerStoresParameters} from '../CounterContainerStoreParameters'
+import {CounterStoreHandler} from '../../stores/counterStoreHandler'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
@@ -9,17 +10,17 @@ export const ADD_NUMBER_EVENT = 'ADD_NUMBER_EVENT'
 
 const PEER_SUBVIEW = 'PEER_SUBVIEW'
 
-const COUNT_STORE = 'COUNT_STORE'
-
 export class CounterView extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
-   * @param {MainStores} mainStores
+   * @param {CounterContainerStoresParameters} counterContainerStoresParameters
    */
-  constructor(viewParameters, mainStores) {
-    super(viewParameters, mainStores)
-    this.suscribeToStore(COUNT_STORE)
+  constructor(viewParameters, counterContainerStoresParameters) {
+    super(viewParameters)
+    this.__counterStore = counterContainerStoresParameters.counterStore
+    this.subscribeToStore(this.__counterStore)
+    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
     this.__registerSubViews()
   }
 
@@ -31,9 +32,7 @@ export class CounterView extends View {
     this.addView(
       PeerView.create(
         new ViewParameters(PEER_SUBVIEW, this),
-        new PeerStoreParameters(
-          this.store(COUNT_STORE)
-        )
+        new CounterContainerStoresParameters(this.__counterStore)
       )
     )
   }
@@ -46,7 +45,7 @@ export class CounterView extends View {
       'div', HtmlParams.withChildNodes([
         this.html(
           'div', HtmlParams.withChildNodes([
-            this.html('span#Counter.counter', HtmlParams.withText(this.__addCounter())),
+            this.html('span#Counter.counter', HtmlParams.withText(this.__counterStoreHandler.count)),
             this.html('input#decrement.button',
               HtmlParams
                 .withAttributes(
@@ -58,7 +57,7 @@ export class CounterView extends View {
                     })
                     .build()
                 )
-                .addStyles({ visibility: (this.__addCounter() < 1 ? 'hidden' : 'visible') })
+                .addStyles({ visibility: (this.__counterStoreHandler.count < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -87,9 +86,9 @@ export class CounterView extends View {
             this.html('img#hotballoon.hotballoon',
               HtmlParams
                 .withAttributes(
-                  { src: 'balloon' })
+                  { src: balloon })
                 .addStyles({
-                  'marginLeft': this.__addCounter() + 'em',
+                  'marginLeft': this.__counterStoreHandler.count + 'em',
                   'position': 'relative'
                 })
             )
@@ -102,38 +101,8 @@ export class CounterView extends View {
         this.html('section#' + PEER_SUBVIEW + '.section',
           HtmlParams
             .withViews([this.view(PEER_SUBVIEW)])
-            .addReconciliationRules([RECONCILIATION_RULES.BYPATH])
         )
       ])
     )
-  }
-
-  /**
-   *
-   * @returns {string}
-   * @private
-   */
-  __addCounter() {
-    const data = this.stateValue(COUNT_STORE)
-
-    if (typeof data.count === 'undefined') {
-      return 'counter not found'
-    } else {
-      return data.count
-    }
-  }
-}
-
-/**
- * @extends ViewStoresParameters
- */
-export class CounterStores extends ViewStoresParameters {
-  /**
-   *
-   * @param {StoreInterface} countStore
-   */
-  constructor(countStore) {
-    super()
-    this.setStore(COUNT_STORE, countStore)
   }
 }

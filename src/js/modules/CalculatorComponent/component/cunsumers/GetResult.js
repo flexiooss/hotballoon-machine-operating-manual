@@ -1,4 +1,4 @@
-import {ResultStore} from '../../stores/ResultStore'
+import {DataResultStore} from '../../stores/DataResultStore'
 import Worker from '../workers/compute.worker'
 
 export class GetResult {
@@ -14,7 +14,7 @@ export class GetResult {
       console.log('%c GetResult:from worker', 'color: purple;')
       console.log(event)
       const result = event.data
-      store.set(new ResultStore(result, payload.operator, ''))
+      store.set(new DataResultStore(result, payload.operator, ''))
       this._worker.terminate()
     })
   }

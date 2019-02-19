@@ -1,10 +1,26 @@
 import {HtmlParams, NodeEventListenerFactory, View, ViewStoresParameters} from 'hotballoon'
-import {PathName} from 'flexio-jsrouter/src/URL/PathName'
+import {NavbarStoreHandler} from '../stores/NavbarStoreHandler'
 
 export const CHANGE_COMPONENT_EVENT = 'CHANGE_COMPONENT_EVENT'
 const NAVBAR_STORE = 'NAVBAR_STORE'
 
 export default class Navbar extends View {
+  /**
+   *
+   * @param {ViewParameters} viewParameters
+   * @param {DocContainerStoresParameters} docContainerStoresParameters
+   */
+  constructor(viewParameters, docContainerStoresParameters) {
+    super(viewParameters)
+    this.__navbarStore = docContainerStoresParameters.navbarStore
+    this.subscribeToStore(this.__navbarStore)
+    this.__navStorehandler = new NavbarStoreHandler(this.__navbarStore.data())
+  }
+
+  /**
+   *
+   * @returns {Node}
+   */
   template() {
     return this.html('nav#navBar.navBar',
       HtmlParams.withChildNodes([
@@ -22,17 +38,16 @@ export default class Navbar extends View {
    * @private
    */
   __linkStoreToLinkView() {
-    const data = this.store(NAVBAR_STORE).data()
-    let linkCount = data.linkCollection.length
+    let linkCount = this.__navStorehandler.size
     let linksTempate = new Array(linkCount)
     for (let i = 0; i < linkCount; i++) {
       linksTempate[i] = this.html('a#linkNav3.linkNav',
         HtmlParams
-          .withText(data.linkCollection[i].name)
+          .withText(this.__navStorehandler.url(i).name)
           .addEventListener(
             NodeEventListenerFactory.listen('click')
               .callback((e) => {
-                this.dispatch(CHANGE_COMPONENT_EVENT, {link: data.linkCollection[i].url})
+                this.dispatch(CHANGE_COMPONENT_EVENT, {link: this.__navStorehandler.url(i).url})
                 this.container().resetDemoDiv()
               })
               .build()
@@ -40,16 +55,5 @@ export default class Navbar extends View {
       )
     }
     return linksTempate
-  }
-}
-
-export class NavbarStores extends ViewStoresParameters {
-  /**
-   *
-   * @param navbarStore
-   */
-  constructor(navbarStore) {
-    super()
-    this.setStore(NAVBAR_STORE, navbarStore)
   }
 }

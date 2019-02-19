@@ -1,36 +1,37 @@
-import {View, HtmlParams, ViewStoresParameters, NodeEventListenerFactory} from 'hotballoon'
+import {View, HtmlParams, NodeEventListenerFactory} from 'hotballoon'
 import {OperatorMoins} from '../component/operator/OperatorMoins'
 import {OperatorMul} from '../component/operator/OperatorMul'
 import {OperatorDiv} from '../component/operator/OperatorDiv'
 import {OperatorPlus} from '../component/operator/OperatorPlus'
 import {OperatorNull} from '../component/operator/OperatorNull'
+import {ResultStoreHandler} from '../stores/ResultStoreHandler'
 
 export const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
 export const INPUT_OPERATOR_EVENT = 'INPUT_OPERATOR_EVENT'
 export const INPUT_RESULT_EVENT = 'INPUT_RESULT_EVENT'
 
-const RESULT_STORE = 'RESULT_STORE'
-
 export default class CalculatorView extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
-   * @param {ResultStores} resultStores
+   * @param {CalculatorContainerStoresParameters} calculatorContainerStoresParameters
    */
-  constructor(viewParameters, resultStores) {
-    super(viewParameters, resultStores)
-    this.suscribeToStore(RESULT_STORE)
+  constructor(viewParameters, calculatorContainerStoresParameters) {
+    super(viewParameters)
+    this.__resultStore = calculatorContainerStoresParameters.resultStore
+    this.__resultStoreHandler = new ResultStoreHandler(this.__resultStore.data())
+    this.subscribeToStore(this.__resultStore)
   }
 
   /**
    *
-   * @return {Node}
+   * @returns {Node}
    */
   template() {
     return this.html('div#calculator.calculator',
       HtmlParams.withChildNodes([
         this.html('input#lexp.lexp',
-          HtmlParams.withAttributes({ type: 'text', value: this.__getResult() })
+          HtmlParams.withAttributes({ type: 'text', value: this.__resultStoreHandler.display() })
         ),
         this.html('div#keyboard.keyboard',
           HtmlParams.withChildNodes(this.__digitsButtons())
@@ -131,31 +132,5 @@ export default class CalculatorView extends View {
       )
     }
     return res
-  }
-
-  /**
-   *
-   * @returns {*}
-   * @private
-   */
-  __getResult() {
-    const data = this.stateValue(RESULT_STORE)
-
-    if (typeof data.lexp === 'undefined') {
-      return 'counter not found'
-    } else {
-      return data.display()
-    }
-  }
-}
-
-export class ResultStores extends ViewStoresParameters {
-  /**
-   *
-   * @param {StoreInterface} resultStore
-   */
-  constructor(resultStore) {
-    super()
-    this.setStore(RESULT_STORE, resultStore)
   }
 }

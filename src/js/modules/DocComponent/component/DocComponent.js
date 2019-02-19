@@ -4,7 +4,7 @@ import {isNode, assert} from 'flexio-jshelpers'
 
 import {AppInitializedAction} from '../../MainComponent/actions/AppInitializedAction'
 import {InitCounterComponent} from './InitCounterComponent'
-import {DocContainer, DocContainerStores} from '../views/Doc.container'
+import {DocContainer, DocContainerStoresParameters} from '../views/Doc.container'
 import {InitCalculatorComponent} from './InitCalculatorComponent'
 import {Route} from 'flexio-jsrouter/src/Route/Route'
 import {initStores} from './initStores'
@@ -64,7 +64,7 @@ export class DocComponent {
           this.__viewContainerID,
           this.__parentNode
         ),
-        new DocContainerStores(this.__store)
+        new DocContainerStoresParameters(this.__store)
       )
     )
   }

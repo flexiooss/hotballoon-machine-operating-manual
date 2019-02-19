@@ -1,19 +1,6 @@
-import {DataStoreInterface} from 'hotballoon'
+import {Store} from 'hotballoon'
 
 export const NAVBAR_STORE = 'NAVBAR_STORE'
 
-/**
- * @extends DataStoreInterface
- */
-export class NavbarStore extends DataStoreInterface {
-  /**
-   *
-   * @param {Link[]} linkCollection
-   * @param {int} selected
-   */
-  constructor(linkCollection = null, selected = 0) {
-    super()
-    this.linkCollection = linkCollection
-    this.selected = selected
-  }
+export class NavbarStore extends Store {
 }
