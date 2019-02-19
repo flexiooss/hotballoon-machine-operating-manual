@@ -24,7 +24,7 @@ export default class MainSimple extends View {
    */
   constructor(viewParameters, mainStores) {
     super(viewParameters, mainStores)
-    this.suscribeToStore(RESULT_STORE)
+    this.subscribeToStore(RESULT_STORE)
   }
 
   /**

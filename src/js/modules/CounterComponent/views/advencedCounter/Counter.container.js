@@ -1,22 +1,30 @@
 'use strict'
 import {
-  ViewStoresParameters,
   ViewContainer,
   ViewParameters,
   ViewEventListenerFactory
 } from 'hotballoon'
-import { default as Main, MainStores, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT } from './Counter.view'
+import {default as Main, MainStores, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT} from './Counter.view'
 
 import '../../assets/css/style.css'
 import {CounterAddNumberPayload} from '../../actions/CounterAddNumberPayload'
 import {CounterAddNumberAction} from '../../actions/CounterAddNumberAction'
 
-const COUNT_STORE = 'RESULT_STORE'
 export const COUNTER_VIEWCONTAINER = 'COUNTER_VIEWCONTAINER'
 
 const MAIN_VIEW = Symbol('MAIN_VIEW')
 
 export class CounterContainer extends ViewContainer {
+  /**
+   *
+   * @param {ViewContainerParameters} viewContainerParameters
+   * @param {CounterContainerStoresParameters} counterContainerStores
+   */
+  constructor(viewContainerParameters, counterContainerStores) {
+    super(viewContainerParameters)
+    this.counterStore = counterContainerStores.counterStore
+  }
+
   /**
    * @override
    */
@@ -25,7 +33,7 @@ export class CounterContainer extends ViewContainer {
       Main.create(
         new ViewParameters(MAIN_VIEW, this),
         new MainStores(
-          this.store(COUNT_STORE)
+          this.counterStore
         )
       )
     )
@@ -68,19 +76,5 @@ export class CounterContainer extends ViewContainer {
           )
         }).build()
     )
-  }
-}
-
-/**
- * @extends ViewStoresParameters
- */
-export class CounterContainerStores extends ViewStoresParameters {
-  /**
-   *
-   * @param {Store} counterStore
-   */
-  constructor(counterStore) {
-    super()
-    this.setStore(COUNT_STORE, counterStore)
   }
 }

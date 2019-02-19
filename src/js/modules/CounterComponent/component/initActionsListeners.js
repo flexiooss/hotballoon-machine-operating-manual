@@ -1,5 +1,5 @@
 import {DispatcherEventListenerFactory} from 'hotballoon'
-import {CounterStore} from '../stores/CounterStore'
+import {DataCounterStore} from '../stores/DataCounterStore'
 import {CounterAddNumberAction} from '../actions/CounterAddNumberAction'
 
 export const initActionsListeners = (componentContext, counterStore) => {
@@ -9,7 +9,7 @@ export const initActionsListeners = (componentContext, counterStore) => {
       .callback((payload) => {
         if (payload.component === componentContext) {
           console.log(payload.sum)
-          counterStore.set(new CounterStore(counterStore.data().count + payload.sum))
+          counterStore.set(new DataCounterStore(counterStore.data().count + payload.sum))
         }
       })
       .build()

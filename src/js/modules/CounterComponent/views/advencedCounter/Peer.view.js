@@ -1,17 +1,18 @@
 /* global Blob:false */
-import {View, ViewStoresParameters, HtmlParams} from 'hotballoon'
-
-const COUNT_STORE = 'RESULT_STORE'
+import {View, HtmlParams} from 'hotballoon'
+import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export default class Peer extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
-   * @param {PeerStoreParameters} stores
+   * @param {CounterContainerStoresParameters} counterContainerStoresParameters
    */
-  constructor(viewParameters, stores) {
-    super(viewParameters, stores)
-    this.suscribeToStore(COUNT_STORE)
+  constructor(viewParameters, counterContainerStoresParameters) {
+    super(viewParameters)
+
+    this.counterStore = counterContainerStoresParameters.counterStore
+    this.subscribeToStore(this.counterStore)
   }
 
   /**
@@ -19,13 +20,18 @@ export default class Peer extends View {
    * @return {Node}
    */
   template() {
+    console.log('ici')
+    // console.log(this.storeData(COUNT_STORE))
+    // console.log(this.stateValue(COUNT_STORE))
     return this.html('div#peer.peer', HtmlParams
-      .withStyles({ background: this._checkCounter(), padding: '5em' })
+      .withStyles({background: this._checkCounter(), padding: '5em'})
+      // .addReconciliationRules([RECONCILIATION_RULES.BYPATH])
     )
   }
 
   _checkCounter() {
-    const data = this.stateValue(COUNT_STORE)
+    const data = this.counterStore.data()
+    // const data = this.stateValue(COUNT_STORE)
 
     if (typeof data.count !== 'undefined') {
       if (data.count % 2 === 0) {
@@ -33,16 +39,5 @@ export default class Peer extends View {
       }
     }
     return 'red'
-  }
-}
-
-export class PeerStoreParameters extends ViewStoresParameters {
-  /**
-   *
-   * @param {StoreInterface} countStore
-   */
-  constructor(countStore) {
-    super()
-    this.setStore(COUNT_STORE, countStore)
   }
 }

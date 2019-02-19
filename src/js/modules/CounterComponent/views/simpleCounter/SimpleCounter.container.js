@@ -1,21 +1,34 @@
 'use strict'
 import {
-  ViewStoresParameters,
   ViewContainer,
   ViewParameters,
   ViewEventListenerFactory
 } from 'hotballoon'
-import { default as Main, MainSimpleStores, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT } from './CounterSimple.view'
+import {
+  default as Main,
+  INCREMENT_EVENT,
+  DECREMENT_EVENT,
+  ADD_NUMBER_EVENT
+} from './CounterSimple.view'
 
 import '../../assets/css/style.css'
 import {CounterAddNumberPayload} from '../../actions/CounterAddNumberPayload'
 import {CounterAddNumberAction} from '../../actions/CounterAddNumberAction'
-
-const COUNT_STORE = 'RESULT_STORE'
+import {CounterContainerStoresParameters} from '../CounterContainerStoresParameters'
 
 const MAIN_SIMPLE_VIEW = Symbol('MAIN_SIMPLE_VIEW')
 
 export class SimpleCounterContainer extends ViewContainer {
+  /**
+   *
+   * @param {ViewContainerParameters} viewContainerParameters
+   * @param {CounterContainerStoresParameters} counterContainerStores
+   */
+  constructor(viewContainerParameters, counterContainerStores) {
+    super(viewContainerParameters)
+    this.counterStore = counterContainerStores.counterStore
+  }
+
   /**
    * @override
    */
@@ -23,8 +36,8 @@ export class SimpleCounterContainer extends ViewContainer {
     this.addView(
       Main.create(
         new ViewParameters(MAIN_SIMPLE_VIEW, this),
-        new MainSimpleStores(
-          this.store(COUNT_STORE)
+        new CounterContainerStoresParameters(
+          this.counterStore
         )
       )
     )
@@ -67,19 +80,5 @@ export class SimpleCounterContainer extends ViewContainer {
           )
         }).build()
     )
-  }
-}
-
-/**
- * @extends ViewStoresParameters
- */
-export class SimpleCounterContainerStores extends ViewStoresParameters {
-  /**
-   *
-   * @param {Store} counterStore
-   */
-  constructor(counterStore) {
-    super()
-    this.setStore(COUNT_STORE, counterStore)
   }
 }

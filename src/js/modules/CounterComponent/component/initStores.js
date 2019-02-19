@@ -1,5 +1,6 @@
 import {COUNT_STORE, CounterStore} from '../stores/CounterStore'
-import {Store, State, InMemoryStorage} from 'hotballoon'
+import {DataCounterStore} from '../stores/DataCounterStore'
+import {State, InMemoryStorage} from 'hotballoon'
 
 /**
  *
@@ -9,9 +10,9 @@ import {Store, State, InMemoryStorage} from 'hotballoon'
 export const initStores = (componentContext) => {
   console.log(componentContext)
   return componentContext.addStore(
-    new Store(COUNT_STORE, new InMemoryStorage(
-      new State(COUNT_STORE, new CounterStore(0)),
-      new CounterStore())
+    new CounterStore(COUNT_STORE, new InMemoryStorage(
+      new State(COUNT_STORE, new DataCounterStore(0)),
+      new DataCounterStore())
     )
   )
 }
