@@ -22,6 +22,7 @@ export class MainComponent {
 
     this.__componentContext = componentContext
     this.__parentNode = parentNode
+    this.__changeRoute = RouterComponent.changeRoute
     this.__routeHandler = RouterComponent.create(
       this.componentContext.APP().addComponentContext(
         new ComponentContext(this.componentContext.APP())
@@ -58,7 +59,13 @@ export class MainComponent {
       DispatcherEventListenerFactory.listen(new AppInitializedAction())
         .callback(
           (payload) => {
-            InitDocComponent.create(payload, this.componentContext.APP(), this.__parentNode, this.__routeHandler)
+            InitDocComponent.create(
+              payload,
+              this.componentContext.APP(),
+              this.__parentNode,
+              this.__routeHandler,
+              this.__changeRoute
+            )
           })
         .build()
     )

@@ -13,7 +13,10 @@ export default class Navbar extends View {
   constructor(viewParameters, docContainerStoresParameters) {
     super(viewParameters)
     this.__navbarStore = docContainerStoresParameters.navbarStore
-    this.subscribeToStore(this.__navbarStore)
+    this.subscribeToStore(this.__navbarStore,(s)=>{
+      this.maSubView.steNewData('toto').update()
+      return true
+    })
     this.__navStorehandler = new NavbarStoreHandler(this.__navbarStore.data())
   }
 
@@ -22,6 +25,7 @@ export default class Navbar extends View {
    * @returns {Node}
    */
   template() {
+    this.__updateStoreHandler()
     return this.html('nav#navBar.navBar',
       HtmlParams.withChildNodes([
         this.html('h2#titleSommaire.titleSommaire', HtmlParams.withText('Sommaire')),
@@ -55,5 +59,13 @@ export default class Navbar extends View {
       )
     }
     return linksTempate
+  }
+
+  /**
+   *
+   * @private
+   */
+  __updateStoreHandler() {
+    this.__navStorehandler = new NavbarStoreHandler(this.__navbarStore.data())
   }
 }

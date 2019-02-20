@@ -8,12 +8,14 @@ export class InitDocComponent {
    * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
+   * @param {function} changeRoute
    */
-  constructor(payload, APP, parentNode, routeHandler) {
+  constructor(payload, APP, parentNode, routeHandler, changeRoute) {
     DocComponent.create(
       APP.addComponentContext(new ComponentContext(APP)),
       parentNode,
-      routeHandler
+      routeHandler,
+      changeRoute
     )
   }
 
@@ -23,11 +25,12 @@ export class InitDocComponent {
    * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
+   * @param {function} changeRoute
    * @return {InitDocComponent}
    * @constructor
    * @static
    */
-  static create(payload, APP, parentNode, routeHandler) {
-    return new this(payload, APP, parentNode, routeHandler)
+  static create(payload, APP, parentNode, routeHandler, changeRoute) {
+    return new this(payload, APP, parentNode, routeHandler, changeRoute)
   }
 }

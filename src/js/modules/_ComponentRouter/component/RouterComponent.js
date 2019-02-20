@@ -6,6 +6,7 @@ import {RouterBuilder} from 'flexio-jsrouter'
 import {UrlConfiguration} from 'flexio-jsrouter/src/UrlConfiguration'
 import {PublicRouteHandler} from 'flexio-jsrouter/src/Route/PublicRouteHandler'
 import {Route} from 'flexio-jsrouter/src/Route/Route'
+import {ChangeRoutePayload} from '../actions/ChangeRoutePayload'
 
 export class RouterComponent {
   /**
@@ -63,6 +64,17 @@ export class RouterComponent {
           )
         })
         .build()
+    )
+  }
+
+  /**
+   *
+   * @param {URL} url
+   * @returns {Action}
+   */
+  static changeRoute(url) {
+    return ChangeRouteAction.withPayload(
+      new ChangeRoutePayload(url)
     )
   }
 }

@@ -1,8 +1,6 @@
 /* global Blob:false */
-import {View, ViewStoresParameters, HtmlParams} from 'hotballoon'
+import {View, HtmlParams} from 'hotballoon'
 import {CounterStoreHandler} from '../../stores/counterStoreHandler'
-
-const COUNT_STORE = 'RESULT_STORE'
 
 export class PeerView extends View {
   /**
@@ -22,8 +20,17 @@ export class PeerView extends View {
    * @return {Node}
    */
   template() {
+    this.__updateStoreHandler()
     return this.html('div#peer.peer', HtmlParams
       .withStyles({ background: this.__counterStoreHandler.color, padding: '5em' })
     )
+  }
+
+  /**
+   *
+   * @private
+   */
+  __updateStoreHandler() {
+    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
   }
 }

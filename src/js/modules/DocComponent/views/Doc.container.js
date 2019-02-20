@@ -10,8 +10,6 @@ import Footer from './footer.view'
 import Head from './Head.view'
 import Navbar, {CHANGE_COMPONENT_EVENT} from './Navbar.view'
 import Main from './Main.view'
-import {ChangeRouteAction} from '../../_ComponentRouter/actions/ChangeRouteAction'
-import {ChangeRoutePayload} from '../../_ComponentRouter/actions/ChangeRoutePayload'
 
 const HEAD_VIEW = Symbol('HEAD_VIEW')
 const HEADER_VIEW = Symbol('HEADER_VIEW')
@@ -27,10 +25,12 @@ export class DocContainer extends ViewContainer {
    *
    * @param {ViewContainerParameters} viewContainerParameters
    * @param {DocContainerStoresParameters } DocContainerStoresParameters
+   * @param {function} changeRoute
    */
-  constructor(viewContainerParameters, DocContainerStoresParameters) {
+  constructor(viewContainerParameters, DocContainerStoresParameters, changeRoute) {
     super(viewContainerParameters)
     this.__navbarStore = DocContainerStoresParameters.navbarStore
+    this.__changeRoute = changeRoute
     this.__registerViews()
   }
   /**
@@ -63,11 +63,7 @@ export class DocContainer extends ViewContainer {
       ViewEventListenerFactory
         .listen(CHANGE_COMPONENT_EVENT)
         .callback((payload) => {
-          this.dispatchAction(
-            ChangeRouteAction.withPayload(
-              new ChangeRoutePayload(payload.link)
-            )
-          )
+          this.dispatchAction(this.__changeRoute(payload.link))
         }).build()
     )
   }

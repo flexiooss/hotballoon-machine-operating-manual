@@ -3,6 +3,7 @@ import balloon from '../../assets/img/balloon.svg'
 import {PeerView} from './Peer.view'
 import {CounterContainerStoresParameters} from '../CounterContainerStoreParameters'
 import {CounterStoreHandler} from '../../stores/counterStoreHandler'
+import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
@@ -41,6 +42,7 @@ export class CounterView extends View {
    * @return {Node}
    */
   template() {
+    this.__updateStoreHandler()
     return this.html(
       'div', HtmlParams.withChildNodes([
         this.html(
@@ -69,7 +71,7 @@ export class CounterView extends View {
                       this.dispatch(INCREMENT_EVENT, null)
                     })
                     .build()
-                )
+                ).addReconciliationRules([RECONCILIATION_RULES.BYPATH])
             ),
             this.html('input#sum',
               HtmlParams
@@ -81,7 +83,8 @@ export class CounterView extends View {
                       this.dispatch(ADD_NUMBER_EVENT, { value: Number(e.target.value) })
                     }
                   })
-                  .build())
+                  .build()
+                )
             ),
             this.html('img#hotballoon.hotballoon',
               HtmlParams
@@ -104,5 +107,13 @@ export class CounterView extends View {
         )
       ])
     )
+  }
+
+  /**
+   *
+   * @private
+   */
+  __updateStoreHandler() {
+    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
   }
 }

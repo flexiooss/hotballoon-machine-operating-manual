@@ -5,6 +5,7 @@ import {OperatorDiv} from '../component/operator/OperatorDiv'
 import {OperatorPlus} from '../component/operator/OperatorPlus'
 import {OperatorNull} from '../component/operator/OperatorNull'
 import {ResultStoreHandler} from '../stores/ResultStoreHandler'
+import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
 export const INPUT_OPERATOR_EVENT = 'INPUT_OPERATOR_EVENT'
@@ -28,13 +29,14 @@ export default class CalculatorView extends View {
    * @returns {Node}
    */
   template() {
+    this.__updateStoreHandler()
     return this.html('div#calculator.calculator',
       HtmlParams.withChildNodes([
         this.html('input#lexp.lexp',
-          HtmlParams.withAttributes({ type: 'text', value: this.__resultStoreHandler.display() })
+          HtmlParams.withAttributes({ type: 'text', value: this.__resultStoreHandler.display(), readOnly: true })
         ),
         this.html('div#keyboard.keyboard',
-          HtmlParams.withChildNodes(this.__digitsButtons())
+          HtmlParams.withChildNodes(this.__digitsButtons()).addReconciliationRules([RECONCILIATION_RULES.BYPATH])
         )
       ])
     )
@@ -62,6 +64,18 @@ export default class CalculatorView extends View {
           .build()
         )
     )
+
+    res[4] = this.html('input#minus.button',
+      HtmlParams
+        .withAttributes({ type: 'button', value: '-' })
+        .addEventListener(NodeEventListenerFactory.listen('click')
+          .callback((e) => {
+            this.dispatch(INPUT_OPERATOR_EVENT, { operator: new OperatorMoins() })
+          })
+          .build()
+        )
+    )
+
     res[4] = this.html('input#minus.button',
       HtmlParams
         .withAttributes({ type: 'button', value: '-' })
@@ -116,7 +130,7 @@ export default class CalculatorView extends View {
     let res = Array(3)
     for (i = 0; i < 3; i++) {
       res[i] = this.html('td#column' + (i + 1) + '.column',
-        HtmlParams.withChildNodes(
+        HtmlParams.withChildNodes([
           this.html('input#digit' + (i + 1) + '.button',
             HtmlParams
               .withAttributes({type: 'button', value: (y * 3 + i + 1)})
@@ -128,9 +142,17 @@ export default class CalculatorView extends View {
                 .build()
               )
           )
-        )
+        ])
       )
     }
     return res
+  }
+
+  /**
+   *
+   * @private
+   */
+  __updateStoreHandler() {
+    this.__resultStoreHandler = new ResultStoreHandler(this.__resultStore.data())
   }
 }

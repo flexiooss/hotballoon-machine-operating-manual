@@ -15,8 +15,9 @@ export class DocComponent {
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
+   * @param {function} changeRoute
    */
-  constructor(componentContext, parentNode, routeHandler) {
+  constructor(componentContext, parentNode, routeHandler, changeRoute) {
     assert(!!isNode(parentNode),
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
@@ -25,6 +26,7 @@ export class DocComponent {
     this.__parentNode = parentNode
     this.__routeHandler = routeHandler
     this.__viewContainerID = this.__componentContext.nextID()
+    this.__changeRoute = changeRoute
     this.__initDocRoute()
     this.__store = initStores(this.__componentContext, this.__routeHandler)
     this.createRenderMountView()
@@ -36,12 +38,13 @@ export class DocComponent {
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
+   * @param {function} changeRoute
    * @return {DocComponent}
    * @constructor
    * @static
    */
-  static create(componentContext, parentNode, routeHandler) {
-    return new this(componentContext, parentNode, routeHandler)
+  static create(componentContext, parentNode, routeHandler, changeRoute) {
+    return new this(componentContext, parentNode, routeHandler, changeRoute)
   }
 
   /**
@@ -64,7 +67,8 @@ export class DocComponent {
           this.__viewContainerID,
           this.__parentNode
         ),
-        new DocContainerStoresParameters(this.__store)
+        new DocContainerStoresParameters(this.__store),
+        this.__changeRoute
       )
     )
   }
