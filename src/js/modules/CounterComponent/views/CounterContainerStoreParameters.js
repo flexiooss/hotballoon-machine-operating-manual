@@ -6,7 +6,7 @@ import {ViewStoresParameters} from 'hotballoon'
 export class CounterContainerStoresParameters extends ViewStoresParameters {
   /**
    *
-   * @param {ResultStore} counterStore
+   * @param {StoreInterface} counterStore
    */
   constructor(counterStore) {
     super()
@@ -15,7 +15,7 @@ export class CounterContainerStoresParameters extends ViewStoresParameters {
 
   /**
    *
-   * @return {ResultStore}
+   * @return {HandlerCounterStore}
    */
   get counterStore() {
     return this.__counterStore

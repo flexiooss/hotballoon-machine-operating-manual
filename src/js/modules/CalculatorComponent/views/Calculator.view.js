@@ -4,7 +4,6 @@ import {OperatorMul} from '../component/operator/OperatorMul'
 import {OperatorDiv} from '../component/operator/OperatorDiv'
 import {OperatorPlus} from '../component/operator/OperatorPlus'
 import {OperatorNull} from '../component/operator/OperatorNull'
-import {ResultStoreHandler} from '../stores/ResultStoreHandler'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
@@ -19,21 +18,19 @@ export default class CalculatorView extends View {
    */
   constructor(viewParameters, calculatorContainerStoresParameters) {
     super(viewParameters)
-    this.__resultStore = calculatorContainerStoresParameters.resultStore
-    this.__resultStoreHandler = new ResultStoreHandler(this.__resultStore.data())
-    this.subscribeToStore(this.__resultStore)
+    this.__stores = calculatorContainerStoresParameters
+    this.subscribeToStore(this.__stores.resultStore)
   }
 
   /**
    *
-   * @returns {Node}
+   * @returns {Element}
    */
   template() {
-    this.__updateStoreHandler()
     return this.html('div#calculator.calculator',
       HtmlParams.withChildNodes([
         this.html('input#lexp.lexp',
-          HtmlParams.withAttributes({ type: 'text', value: this.__resultStoreHandler.display(), readOnly: true })
+          HtmlParams.withAttributes({ type: 'text', value: this.__stores.resultStore.display(), readOnly: true })
         ),
         this.html('div#keyboard.keyboard',
           HtmlParams.withChildNodes(this.__digitsButtons()).addReconciliationRules([RECONCILIATION_RULES.BYPATH])
@@ -146,13 +143,5 @@ export default class CalculatorView extends View {
       )
     }
     return res
-  }
-
-  /**
-   *
-   * @private
-   */
-  __updateStoreHandler() {
-    this.__resultStoreHandler = new ResultStoreHandler(this.__resultStore.data())
   }
 }

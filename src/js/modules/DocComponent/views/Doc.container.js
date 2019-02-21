@@ -29,7 +29,7 @@ export class DocContainer extends ViewContainer {
    */
   constructor(viewContainerParameters, DocContainerStoresParameters, changeRoute) {
     super(viewContainerParameters)
-    this.__navbarStore = DocContainerStoresParameters.navbarStore
+    this.__stores = DocContainerStoresParameters
     this.__changeRoute = changeRoute
     this.__registerViews()
   }
@@ -38,19 +38,19 @@ export class DocContainer extends ViewContainer {
    * @private
    */
   __registerViews() {
-    this.addView(Head.createWithParentNode(new ViewParameters(HEAD_VIEW, this), new ViewStoresParameters(),
+    this.addView(Head.createWithParentNode(new ViewParameters(HEAD_VIEW, this),
       document.getElementsByTagName('head')[0])
     )
-    this.addView(Header.create(new ViewParameters(HEADER_VIEW, this)))
+    this.addView(new Header(new ViewParameters(HEADER_VIEW, this)))
     this.addView(
-      Navbar.create(
+      new Navbar(
         new ViewParameters(NAVBAR_VIEW, this),
-        new DocContainerStoresParameters(this.__navbarStore)
+        new DocContainerStoresParameters(this.__stores.navbarStore)
       )
     )
-    this.__main = Main.create(new ViewParameters(MAIN_VIEW, this))
+    this.__main = new Main(new ViewParameters(MAIN_VIEW, this))
     this.addView(this.__main)
-    this.addView(Footer.create(new ViewParameters(FOOTER_VIEW, this)))
+    this.addView(new Footer(new ViewParameters(FOOTER_VIEW, this)))
     this.__handleEvents()
   }
 
@@ -87,7 +87,7 @@ export class DocContainer extends ViewContainer {
 export class DocContainerStoresParameters extends ViewStoresParameters {
   /**
    *
-   * @param {NavbarStore} navbarStore
+   * @param {StoreInterface} navbarStore
    */
   constructor(navbarStore) {
     super()
@@ -96,7 +96,7 @@ export class DocContainerStoresParameters extends ViewStoresParameters {
 
   /**
    *
-   * @returns {NavbarStore}
+   * @returns {HandlerNavbarStore}
    */
   get navbarStore() {
     return this.__navbarStore

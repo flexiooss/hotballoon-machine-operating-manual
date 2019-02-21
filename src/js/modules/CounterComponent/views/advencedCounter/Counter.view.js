@@ -2,7 +2,7 @@ import {View, HtmlParams, ViewParameters, ViewStoresParameters, NodeEventListene
 import balloon from '../../assets/img/balloon.svg'
 import {PeerView} from './Peer.view'
 import {CounterContainerStoresParameters} from '../CounterContainerStoreParameters'
-import {CounterStoreHandler} from '../../stores/counterStoreHandler'
+import {HandlerCounterStore} from '../../stores/HandlerCounterStore'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
@@ -19,9 +19,8 @@ export class CounterView extends View {
    */
   constructor(viewParameters, counterContainerStoresParameters) {
     super(viewParameters)
-    this.__counterStore = counterContainerStoresParameters.counterStore
-    this.subscribeToStore(this.__counterStore)
-    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
+    this.__stores = counterContainerStoresParameters
+    this.subscribeToStore(this.__stores.counterStore)
     this.__registerSubViews()
   }
 
@@ -31,23 +30,22 @@ export class CounterView extends View {
    */
   __registerSubViews() {
     this.addView(
-      PeerView.create(
+      new PeerView(
         new ViewParameters(PEER_SUBVIEW, this),
-        new CounterContainerStoresParameters(this.__counterStore)
+        new CounterContainerStoresParameters(this.__stores.counterStore)
       )
     )
   }
   /**
    *
-   * @return {Node}
+   * @return {Element}
    */
   template() {
-    this.__updateStoreHandler()
     return this.html(
       'div', HtmlParams.withChildNodes([
         this.html(
           'div', HtmlParams.withChildNodes([
-            this.html('span#Counter.counter', HtmlParams.withText(this.__counterStoreHandler.count)),
+            this.html('span#Counter.counter', HtmlParams.withText(this.__stores.counterStore.count)),
             this.html('input#decrement.button',
               HtmlParams
                 .withAttributes(
@@ -59,7 +57,7 @@ export class CounterView extends View {
                     })
                     .build()
                 )
-                .addStyles({ visibility: (this.__counterStoreHandler.count < 1 ? 'hidden' : 'visible') })
+                .addStyles({ visibility: (this.__stores.counterStore.count < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -91,7 +89,7 @@ export class CounterView extends View {
                 .withAttributes(
                   { src: balloon })
                 .addStyles({
-                  'marginLeft': this.__counterStoreHandler.count + 'em',
+                  'marginLeft': this.__stores.counterStore.count + 'em',
                   'position': 'relative'
                 })
             )
@@ -107,13 +105,5 @@ export class CounterView extends View {
         )
       ])
     )
-  }
-
-  /**
-   *
-   * @private
-   */
-  __updateStoreHandler() {
-    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
   }
 }

@@ -1,6 +1,7 @@
 import {Store} from 'hotballoon'
 
-export const RESULT_STORE = 'RESULT_STORE'
-
+/**
+ * @extends Store
+ */
 export class ResultStore extends Store {
 }

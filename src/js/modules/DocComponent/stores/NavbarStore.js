@@ -1,6 +1,7 @@
 import {Store} from 'hotballoon'
 
-export const NAVBAR_STORE = 'NAVBAR_STORE'
-
+/**
+ * @extends Store
+ */
 export class NavbarStore extends Store {
 }

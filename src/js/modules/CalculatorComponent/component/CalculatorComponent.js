@@ -4,6 +4,7 @@ import {initStores} from './initStores'
 import {initActionsListeners} from './initActionsListeners'
 import {isNode, assert} from 'flexio-jshelpers'
 import {CalculatorContainer, CalculatorContainerStoresParameters} from '../views/CalculatorContainer'
+import {HandlerResultStore} from '../stores/HandlerResultStore'
 
 export class CalculatorComponent {
   /**
@@ -18,9 +19,9 @@ export class CalculatorComponent {
 
     this.__parentNode = parentNode
     this.__componentContext = componentContext
-    this.__store = initStores(this.__componentContext)
-
-    initActionsListeners(this.__componentContext, this.__store)
+    this.__resultStore = initStores(this.__componentContext)
+    this.__resultStoreHandler = new HandlerResultStore(this.__resultStore)
+    initActionsListeners(this.__componentContext, this.__resultStore)
   }
 
   /**
@@ -62,7 +63,8 @@ export class CalculatorComponent {
           CALCULATOR_VIEWCONTAINER_ID,
           this.__parentNode
         ),
-        new CalculatorContainerStoresParameters(this.__store)
+        new CalculatorContainerStoresParameters(this.__resultStoreHandler),
+        this.__componentContext
       )
     )
 

@@ -1,5 +1,5 @@
 'use strict'
-import {ViewStoresParameters, ViewContainer, ViewParameters, ViewEventListenerFactory} from 'hotballoon'
+import {ViewContainer, ViewParameters, ViewEventListenerFactory} from 'hotballoon'
 import {CounterView, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT} from './Counter.view'
 
 import {CounterAddNumberPayload} from '../../actions/CounterAddNumberPayload'
@@ -16,10 +16,12 @@ export class CounterContainer extends ViewContainer {
    *
    * @param {ViewContainerParameters} viewContainerParameters
    * @param {CounterContainerStoresParameters} counterContainerStores
+   * @param {ComponentContext} componentContext
    */
-  constructor(viewContainerParameters, counterContainerStores) {
+  constructor(viewContainerParameters, counterContainerStores, componentContext) {
     super(viewContainerParameters)
-    this.__counterStore = counterContainerStores.counterStore
+    this.__stores = counterContainerStores
+    this.__componentContext = componentContext
     this.__registerViews()
   }
 
@@ -29,9 +31,9 @@ export class CounterContainer extends ViewContainer {
    */
   __registerViews() {
     this.addView(
-      CounterView.create(
+      new CounterView(
         new ViewParameters(MAIN_VIEW, this),
-        new CounterContainerStoresParameters(this.__counterStore)
+        new CounterContainerStoresParameters(this.__stores.counterStore)
       )
     )
     this.__handleEvents()
@@ -48,7 +50,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(1, this.componentContext())
+              new CounterAddNumberPayload(1, this.__componentContext)
             )
           )
         }).build()
@@ -60,7 +62,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(-1, this.componentContext())
+              new CounterAddNumberPayload(-1, this.__componentContext)
             )
           )
         }).build()
@@ -72,7 +74,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(payload.value, this.componentContext())
+              new CounterAddNumberPayload(payload.value, this.__componentContext)
             )
           )
         }).build()

@@ -3,7 +3,7 @@ import {View, HtmlParams, ViewStoresParameters} from 'hotballoon'
 export default class Main extends View {
   /**
    *
-   * @return {Node}
+   * @return {Element}
    */
   template() {
     return this.html('main#main',
@@ -31,7 +31,4 @@ export default class Main extends View {
       this.nodeRef('demo').removeChild(this.nodeRef('demo').firstChild)
     }
   }
-}
-
-export class MainStores extends ViewStoresParameters {
 }

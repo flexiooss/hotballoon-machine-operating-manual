@@ -28,4 +28,12 @@ nav {
   margin: 0.67em 0;
 }
 
+.selected {
+  background: #29aeef;
+  pointer-events: none;
+  cursor: default;
+}
 
+.selected:hover {
+  color: #fff;
+}

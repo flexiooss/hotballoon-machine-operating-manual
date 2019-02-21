@@ -7,6 +7,7 @@ import {isNode, assert} from 'flexio-jshelpers'
 import {CounterContainer} from '../views/advencedCounter/Counter.container'
 import {SimpleCounterContainer} from '../views/simpleCounter/SimpleCounter.container'
 import {CounterContainerStoresParameters} from '../views/CounterContainerStoreParameters'
+import {HandlerCounterStore} from '../stores/HandlerCounterStore'
 
 export class CounterComponent {
   /**
@@ -21,11 +22,12 @@ export class CounterComponent {
       typeof parentNode)
 
     this.__componentContext = componentContext
-    this.__store = initStores(this.__componentContext)
+    this.__counterStore = initStores(this.__componentContext)
+    this.__counterStoreHandler = new HandlerCounterStore(this.__counterStore)
     this.__mode = mode
     this.__parentNode = parentNode
 
-    initActionsListeners(this.__componentContext, this.__store)
+    initActionsListeners(this.__componentContext, this.__counterStore)
   }
 
   /**
@@ -41,7 +43,7 @@ export class CounterComponent {
    * @return {Store}
    */
   get store() {
-    return this.__store
+    return this.__counterStore
   }
 
   /**
@@ -77,7 +79,8 @@ export class CounterComponent {
             COUNTER_VIEWCONTAINER_ID,
             this.__parentNode
           ),
-          new CounterContainerStoresParameters(this.__store)
+          new CounterContainerStoresParameters(this.__counterStoreHandler),
+          this.__componentContext
         )
       )
     } else if (this.__mode.option !== 'subview') {
@@ -88,7 +91,8 @@ export class CounterComponent {
             COUNTER_VIEWCONTAINER_ID,
             this.__parentNode
           ),
-          new CounterContainerStoresParameters(this.__store)
+          new CounterContainerStoresParameters(this.__counterStoreHandler),
+          this.__componentContext
         )
       )
     }

@@ -16,10 +16,12 @@ export class CalculatorContainer extends ViewContainer {
    *
    * @param {ViewContainerParameters} viewContainerParameters
    * @param {CalculatorContainerStoresParameters} calculatorContainerStoresParameters
+   * @param {ComponentContext} componentContext
    */
-  constructor(viewContainerParameters, calculatorContainerStoresParameters) {
+  constructor(viewContainerParameters, calculatorContainerStoresParameters, componentContext) {
     super(viewContainerParameters)
-    this.__resultStore = calculatorContainerStoresParameters.resultStore
+    this.__stores = calculatorContainerStoresParameters
+    this.__componentContext = componentContext
     this.__registerViews()
   }
 
@@ -29,9 +31,9 @@ export class CalculatorContainer extends ViewContainer {
    */
   __registerViews() {
     this.addView(
-      Main.create(
+      new Main(
         new ViewParameters(CALCULATOR_VIEW, this),
-        new CalculatorContainerStoresParameters(this.__resultStore)
+        new CalculatorContainerStoresParameters(this.__stores.resultStore)
       )
     )
     this.__handleEvents()
@@ -44,7 +46,7 @@ export class CalculatorContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             NumberInputAction.withPayload(
-              new NumberInputPayload(payload.number, this.componentContext())
+              new NumberInputPayload(payload.number, this.__componentContext)
             )
           )
         }).build()
@@ -57,7 +59,7 @@ export class CalculatorContainer extends ViewContainer {
           console.log(payload.operator)
           this.dispatchAction(
             OperatorInputAction.withPayload(
-              new OperatorInputPayload(payload.operator, this.componentContext())
+              new OperatorInputPayload(payload.operator, this.__componentContext)
             )
           )
         }).build()
@@ -69,7 +71,7 @@ export class CalculatorContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             ResultInputAction.withPayload(
-              new OperatorInputPayload(payload.operator, this.componentContext())
+              new OperatorInputPayload(payload.operator, this.__componentContext)
             )
           )
         }).build()
@@ -92,7 +94,7 @@ export class CalculatorContainerStoresParameters extends ViewStoresParameters {
 
   /**
    *
-   * @return {ResultStore}
+   * @return {HandlerResultStore}
    */
   get resultStore() {
     return this.__resultSotre

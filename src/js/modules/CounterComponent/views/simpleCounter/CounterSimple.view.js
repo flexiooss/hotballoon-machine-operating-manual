@@ -4,7 +4,7 @@ import {
   NodeEventListenerFactory
 } from 'hotballoon'
 import balloon from '../../assets/img/balloon.svg'
-import {CounterStoreHandler} from '../../stores/counterStoreHandler'
+import {HandlerCounterStore} from '../../stores/HandlerCounterStore'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
@@ -22,9 +22,8 @@ export class CounterViewSimple extends View {
    */
   constructor(viewParameters, counterContainerStoresParameters) {
     super(viewParameters)
-    this.__counterStore = counterContainerStoresParameters.counterStore
-    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
-    this.subscribeToStore(this.__counterStore)
+    this.__stores = counterContainerStoresParameters
+    this.subscribeToStore(this.__stores.counterStore)
   }
 
   /**
@@ -32,12 +31,11 @@ export class CounterViewSimple extends View {
    * @return {Node}
    */
   template() {
-    this.__updateStoreHandler()
     return this.html(
       'div', HtmlParams.withChildNodes([
         this.html(
           'div', HtmlParams.withChildNodes([
-            this.html('span#Counter.counter', HtmlParams.withText(this.__counterStoreHandler.count)),
+            this.html('span#Counter.counter', HtmlParams.withText(this.__stores.counterStore.count)),
             this.html('input#decrement.button',
               HtmlParams
                 .withAttributes(
@@ -49,7 +47,7 @@ export class CounterViewSimple extends View {
                     })
                     .build()
                 )
-                .addStyles({ visibility: (this.__counterStoreHandler.count < 1 ? 'hidden' : 'visible') })
+                .addStyles({ visibility: (this.__stores.counterStore.count < 1 ? 'hidden' : 'visible') })
             ),
             this.html('input#increment.button',
               HtmlParams
@@ -80,7 +78,7 @@ export class CounterViewSimple extends View {
                 .withAttributes(
                   { src: balloon })
                 .addStyles({
-                  'marginLeft': this.__counterStoreHandler.count + 'em',
+                  'marginLeft': this.__stores.counterStore.count + 'em',
                   'position': 'relative'
                 })
             )
@@ -88,13 +86,5 @@ export class CounterViewSimple extends View {
         )
       ])
     )
-  }
-
-  /**
-   *
-   * @private
-   */
-  __updateStoreHandler() {
-    this.__counterStoreHandler = new CounterStoreHandler(this.__counterStore.data())
   }
 }

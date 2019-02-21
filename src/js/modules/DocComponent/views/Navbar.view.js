@@ -1,8 +1,6 @@
-import {HtmlParams, NodeEventListenerFactory, View, ViewStoresParameters} from 'hotballoon'
-import {NavbarStoreHandler} from '../stores/NavbarStoreHandler'
+import {HtmlParams, NodeEventListenerFactory, View} from 'hotballoon'
 
 export const CHANGE_COMPONENT_EVENT = 'CHANGE_COMPONENT_EVENT'
-const NAVBAR_STORE = 'NAVBAR_STORE'
 
 export default class Navbar extends View {
   /**
@@ -12,20 +10,15 @@ export default class Navbar extends View {
    */
   constructor(viewParameters, docContainerStoresParameters) {
     super(viewParameters)
-    this.__navbarStore = docContainerStoresParameters.navbarStore
-    this.subscribeToStore(this.__navbarStore,(s)=>{
-      this.maSubView.steNewData('toto').update()
-      return true
-    })
-    this.__navStorehandler = new NavbarStoreHandler(this.__navbarStore.data())
+    this.__stores = docContainerStoresParameters
+    this.subscribeToStore(this.__stores.navbarStore)
   }
 
   /**
    *
-   * @returns {Node}
+   * @returns {Element}
    */
   template() {
-    this.__updateStoreHandler()
     return this.html('nav#navBar.navBar',
       HtmlParams.withChildNodes([
         this.html('h2#titleSommaire.titleSommaire', HtmlParams.withText('Sommaire')),
@@ -42,16 +35,16 @@ export default class Navbar extends View {
    * @private
    */
   __linkStoreToLinkView() {
-    let linkCount = this.__navStorehandler.size
+    let linkCount = this.__stores.navbarStore.size
     let linksTempate = new Array(linkCount)
     for (let i = 0; i < linkCount; i++) {
-      linksTempate[i] = this.html('a#linkNav3.linkNav',
+      linksTempate[i] = this.html('link#linkNav3.linkNav' + (this.__stores.navbarStore.selected(i) ? '.selected' : ''),
         HtmlParams
-          .withText(this.__navStorehandler.url(i).name)
+          .withText(this.__stores.navbarStore.url(i).name)
           .addEventListener(
             NodeEventListenerFactory.listen('click')
               .callback((e) => {
-                this.dispatch(CHANGE_COMPONENT_EVENT, {link: this.__navStorehandler.url(i).url})
+                this.dispatch(CHANGE_COMPONENT_EVENT, {link: this.__stores.navbarStore.url(i).url})
                 this.container().resetDemoDiv()
               })
               .build()
@@ -59,13 +52,5 @@ export default class Navbar extends View {
       )
     }
     return linksTempate
-  }
-
-  /**
-   *
-   * @private
-   */
-  __updateStoreHandler() {
-    this.__navStorehandler = new NavbarStoreHandler(this.__navbarStore.data())
   }
 }

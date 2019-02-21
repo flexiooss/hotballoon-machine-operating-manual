@@ -18,10 +18,12 @@ export class SimpleCounterContainer extends ViewContainer {
    *
    * @param {ViewContainerParameters} viewContainerParameters
    * @param {CounterContainerStoresParameters} counterContainerStores
+   * @param {ComponentContext} componentContext
    */
-  constructor(viewContainerParameters, counterContainerStores) {
+  constructor(viewContainerParameters, counterContainerStores, componentContext) {
     super(viewContainerParameters)
-    this.__counterStore = counterContainerStores.counterStore
+    this.__stores = counterContainerStores
+    this.__componentContext = componentContext
     this.__registerViews()
   }
 
@@ -31,9 +33,9 @@ export class SimpleCounterContainer extends ViewContainer {
    */
   __registerViews() {
     this.addView(
-      CounterViewSimple.create(
+      new CounterViewSimple(
         new ViewParameters(MAIN_SIMPLE_VIEW, this),
-        new CounterContainerStoresParameters(this.__counterStore)
+        new CounterContainerStoresParameters(this.__stores.counterStore)
       )
     )
     this.__handleEvents()
@@ -46,7 +48,7 @@ export class SimpleCounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(1, this.componentContext())
+              new CounterAddNumberPayload(1, this.__componentContext)
             )
           )
         }).build()
@@ -58,7 +60,7 @@ export class SimpleCounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(-1, this.componentContext())
+              new CounterAddNumberPayload(-1, this.__componentContext)
             )
           )
         }).build()
@@ -70,7 +72,7 @@ export class SimpleCounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(payload.value, this.componentContext())
+              new CounterAddNumberPayload(payload.value, this.__componentContext)
             )
           )
         }).build()
