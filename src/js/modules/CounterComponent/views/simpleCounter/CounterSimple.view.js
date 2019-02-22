@@ -4,7 +4,6 @@ import {
   NodeEventListenerFactory
 } from 'hotballoon'
 import balloon from '../../assets/img/balloon.svg'
-import {HandlerCounterStore} from '../../stores/HandlerCounterStore'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'

@@ -28,6 +28,8 @@ export class CounterComponent {
     this.__parentNode = parentNode
 
     initActionsListeners(this.__componentContext, this.__counterStore)
+    console.log('this')
+    console.log(this)
   }
 
   /**

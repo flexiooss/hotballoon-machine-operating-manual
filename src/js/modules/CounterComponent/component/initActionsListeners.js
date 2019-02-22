@@ -12,11 +12,11 @@ export const initActionsListeners = (componentContext, counterStore) => {
     DispatcherEventListenerFactory.listen(
       new CounterAddNumberAction())
       .callback((payload) => {
-        if (payload.component === componentContext) {
-          console.log(payload.sum)
-          let result = counterStore.data().count + payload.sum
-          counterStore.set(new DataCounterStore(result < 0 ? 0 : result))
-        }
+        console.log('componentContext')
+        console.log(componentContext)
+        console.log(payload.sum)
+        let result = counterStore.data().count + payload.sum
+        counterStore.set(new DataCounterStore(result < 0 ? 0 : result))
       })
       .build()
   )

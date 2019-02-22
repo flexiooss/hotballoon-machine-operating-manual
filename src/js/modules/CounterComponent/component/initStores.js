@@ -1,5 +1,5 @@
 import {COUNT_STORE, DataCounterStore} from '../stores/DataCounterStore'
-import {Store, State, InMemoryStorage} from 'hotballoon'
+import {State, InMemoryStorage} from 'hotballoon'
 import {CounterStore} from '../stores/CounterStore'
 
 /**

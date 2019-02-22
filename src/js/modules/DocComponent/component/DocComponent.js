@@ -18,12 +18,13 @@ export class DocComponent {
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
+   * @param {ExecutorInterface} executor
    */
-  constructor(componentContext, parentNode, routeHandler, changeRoute) {
+  constructor(componentContext, parentNode, routeHandler, changeRoute, executor) {
     assert(!!isNode(parentNode),
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
-
+    this.__executor = executor
     this.__componentContext = componentContext
     this.__parentNode = parentNode
     this.__routeHandler = routeHandler
@@ -42,12 +43,13 @@ export class DocComponent {
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
+   * @param {ExecutorInterface} executor
    * @return {DocComponent}
    * @constructor
    * @static
    */
-  static create(componentContext, parentNode, routeHandler, changeRoute) {
-    return new this(componentContext, parentNode, routeHandler, changeRoute)
+  static create(componentContext, parentNode, routeHandler, changeRoute, executor) {
+    return new this(componentContext, parentNode, routeHandler, changeRoute, executor)
   }
 
   /**
@@ -123,7 +125,9 @@ export class DocComponent {
           InitCalculatorComponent.create(
             null,
             this.__componentContext.APP(),
-            this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode())
+            this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
+            this.__executor
+          )
           selected = 2
         }
         this.__navbarStore.set(new DataNavbarStore(this.__navbarStore.data().linkCollection, selected))

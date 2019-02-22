@@ -6,12 +6,10 @@ export class OperatorInputPayload extends ActionPayload {
   /**
    *
    * @param {Operator} operator
-   * @param {ComponentContext} component
    */
-  constructor(operator = new OperatorNull(), component = null) {
+  constructor(operator = new OperatorNull()) {
     super()
     assert(isObject(operator), 'hotballoon:NumberInputPayload:constructor: `operator` argument should be an object')
     this.operator = operator
-    this.component = component
   }
 }

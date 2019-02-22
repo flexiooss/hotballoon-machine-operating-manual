@@ -10,8 +10,9 @@ export class MainComponent {
    *
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
+   * @param {ExecutorInterface} executor
    */
-  constructor(componentContext, parentNode) {
+  constructor(componentContext, parentNode, executor) {
     assert(
       TypeCheck.isComponentContext(componentContext),
       'BootstrapComponent:constructor: `parentNode` argument should be NodeType, %s given',
@@ -20,6 +21,7 @@ export class MainComponent {
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
 
+    this.__executor = executor
     this.__componentContext = componentContext
     this.__parentNode = parentNode
     this.__changeRoute = RouterComponent.changeRoute
@@ -35,11 +37,12 @@ export class MainComponent {
    *
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
+   * @param {ExecutorInterface} executor
    * @return {MainComponent}
    * @static
    */
-  static create(componentContext, parentNode) {
-    return new this(componentContext, parentNode)
+  static create(componentContext, parentNode, executor) {
+    return new this(componentContext, parentNode, executor)
   }
 
   /**
@@ -64,7 +67,8 @@ export class MainComponent {
               this.componentContext.APP(),
               this.__parentNode,
               this.__routeHandler,
-              this.__changeRoute
+              this.__changeRoute,
+              this.__executor
             )
           })
         .build()

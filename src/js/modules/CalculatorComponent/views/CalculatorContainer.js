@@ -46,7 +46,7 @@ export class CalculatorContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             NumberInputAction.withPayload(
-              new NumberInputPayload(payload.number, this.__componentContext)
+              new NumberInputPayload(payload.number)
             )
           )
         }).build()
@@ -59,7 +59,7 @@ export class CalculatorContainer extends ViewContainer {
           console.log(payload.operator)
           this.dispatchAction(
             OperatorInputAction.withPayload(
-              new OperatorInputPayload(payload.operator, this.__componentContext)
+              new OperatorInputPayload(payload.operator)
             )
           )
         }).build()
@@ -71,7 +71,7 @@ export class CalculatorContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             ResultInputAction.withPayload(
-              new OperatorInputPayload(payload.operator, this.__componentContext)
+              new OperatorInputPayload(payload.operator)
             )
           )
         }).build()

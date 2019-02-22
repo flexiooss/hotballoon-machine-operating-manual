@@ -3,7 +3,7 @@ import {DataResultStore} from '../stores/DataResultStore'
 import {OperatorInputAction} from '../actions/OperatorInputAction'
 import {NumberInputAction} from '../actions/NumberInputAction'
 import {ResultInputAction} from '../actions/ResultInputAction'
-import {GetResult} from './cunsumers/GetResult'
+import {Job} from './cunsumers/JobResult'
 import {OperatorNull} from './operator/OperatorNull'
 import {OperatorInputPayload} from '../actions/OperatorInputPayload'
 import {OperatorDiv} from './operator/OperatorDiv'
@@ -12,8 +12,9 @@ import {OperatorDiv} from './operator/OperatorDiv'
  *
  * @param {ComponentContext} componentContext
  * @param {Store} resultStore
+ * @param {ExecutorInterface} executor
  */
-export const initActionsListeners = (componentContext, resultStore) => {
+export const initActionsListeners = (componentContext, resultStore, executor) => {
   componentContext.listenAction(
     DispatcherEventListenerFactory.listen(
       new NumberInputAction())
@@ -47,10 +48,9 @@ export const initActionsListeners = (componentContext, resultStore) => {
               resultStore.data().rexp)
             )
           } else {
-            console.log(componentContext)
             componentContext.dispatchAction(
               ResultInputAction.withPayload(
-                new OperatorInputPayload(payload.operator, componentContext)
+                new OperatorInputPayload(payload.operator)
               )
             )
           }
@@ -68,10 +68,7 @@ export const initActionsListeners = (componentContext, resultStore) => {
           if (resultStore.data().lexp !== '' &&
             resultStore.data().rexp !== '' &&
             !(resultStore.data().operator instanceof OperatorNull)) {
-            new GetResult(
-              payload,
-              resultStore
-            )
+            executor.process(new Job(payload, resultStore))
           }
         }
       })

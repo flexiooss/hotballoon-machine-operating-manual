@@ -11,17 +11,18 @@ export class CalculatorComponent {
    *
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
+   * @param {ExecutorInterface} executor
    */
-  constructor(componentContext, parentNode) {
+  constructor(componentContext, parentNode, executor) {
     assert(!!isNode(parentNode),
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
-
+    this.__executor = executor
     this.__parentNode = parentNode
     this.__componentContext = componentContext
     this.__resultStore = initStores(this.__componentContext)
     this.__resultStoreHandler = new HandlerResultStore(this.__resultStore)
-    initActionsListeners(this.__componentContext, this.__resultStore)
+    initActionsListeners(this.__componentContext, this.__resultStore, this.__executor)
   }
 
   /**
@@ -36,12 +37,13 @@ export class CalculatorComponent {
    *
    * @param {ComponentContext} componentContext
    * @param {Node} parentNode
+   * @param {ExecutorInterface} executor
    * @return {CalculatorComponent}
    * @constructor
    * @static
    */
-  static create(componentContext, parentNode) {
-    return new this(componentContext, parentNode)
+  static create(componentContext, parentNode, executor) {
+    return new this(componentContext, parentNode, executor)
   }
 
   createRenderMountView() {

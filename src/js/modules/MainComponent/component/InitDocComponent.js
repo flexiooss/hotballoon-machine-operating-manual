@@ -9,13 +9,15 @@ export class InitDocComponent {
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
+   * @param {ExecutorInterface} executor
    */
-  constructor(payload, APP, parentNode, routeHandler, changeRoute) {
+  constructor(payload, APP, parentNode, routeHandler, changeRoute, executor) {
     DocComponent.create(
       APP.addComponentContext(new ComponentContext(APP)),
       parentNode,
       routeHandler,
-      changeRoute
+      changeRoute,
+      executor
     )
   }
 
@@ -26,11 +28,12 @@ export class InitDocComponent {
    * @param {Node} parentNode
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
+   * @param {ExecutorInterface} executor
    * @return {InitDocComponent}
    * @constructor
    * @static
    */
-  static create(payload, APP, parentNode, routeHandler, changeRoute) {
-    return new this(payload, APP, parentNode, routeHandler, changeRoute)
+  static create(payload, APP, parentNode, routeHandler, changeRoute, executor) {
+    return new this(payload, APP, parentNode, routeHandler, changeRoute, executor)
   }
 }

@@ -50,7 +50,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(1, this.__componentContext)
+              new CounterAddNumberPayload(1)
             )
           )
         }).build()
@@ -62,7 +62,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(-1, this.__componentContext)
+              new CounterAddNumberPayload(-1)
             )
           )
         }).build()
@@ -74,7 +74,7 @@ export class CounterContainer extends ViewContainer {
         .callback((payload) => {
           this.dispatchAction(
             CounterAddNumberAction.withPayload(
-              new CounterAddNumberPayload(payload.value, this.__componentContext)
+              new CounterAddNumberPayload(payload.value)
             )
           )
         }).build()
