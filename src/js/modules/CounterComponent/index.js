@@ -1,1 +1,1 @@
-export { CounterComponent } from './component/CounterComponent'
+export { ComponentCounter } from './component/ComponentCounter'

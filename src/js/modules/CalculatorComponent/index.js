@@ -1,1 +1,1 @@
-export { CalculatorComponent } from './component/CalculatorComponent'
+export { ComponentCalculator } from './component/ComponentCalculator'

@@ -4,6 +4,7 @@ import {ComponentContext, DispatcherEventListenerFactory, TypeCheck} from 'hotba
 import {AppInitializedAction} from '../actions/AppInitializedAction'
 import {InitDocComponent} from './InitDocComponent'
 import {RouterComponent} from '../../_ComponentRouter'
+import {ComponentTransaction} from '../../TransactionStoreComponent'
 
 export class MainComponent {
   /**
@@ -16,7 +17,7 @@ export class MainComponent {
     assert(
       TypeCheck.isComponentContext(componentContext),
       'BootstrapComponent:constructor: `parentNode` argument should be NodeType, %s given',
-      typeof parentNode)
+      typeof componentContext)
     assert(!!isNode(parentNode),
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
@@ -31,6 +32,13 @@ export class MainComponent {
       )
     ).routeHandler
     this.__initDocComponent()
+    ComponentTransaction.create(
+      this.componentContext.APP().addComponentContext(
+        new ComponentContext(this.componentContext.APP())
+      ),
+      this.__parentNode
+    ).setEventLoop().mountView()
+    this.__transactionAction = ComponentTransaction.actionTansaction
   }
 
   /**
@@ -68,7 +76,8 @@ export class MainComponent {
               this.__parentNode,
               this.__routeHandler,
               this.__changeRoute,
-              this.__executor
+              this.__executor,
+              this.__transactionAction
             )
           })
         .build()

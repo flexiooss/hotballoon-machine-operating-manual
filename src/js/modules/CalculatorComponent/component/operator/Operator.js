@@ -9,7 +9,7 @@ export class Operator {
   }
 
   /**
-   * CounterView method
+   * ViewCounter method
    * @return {Node}
    */
   operation(a, b) {

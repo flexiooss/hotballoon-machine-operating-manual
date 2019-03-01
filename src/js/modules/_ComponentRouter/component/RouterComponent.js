@@ -16,8 +16,8 @@ export class RouterComponent {
   constructor(componentContext) {
     assert(
       TypeCheck.isComponentContext(componentContext),
-      'BootstrapComponent:constructor: `parentNode` argument should be NodeType, %s given',
-      typeof parentNode)
+      'BootstrapComponent:constructor: `componentContext` argument should be ComponentContext, %s given',
+      typeof componentContext)
     this.__componentContext = componentContext
     this.__router = RouterBuilder.build(new UrlConfiguration('https', 'localhost', '8080'))
     this.__routeHandler = new PublicRouteHandler(this.__router, Route)
@@ -52,10 +52,6 @@ export class RouterComponent {
       DispatcherEventListenerFactory.listen(
         new ChangeRouteAction())
         .callback((payload) => {
-          console.trace()
-          console.log(payload.url)
-          console.log(typeof payload.url)
-          console.log(payload.url.pathname)
           let routePathname = this.__router.urlHandler.urlToPathname(payload.url)
           console.log(routePathname)
           const routeWithParams = this.__router.routeByPathname(routePathname)

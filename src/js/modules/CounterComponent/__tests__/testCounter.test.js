@@ -2,9 +2,10 @@
 
 import {TestCase} from 'code-altimeter-js'
 import {HotBalloonApplication as App, ComponentContext, Dispatcher as AppDispatcher} from 'hotballoon'
-import {CounterComponent} from '..'
-import {CounterAddNumberAction} from '../actions/CounterAddNumberAction'
-import {CounterAddNumberPayload} from '../actions/CounterAddNumberPayload'
+import {ComponentCounter} from '..'
+import {ActionModifyCounter} from '../actions/ActionModifyCounter'
+import {PayloadModifyCounter} from '../actions/PayloadModifyCounter'
+import {addMultimeter} from '../component/catalogContainerViews/addMultimeter'
 const assert = require('assert')
 
 const APP = new App('Test', new AppDispatcher())
@@ -17,35 +18,42 @@ class TestCounter extends TestCase {
   }
 
   setUp() {
-    this.counterComponent = CounterComponent.create(APP.addComponentContext(new ComponentContext(APP)), HTML_NODE, 'SIMPLE')
+    this.counterComponent = ComponentCounter.create(APP.addComponentContext(new ComponentContext(APP)), HTML_NODE, 'simple')
   }
 
   testIncrementNumber() {
-    this.counterComponent.componentContext.dispatchAction(
-      CounterAddNumberAction.withPayload(
-        new CounterAddNumberPayload(1, this.counterComponent.componentContext)
+    this.counterComponent.setEventLoop()
+    this.multimeter = this.counterComponent.addMultimeter()
+
+    this.multimeter.dispatchAction(
+      ActionModifyCounter.withPayload(
+        new PayloadModifyCounter(1)
       )
     )
-    assert.deepStrictEqual(this.counterComponent.store.data().count, 1)
+    assert.deepStrictEqual(this.counterComponent.counterStore.data().count, 1)
   }
 
   testDecrementNumber() {
+    this.counterComponent.setEventLoop()
+
     this.counterComponent.componentContext.dispatchAction(
-      CounterAddNumberAction.withPayload(
-        new CounterAddNumberPayload(-1, this.counterComponent.componentContext)
+      ActionModifyCounter.withPayload(
+        new PayloadModifyCounter(-1)
       )
     )
-    assert.deepStrictEqual(this.counterComponent.store.data().count, 0)
+    assert.deepStrictEqual(this.counterComponent.counterStore.data().count, 0)
   }
 
   testUnchanged() {
-    let tmpDataStore = this.counterComponent.store.data()
+    this.counterComponent.setEventLoop()
+
+    let tmpDataStore = this.counterComponent.counterStore.data
     this.counterComponent.componentContext.dispatchAction(
-      CounterAddNumberAction.withPayload(
-        new CounterAddNumberPayload(0, this.counterComponent.componentContext)
+      ActionModifyCounter.withPayload(
+        new PayloadModifyCounter(0)
       )
     )
-    assert.deepStrictEqual(this.counterComponent.store.data(), tmpDataStore)
+    assert.deepStrictEqual(this.counterComponent.counterStore.data, tmpDataStore)
   }
 }
 

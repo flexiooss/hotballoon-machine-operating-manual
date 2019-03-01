@@ -1,15 +1,12 @@
 'use strict'
-import {DispatcherEventListenerFactory, ViewContainerParameters} from 'hotballoon'
+import {TypeCheck} from 'hotballoon'
 import {isNode, assert} from 'flexio-jshelpers'
-
-import {AppInitializedAction} from '../../MainComponent/actions/AppInitializedAction'
-import {InitCounterComponent} from './InitCounterComponent'
-import {DocContainer, DocContainerStoresParameters} from '../views/Doc.container'
-import {InitCalculatorComponent} from './InitCalculatorComponent'
-import {Route} from 'flexio-jsrouter/src/Route/Route'
-import {initStores} from './initStores'
-import {HandlerNavbarStore} from '../stores/HandlerNavbarStore'
-import {DataNavbarStore} from '../stores/DataNavbarStore'
+import {StoreHandlerNavbar} from '../stores/StoreHandlerNavbar'
+import {addDocViewContainer} from './catalogContainerViews/addDocViewContainer'
+import {addDocRoute} from './catalogRoutes/addRouteDoc'
+import {addStoreNavbar} from './catalogStores/addStoreNavbar'
+import {addActionInitializer} from './catalogActions/addActionInitializer'
+import {addActionChangeView} from './catalogActions/addActionChangeView'
 
 export class DocComponent {
   /**
@@ -19,37 +16,68 @@ export class DocComponent {
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
    * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
    */
-  constructor(componentContext, parentNode, routeHandler, changeRoute, executor) {
+  constructor(componentContext, parentNode, routeHandler, changeRoute, executor, transactionAction) {
     assert(!!isNode(parentNode),
       'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
-    this.__executor = executor
+
+    assert(
+      TypeCheck.isComponentContext(componentContext),
+      'BootstrapComponent:constructor: `parentNode` argument should be NodeType, %s given',
+      typeof componentContext
+    )
+
     this.__componentContext = componentContext
     this.__parentNode = parentNode
     this.__routeHandler = routeHandler
-    this.__viewContainerID = this.__componentContext.nextID()
     this.__changeRoute = changeRoute
-    this.__initDocRoute()
-    this.__navbarStore = initStores(this.__componentContext, this.__routeHandler)
-    this.__navbarStoreHandler = new HandlerNavbarStore(this.__navbarStore)
-    this.createRenderMountView()
-    this.__initDispatcherListeners()
+    this.__executor = executor
+    this.__viewContainerID = this.__componentContext.nextID()
+    this.__transactionAction = transactionAction
+  }
+
+  addDocRoute() {
+    addDocRoute(this)
+    return this
+  }
+
+  addStoreNavbar() {
+    this.__navbarStore = addStoreNavbar(this)
+    this.__navbarStoreHandler = new StoreHandlerNavbar(this.__navbarStore)
+    return this
+  }
+
+  addActionInitializer() {
+    addActionInitializer(this)
+    return this
+  }
+
+  addActionChangeView() {
+    addActionChangeView(this)
+    return this
   }
 
   /**
    *
-   * @param {ComponentContext} componentContext
-   * @param {Node} parentNode
-   * @param {PublicRouteHandler} routeHandler
-   * @param {function} changeRoute
-   * @param {ExecutorInterface} executor
-   * @return {DocComponent}
-   * @constructor
-   * @static
+   * @returns {DocComponent}
    */
-  static create(componentContext, parentNode, routeHandler, changeRoute, executor) {
-    return new this(componentContext, parentNode, routeHandler, changeRoute, executor)
+  setEventLoop() {
+    this.addDocRoute()
+    this.addStoreNavbar()
+    this.addActionInitializer()
+    this.addActionChangeView()
+    return this
+  }
+
+  /**
+   *
+   * @returns {DocComponent}
+   */
+  mountView() {
+    addDocViewContainer(this).renderAndMount(this.__parentNode)
+    return this
   }
 
   /**
@@ -60,85 +88,27 @@ export class DocComponent {
     return this.__componentContext
   }
 
-  createRenderMountView() {
-    this.__addDocViewContainer().renderAndMount(this.__parentNode)
-  }
-
-  __addDocViewContainer() {
-    return this.__componentContext.addViewContainer(
-      new DocContainer(
-        new ViewContainerParameters(
-          this.__componentContext,
-          this.__viewContainerID,
-          this.__parentNode
-        ),
-        new DocContainerStoresParameters(this.__navbarStoreHandler),
-        this.__changeRoute
-      )
-    )
+  /**
+   *
+   * @returns {StoreNavbar}
+   */
+  get navbarStore() {
+    return this.__navbarStore
   }
 
   /**
    *
-   * @private
+   * @param {ComponentContext} componentContext
+   * @param {Node} parentNode
+   * @param {PublicRouteHandler} routeHandler
+   * @param {function} changeRoute
+   * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
+   * @return {DocComponent}
+   * @constructor
+   * @static
    */
-  __initDispatcherListeners() {
-    console.log(this.__componentContext.viewContainer(this.__viewContainerID))
-    this.__componentContext.listenAction(
-      /**
-       * @param {AppActionPayload} payload
-       */
-      DispatcherEventListenerFactory.listen(new AppInitializedAction())
-        .callback(
-          (payload) => {
-            InitCounterComponent.create(
-              payload,
-              this.__componentContext.APP(),
-              this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
-              new CounterViewModeParameterObject('simple')
-            )
-          })
-        .build()
-    )
-  }
-
-  __initDocRoute() {
-    const docRoute = new Route(
-      'doc',
-      '/doc/{component}/{option}',
-      obj => Object.assign({}, obj),
-      (params) => {
-        let selected = -1
-        if (params.component === 'counter') {
-          InitCounterComponent.create(
-            null,
-            this.__componentContext.APP(),
-            this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
-            new CounterViewModeParameterObject(params.option)
-          )
-          if (params.option === 'simple') {
-            selected = 0
-          } else if (params.option === 'subview') {
-            selected = 1
-          }
-        } else {
-          InitCalculatorComponent.create(
-            null,
-            this.__componentContext.APP(),
-            this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
-            this.__executor
-          )
-          selected = 2
-        }
-        this.__navbarStore.set(new DataNavbarStore(this.__navbarStore.data().linkCollection, selected))
-      }
-    )
-    this.__routeHandler.addRoute(docRoute)
-  }
-}
-
-export class CounterViewModeParameterObject {
-  constructor(option) {
-    this.option = option
+  static create(componentContext, parentNode, routeHandler, changeRoute, executor, transactionAction) {
+    return new this(componentContext, parentNode, routeHandler, changeRoute, executor, transactionAction)
   }
 }

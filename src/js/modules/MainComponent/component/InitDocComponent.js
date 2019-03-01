@@ -10,15 +10,17 @@ export class InitDocComponent {
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
    * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
    */
-  constructor(payload, APP, parentNode, routeHandler, changeRoute, executor) {
+  constructor(payload, APP, parentNode, routeHandler, changeRoute, executor, transactionAction) {
     DocComponent.create(
       APP.addComponentContext(new ComponentContext(APP)),
       parentNode,
       routeHandler,
       changeRoute,
-      executor
-    )
+      executor,
+      transactionAction
+    ).setEventLoop().mountView()
   }
 
   /**
@@ -29,11 +31,12 @@ export class InitDocComponent {
    * @param {PublicRouteHandler} routeHandler
    * @param {function} changeRoute
    * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
    * @return {InitDocComponent}
    * @constructor
    * @static
    */
-  static create(payload, APP, parentNode, routeHandler, changeRoute, executor) {
-    return new this(payload, APP, parentNode, routeHandler, changeRoute, executor)
+  static create(payload, APP, parentNode, routeHandler, changeRoute, executor, transactionAction) {
+    return new this(payload, APP, parentNode, routeHandler, changeRoute, executor, transactionAction)
   }
 }

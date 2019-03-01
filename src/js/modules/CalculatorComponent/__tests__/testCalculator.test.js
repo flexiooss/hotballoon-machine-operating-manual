@@ -2,15 +2,16 @@
 
 import {TestCase} from 'code-altimeter-js'
 import {HotBalloonApplication as App, ComponentContext, Dispatcher as AppDispatcher} from 'hotballoon'
-import {NumberInputAction} from '../actions/NumberInputAction'
-import {NumberInputPayload} from '../actions/NumberInputPayload'
-import {DataResultStore} from '../stores/DataResultStore'
-import {OperatorInputPayload} from '../actions/OperatorInputPayload'
-import {OperatorInputAction} from '../actions/OperatorInputAction'
+import {ActionNumberInput} from '../actions/ActionNumberInput'
+import {PayloadNumberInput} from '../actions/PayloadNumberInput'
+import {StoreDataResult} from '../stores/StoreDataResult'
+import {PayloadOperatorInput} from '../actions/PayloadOperatorInput'
+import {ActionOperatorInput} from '../actions/ActionOperatorInput'
 import {OperatorPlus} from '../component/operator/OperatorPlus'
 import {OperatorNull} from '../component/operator/OperatorNull'
-import {CalculatorComponent} from '..'
+import {ComponentCalculator} from '..'
 import {OperatorDiv} from '../component/operator/OperatorDiv'
+import {ExecutorInline} from '../component/Job/ExecutorInlineImpl'
 const assert = require('assert')
 
 const APP = new App('Test', new AppDispatcher())
@@ -23,74 +24,87 @@ class TestCounter extends TestCase {
   }
 
   setUp() {
-    this.calculatorComponent = CalculatorComponent.create(APP.addComponentContext(new ComponentContext(APP)), HTML_NODE)
+    this.calculatorComponent = ComponentCalculator.create(APP.addComponentContext(new ComponentContext(APP)), HTML_NODE, new ExecutorInline())
   }
 
   testLeftExpression() {
+    this.calculatorComponent.addResultStore()
+      .addActionNumberInput()
+    
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
-    let expectedStore = new DataResultStore('1', new OperatorNull())
-    assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
+    let expectedStore = new StoreDataResult('1', new OperatorNull())
+    assert.deepStrictEqual(this.calculatorComponent.resultStore.data(), expectedStore)
   }
 
   testOperator() {
+    this.calculatorComponent.addResultStore()
+      .addActionNumberInput()
+      .addActionOperatorInput()
+    
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorPlus()))
     )
-    let expectedStore = new DataResultStore('1', new OperatorPlus())
-    assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
+    let expectedStore = new StoreDataResult('1', new OperatorPlus())
+    assert.deepStrictEqual(this.calculatorComponent.resultStore.data(), expectedStore)
   }
 
   testRightExpression() {
+    this.calculatorComponent.setEventLoop()
+    
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorPlus()))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
-    let expectedStore = new DataResultStore('1', new OperatorPlus(), '1')
-    assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
+    let expectedStore = new StoreDataResult('1', new OperatorPlus(), '1')
+    assert.deepStrictEqual(this.calculatorComponent.resultStore.data(), expectedStore)
   }
 
   testResult() {
+    this.calculatorComponent.setEventLoop()
+  
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorPlus()))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorPlus()))
     )
-    let expectedStore = new DataResultStore('2', OperatorNull)
-    assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
+    let expectedStore = new StoreDataResult('2', new OperatorPlus())
+    assert.deepStrictEqual(this.calculatorComponent.resultStore.data(), expectedStore)
   }
 
   testDivisionPerZero() {
+    this.calculatorComponent.setEventLoop()
+  
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('1', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('1'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorDiv(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorDiv()))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      NumberInputAction.withPayload(new NumberInputPayload('0', this.calculatorComponent.componentContext))
+      ActionNumberInput.withPayload(new PayloadNumberInput('0'))
     )
     this.calculatorComponent.componentContext.dispatchAction(
-      OperatorInputAction.withPayload(new OperatorInputPayload(new OperatorPlus(), this.calculatorComponent.componentContext))
+      ActionOperatorInput.withPayload(new PayloadOperatorInput(new OperatorPlus()))
     )
-    let expectedStore = new DataResultStore()
-    assert.deepStrictEqual(this.calculatorComponent.store.data(), expectedStore)
+    let expectedStore = new StoreDataResult()
+    assert.deepStrictEqual(this.calculatorComponent.resultStore.data(), expectedStore)
   }
 }
 

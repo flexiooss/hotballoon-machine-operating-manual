@@ -1,5 +1,5 @@
-import {CalculatorComponent} from '../../CalculatorComponent'
 import {ComponentContext} from 'hotballoon'
+import {ComponentCalculator} from '../../CalculatorComponent'
 
 export class InitCalculatorComponent {
   /**
@@ -8,13 +8,15 @@ export class InitCalculatorComponent {
    * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
    */
-  constructor(payload, APP, parentNode, executor) {
-    CalculatorComponent.create(
+  constructor(payload, APP, parentNode, executor, transactionAction) {
+    ComponentCalculator.create(
       APP.addComponentContext(new ComponentContext(APP)),
       parentNode,
-      executor
-    ).createRenderMountView()
+      executor,
+      transactionAction
+    ).setEventLoop().mountView()
   }
 
   /**
@@ -23,11 +25,12 @@ export class InitCalculatorComponent {
    * @param {HotBalloonApplication} APP
    * @param {Node} parentNode
    * @param {ExecutorInterface} executor
+   * @param {function} transactionAction
    * @return {InitCalculatorComponent}
    * @constructor
    * @static
    */
-  static create(payload, APP, parentNode, executor) {
-    return new this(payload, APP, parentNode, executor)
+  static create(payload, APP, parentNode, executor, transactionAction) {
+    return new this(payload, APP, parentNode, executor, transactionAction)
   }
 }
