@@ -1,0 +1,29 @@
+@startuml
+
+participant InitComponent
+participant Component
+participant ViewContainer
+participant View
+Actor USER
+
+title basic operation of a component
+
+autonumber
+InitComponent -> InitComponent : create new\nComponentContext
+InitComponent->Component : initialize with\nComponentContext\nand parentNode
+activate Component
+Component -> Component : init stores
+Component -> Component : init Listeners Actions
+Component -> ViewContainer : initialize
+deactivate Component
+ViewContainer -> View : mount view
+View -> View : render
+hnote over Component : idle
+......
+USER -> View : doSomeThing
+View -> View : dispatchEvent
+ViewContainer -> ViewContainer : dispatchAction
+Component -> Component : execute Action callback
+Component -> Component : update store
+View -> View : render
+@enduml

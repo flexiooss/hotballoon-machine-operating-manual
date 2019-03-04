@@ -1,0 +1,28 @@
+@startuml
+participant ComponentRouter
+participant MainCompoent
+participant Switchman
+participant InitialComponent
+participant SecondComponent
+Actor USER
+
+title basic use of a router
+
+autonumber
+ComponentRouter<-MainCompoent : instanciate
+ComponentRouter->ComponentRouter : init router with\nURL configuration
+ComponentRouter->ComponentRouter : init listener\nAction change route
+ComponentRouter->MainCompoent : send PublicRouteHandler
+MainCompoent->Switchman : instanciate with\nPublicRouteHandler
+Switchman -> InitialComponent : instanciate
+ComponentRouter <- Switchman : init new route
+hnote over Switchman : idle
+......
+Switchman <- USER: click action to change to SecondComponent
+Switchman -> Switchman : dispatch action change\nroute with URL format
+ComponentRouter->ComponentRouter : trigger listener\naction change route
+ComponentRouter->ComponentRouter : resolve route
+ComponentRouter->Switchman : execute callback
+Switchman -> Switchman : unplug InitComponent
+Switchman -> SecondComponent : initialize
+@enduml
