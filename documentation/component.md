@@ -164,5 +164,37 @@ une template de la vue, branché sur de la data dans les stores
       )
     }
     ```
+4. InitComponent définit les Actions sur lesquels le component est branché.
+On branche les actions sur un component en créant un listener sur celle-ci :
+    ```javascript
+   export const addActionExample = (component) => {
+     component.componentContext.listenAction(
+       DispatcherEventListenerFactory.listen(
+         new ActionExample())
+         .callback((payload) => {
+           doSomeThing(payload)
+         })
+         .build()
+     )
+   }
+    ```
+5. 
 
+   ```javascript 
+    export const addExampleViewContainer = (component) => {
+      const VIEWCONTAINER_ID = component.componentContext.nextID()
+      let VIEWCONTAINER_INST
+      VIEWCONTAINER_INST = component.componentContext.addViewContainer(
+        new ContainerExample(
+          new ViewContainerParameters(
+            component.componentContext,
+            VIEWCONTAINER_ID,
+            component.parentNode
+          ),
+          new CalculatorContainerStoresParameters(component.exampleStoreHandler)
+        )
+      )
+      return VIEWCONTAINER_INST
+}
+```
 ![RouterUse](./Router.svg)
