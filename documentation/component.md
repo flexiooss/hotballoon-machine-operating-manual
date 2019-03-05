@@ -14,7 +14,7 @@ Vous avez à votre disposition le code source du site que vous êtes
 en train de lire qui a été développé à l'aide d'HotBalloon! Vous avez donc un premier exemple de développement, vous permettant ainsi d'apprendre par le code.
 Le code que je vais passer au projecteur dans ce document ne permettra pas à lui seul de vous permettre 
 d'implémenter une application utilisant HotBalloon, ce document donne uniquement un fil conducteur vous permettant de 
-saisir la logique associéeà cet outil. 
+saisir la logique associée à cet outil. 
 
 Premier point : le framework demande d'écrire une quantité de code conséquent. 
 Pourquoi commencer par un point négatif ? Devriez-vous utiliser un outil qui ne vous fait pas gagner de temps ?
@@ -25,34 +25,34 @@ est rapide, et tout en respectant la lisibilité de l'application.
 
 
 Dans une application Hot balloon, chaque acteur a sa propre place et ne joue pas plusieurs rôles. 
-Chaque acteur a pour objectif d'effectuer une tâche qui lui est propre dans le traitement des données. Ces acteurs définissent un environnement symbolisant une boucle utilisant de l'evennementiel :
+Chaque acteur a pour objectif d'effectuer une tâche qui lui est propre dans le traitement des données. Ces acteurs définissent un environnement symbolisant une boucle utilisant de l'événementiel :
 
 
 ![PatternHB](./patternHB.svg)
 
-Ici, le bouton de la vue permet d'incrémenter un compteur. La vue déclenche cette fameuse boucle. elle n'a pas du tout conscience de ce qu'elle va déclencher,
-elle va simplement envoyer un signal qui va être reçu par quiconque veut l'entrendre.
+Ici, le bouton de la vue permet d'incrémenter un compteur. La vue déclenche cette fameuse boucle. Elle n'a pas du tout conscience de ce qu'elle va déclencher,
+elle va simplement envoyer un signal qui va être reçu par quiconque veut l'entendre.
 
-Là intervient un acteur nommé View Container qui va s'intéressé à ce signal, qu'il va traduire en une 
+Là intervient un acteur nommé View Container qui va s'intéresser à ce signal, qu'il va traduire en une 
 action qui va permettre d'incrémenter un compteur qu'il va envoyer au dispatcher.
 
 Le dispatcher a pour rôle d'envoyer l'action. Il va effectuer le rôle de facteur en envoyant un signalement 
-aupret de chaque Component qui aura souscrit un abonnement aupret de cette action.
+auprès de chaque Component qui aura souscrit un abonnement auprès de cette action.
 
 Le component traitera ensuite le signal, il va traduire comme l'action d'incrémenter un compteur, il va donc s'exécuter à l'aide d'une logique métier qu'il connaît.
 Cette logique va permettre de mettre à jour un centre de stockage où est située la valeur du compteur appelé le store.
 
-Une fois la valeur modifiée dans le store (modification par incrémentation), le store va envoyer un signal pour dire qu'il a changer.
+Une fois la valeur modifiée dans le store (modification par incrémentation), le store va envoyer un signal pour dire qu'il a changé.
 Ce signal sera reçu par le ViewContainer qui va relayer cette information à la vue qui affiche le compteur pour mettre à jour la valeur affichée.
 
-> Notez que le component a également la possibilité de dispatcher une action, à destination de lui même ou d'un autre component de l'application.
-> Oui ! On peut avoir plusieurs components dans la même application, on peut donc avoir plusieurs boucles évenementielles au sein de la même application.
+> Notez que le component a également la possibilité de dispatcher une action, à destination de lui-même ou d'un autre component de l'application.
+> Oui ! On peut avoir plusieurs components dans la même application, on peut donc avoir plusieurs boucles événementielles au sein de la même application.
 > Ce mécanisme va nous permettre de factoriser l'application et de la rendre modulaire. Et tout ceci s'effectue de manière très naturelle pour un développeur normalement constitué !
 
-Sans cette vison globale, vous ne parviendrez pas à comprendre ce qui va suivre, 
+Sans cette vision globale, vous ne parviendrez pas à comprendre ce qui va suivre, 
 prenez un peu de temps pour bien ancrer ce schéma dans votre tête, sans lui vous n'irez pas loin !
 
-Maintenant les présentations faites, nous allons nous interesser à la partie conception. 
+Maintenant les présentations faites, nous allons nous intéresser à la partie conception. 
 
 > Qu'allez-vous devoir dire à javascript pour qu'il vous fabrique un compteur qui s'incrémente avec un bouton ?
 
@@ -159,8 +159,8 @@ this.dispatchAction(
 ```
 Ici, on dispatch une action "ActionIncrement"
 
-> le mot Payload vous attire forcement l'oeil, sachez que nous en reparlerons en détail, mais gardez dns la tête qu'une action peut être plus qu'un simple signal,
-> elle peut ransporter des données avec elle ! Bonne nouvelle non ?
+> le mot Payload vous attire forcément l'œil, sachez que nous en reparlerons en détail, mais gardez à l'esprit qu'une action peut être plus qu'un simple signal,
+> elle peut transporter des données avec elle ! Bonne nouvelle non ?
 
 Une fois dispatché, on pourra écouter cette action de la manière suivante :
 ```javascript
@@ -172,7 +172,7 @@ component.componentContext.listenAction(
     })
 )
 ```
-Une fois l'action capturé dans ce listener, le callback va se charger d'exécuter le code (doSomeThings), dans le cas de notre compteur, 
+Une fois l'action capturée dans ce listener, le callback va se charger d'exécuter le code (doSomeThings), dans le cas de notre compteur, 
 l'action "ActionIncrement" devrait permettre de changer le contenu du store. 
 
 ### Views
@@ -204,16 +204,16 @@ template() {
   )    
 }
 ```
-Ce tempate nous permet de créer un noeud div, sonstitué d'un id divCounter et d'une classe nommée containerCounter.
-Ce noeud est composé de 2 noeud fils : 
-- un noeud span qui a pour text la valeur contenue dans le store counterStore.
-- un noeud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
-sur celui-ci, un evenement INCREMENT_EVENT va être dispatché.
+Ce tempate nous permet de créer un noeud div, constitué d'un id divCounter et d'une classe nommée containerCounter.
+Ce noeud est composé de 2 nœud fils : 
+- un nœud span qui a pour texte la valeur contenue dans le store counterStore.
+- un nœud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
+sur celui-ci, un évènement INCREMENT_EVENT va être dispatché.
 
 
 
 ### ViewContainers
-Enregistre les views et les Evenements associés à ces views pour dispatcher des actions en fonction de ces evenements
+Enregistre les views et les évènements associés à ces views pour dispatcher des actions en fonction de ces évènement
 
 Ecouter un event :
 ```javascript
