@@ -1,28 +1,32 @@
 # Philosophie HotBalloon
 
-Prérequis : pattern publish subscribe, callbacks
+> Prérequis : pattern publish subscribe, callbacks
 
 Hot Balloon est un framework développé et utilisé par Flexio, une solution 
 de digitalisation innovante. Il est basé sur [le pattern flux](https://facebook.github.io/flux/docs/in-depth-overview.html). 
 Le framework HotBalloon lié à ce pattern est un outil laissant beaucoup de 
 liberté au développeur, il faudra donc comprendre la philosophie de ce 
 framework pour implémenter des applications de manière simple et intelligible. 
-
-Vous vous apprêtez à lire une documentation visant à vous procurer les 
+Cette documentation a pour but de vous procurer les 
 éléments nécessaires pour atteindre ces objectifs.
-Cette documentation est accompagnée du code source du site que vous êtes 
-en train de lire ! Vous avez donc un premier exemple de développement, vous permettant ainsi d'apprendre par le code.
+
+Vous avez à votre disposition le code source du site que vous êtes 
+en train de lire qui a été développé à l'aide d'HotBalloon! Vous avez donc un premier exemple de développement, vous permettant ainsi d'apprendre par le code.
+Le code que je vais passer au projecteur dans ce document ne permettra pas à lui seul de vous permettre 
+d'implémenter une application utilisant HotBalloon, ce document donne uniquement un fil conducteur vous permettant de 
+saisir la logique associéeà cet outil. 
 
 Premier point : le framework demande d'écrire une quantité de code conséquent. 
 Pourquoi commencer par un point négatif ? Devriez-vous utiliser un outil qui ne vous fait pas gagner de temps ?
 Il ne s'agit pourtant pas d'un point négatif ! (ah bon ?) Oui ! Et vous vous en rendrez compte par son utilisation.
-Une application hot balloon a pour avantage d'être très verbeuse, chaque information est décrite de manière clair et pourtant 
+Une application hot balloon a pour avantage d'être très verbeuse, chaque information est décrite de manière claire et pourtant 
 précise, ce qui permet une relecture et une maintenabilité du code aisée. En parlant de maintenabilité, sachez que l'ajout de nouvelles fonctionnalités
-est rapide, et tout en respectant encore la lisibilité de l'application.
+est rapide, et tout en respectant la lisibilité de l'application.
 
 
 Dans une application Hot balloon, chaque acteur a sa propre place et ne joue pas plusieurs rôles. 
-Chaque acteur a pour rôle d'effectuer un traitement des données à l'aide d'évenementiel. Ce traitement agit sous forme de boucle :
+Chaque acteur a pour objectif d'effectuer une tâche qui lui est propre dans le traitement des données. Ces acteurs définissent un environnement symbolisant une boucle utilisant de l'evennementiel :
+
 
 ![PatternHB](./patternHB.svg)
 
@@ -41,80 +45,48 @@ Cette logique va permettre de mettre à jour un centre de stockage où est situ�
 Une fois la valeur modifiée dans le store (modification par incrémentation), le store va envoyer un signal pour dire qu'il a changer.
 Ce signal sera reçu par le ViewContainer qui va relayer cette information à la vue qui affiche le compteur pour mettre à jour la valeur affichée.
 
- 
+> Notez que le component a également la possibilité de dispatcher une action, à destination de lui même ou d'un autre component de l'application.
+> Oui ! On peut avoir plusieurs components dans la même application, on peut donc avoir plusieurs boucles évenementielles au sein de la même application.
+> Ce mécanisme va nous permettre de factoriser l'application et de la rendre modulaire. Et tout ceci s'effectue de manière très naturelle pour un développeur normalement constitué !
 
-Une des règles principales est d'avoir la logique métier de l'application stockée à un seul endroit, dans le component.
+Sans cette vison globale, vous ne parviendrez pas à comprendre ce qui va suivre, 
+prenez un peu de temps pour bien ancrer ce schéma dans votre tête, sans lui vous n'irez pas loin !
 
+Maintenant les présentations faites, nous allons nous interesser à la partie conception. 
 
-### Project structure
+> Qu'allez-vous devoir dire à javascript pour qu'il vous fabrique un compteur qui s'incrémente avec un bouton ?
+
+Pour répondre à cette question, je vais énumérer les différentes entités que vous allez devoir développer et la manière dont vous allez les utiliser.
+
+### structure du projet
 
 ```
 ├── Module
       ├── __tests__
       ├── actions
-            ├── ActionExample.js
-            └── PayloadExample.js
+            └── ActionIncrement.js
       ├── assets
             ├── css
             └── img
       ├── component
             ├── catalogActions
+                   └── addActionIncrement.js 
             ├── catalogContainersViews
+                   └── addViewContainerCounter.js 
             ├── catalogStores
+                   └── addStoreCounter.js 
             └── Component.js
       ├── stores
-            ├── StoreData.js
-            ├── StoreHandler.js
-            └── Store.js
+            ├── StoreDataCounter.js
+            ├── StoreHandlerCounter.js
+            └── StoreCounter.js
       ├── views
-            ├── Container.js
-            └── View.js
+            ├── ContainerCounter.js
+            └── ViewCounter.js
       ├── index.js
       └── package.json
 ```
 
-### Component
-constitué d'un component context. 
-Le component context permet :
-   - d'ajouter des actions et de les écouter,
-   - de dispatch (envoyer) des actions,
-   - d'ajouter des stores,
-   - d'ajouter des conteneurs de vues.
-   
-### Actions
-
-Une action accèpte un payload.
-Le payload permet te faire transiter de la donnée avec l'action à dispatcher
-```javascript
-const ACTIONS_EXAMPLE = 'ACTIONS_ADD_NUMBER'
-/**
- * @extends Action
- */
-export class ActionExample extends Action {
-  constructor() {
-    super(new ActionParams(ACTIONS_EXAMPLE, PayloadExample))
-  }
-}
-```
-
-Ecouter une action :
-```javascript
-component.componentContext.listenAction(
-  DispatcherEventListenerFactory.listen(
-    new ActionExample())
-    .callback((payload) => {
-      ...
-    }
-```
-
-Dispatcher une action :
-```javascript
-this.dispatchAction(
-  ActionExample.withPayload(
-    new PayloadExample(value)
-  )
-)
-```
 
 ### Stores
 Trois classes représentent un store : 
@@ -123,7 +95,7 @@ Trois classes représentent un store :
 /**
  * @extends Store
  */
-export class StoreExample extends Store {
+export class StoreCounter extends Store {
 }
 ```
 
@@ -132,12 +104,12 @@ export class StoreExample extends Store {
 /**
  * @extends DataStoreInterface
  */
-export class StoreDataExample extends DataStoreInterface {
+export class StoreDataCounter extends DataStoreInterface {
   /**
    *
-   * @param {string} value
+   * @param {int} value
    */
-  constructor(value = '') {
+  constructor(value = 0) {
     super()
     this.value = value
   }
@@ -148,10 +120,10 @@ export class StoreDataExample extends DataStoreInterface {
 /**
  * @extends PublicStoreHandler
  */
-export class StoreHandlerData extends PublicStoreHandler {
+export class StoreHandlerCounter extends PublicStoreHandler {
   /**
    *
-   * @returns {string}
+   * @returns {int}
    */
   get value() {
     return this.data().value
@@ -159,27 +131,113 @@ export class StoreHandlerData extends PublicStoreHandler {
 }
  ```   
     
+### Actions
+
+L'action, comme dit plus haut, est un "singal", elle permet de mettre en relation la vue et le component.
+
+On crée une action de cette manière :
+
+```javascript
+const ACTIONS_EXAMPLE = 'ACTIONS_ADD_NUMBER'
+/**
+ * @extends Action
+ */
+export class ActionIncrement extends Action {
+  constructor() {
+    super(new ActionParams(ACTIONS_EXAMPLE, ActionPayload))
+  }
+}
+```
+
+Pour dispatcher (envoyer au postier) une nouvelle action :
+```javascript
+this.dispatchAction(
+  ActionIncrement.withPayload(
+    new ActionPayload()
+  )
+)
+```
+Ici, on dispatch une action "ActionIncrement"
+
+> le mot Payload vous attire forcement l'oeil, sachez que nous en reparlerons en détail, mais gardez dns la tête qu'une action peut être plus qu'un simple signal,
+> elle peut ransporter des données avec elle ! Bonne nouvelle non ?
+
+Une fois dispatché, on pourra écouter cette action de la manière suivante :
+```javascript
+component.componentContext.listenAction(
+  DispatcherEventListenerFactory.listen(
+    new ActionIncrement())
+    .callback((payload) => {
+      doSomeThings()
+    })
+)
+```
+Une fois l'action capturé dans ce listener, le callback va se charger d'exécuter le code (doSomeThings), dans le cas de notre compteur, 
+l'action "ActionIncrement" devrait permettre de changer le contenu du store. 
+
+### Views
+Pour créer une vue, on écrit un tempate qui va décrire ce que le doit afficher la vue. Cette vue est branchée sur des stores qui vont 
+permettre de mettre à jour cette vue. On écrit un tempate de cette manière : 
+```javascript 
+/**
+ *
+ * @return {Element}
+ */
+template() {
+  return this.html('div#divCounter.containerCounter',
+    HtmlParams
+      .addChildNodes([
+        this.html('span#counter.counter', HtmlParams.withText(this.__stores.counterStore.value)),
+        this.html('input#increment.button',
+          HtmlParams
+            .withAttributes(
+              { value: 'Increment', type: 'button' })
+            .addEventListener(
+              NodeEventListenerFactory.listen('click')
+                .callback((e) => {
+                  this.dispatch(INCREMENT_EVENT, null)
+                })
+                .build()
+            )
+        )
+      ])          
+  )    
+}
+```
+Ce tempate nous permet de créer un noeud div, sonstitué d'un id divCounter et d'une classe nommée containerCounter.
+Ce noeud est composé de 2 noeud fils : 
+- un noeud span qui a pour text la valeur contenue dans le store counterStore.
+- un noeud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
+sur celui-ci, un evenement INCREMENT_EVENT va être dispatché.
+
+
+
 ### ViewContainers
 Enregistre les views et les Evenements associés à ces views pour dispatcher des actions en fonction de ces evenements
 
 Ecouter un event :
 ```javascript
-this.view(EXAMPLE_VIEW).on(
+this.view(COUNTER_VIEW).on(
   ViewEventListenerFactory
-    .listen(EXAMPLE_EVENT)
+    .listen(INCREMENT_EVENT)
     .callback((payload) => {
       this.dispatchAction(
-        ActionExample.withPayload(
-          new PayloadExample(payload.value)
+        ActionIncrement.withPayload(
+          new ActionPayload()
         )
       )
     }).build()
 )
 ```
 
-### Views
-une template de la vue, branché sur de la data dans les stores
-
+### Component
+constitué d'un component context. 
+Le component context permet :
+   - d'ajouter des actions et de les écouter,
+   - de dispatch (envoyer) des actions,
+   - d'ajouter des stores,
+   - d'ajouter des conteneurs de vues.
+   
 
 ![ComponentUse](./basicComponent.svg)
 
