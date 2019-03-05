@@ -2,7 +2,7 @@
 
 > Prérequis : pattern publish subscribe, callbacks
 
-Hot Balloon est un framework développé et utilisé par Flexio, une solution 
+HotBalloon est un framework développé et utilisé par Flexio, une solution 
 de digitalisation innovante. Il est basé sur [le pattern flux](https://facebook.github.io/flux/docs/in-depth-overview.html). 
 Le framework HotBalloon lié à ce pattern est un outil laissant beaucoup de 
 liberté au développeur, il faudra donc comprendre la philosophie de ce 
@@ -19,12 +19,12 @@ saisir la logique associée à cet outil.
 Premier point : le framework demande d'écrire une quantité de code conséquent. 
 Pourquoi commencer par un point négatif ? Devriez-vous utiliser un outil qui ne vous fait pas gagner de temps ?
 Il ne s'agit pourtant pas d'un point négatif ! (ah bon ?) Oui ! Et vous vous en rendrez compte par son utilisation.
-Une application hot balloon a pour avantage d'être très verbeuse, chaque information est décrite de manière claire et pourtant 
+Une application HotBalloon a pour avantage d'être très verbeuse, chaque information est décrite de manière claire et pourtant 
 précise, ce qui permet une relecture et une maintenabilité du code aisée. En parlant de maintenabilité, sachez que l'ajout de nouvelles fonctionnalités
 est rapide, et tout en respectant la lisibilité de l'application.
 
 
-Dans une application Hot balloon, chaque acteur a sa propre place et ne joue pas plusieurs rôles. 
+Dans une application HotBalloon, chaque acteur a sa propre place et ne joue pas plusieurs rôles. 
 Chaque acteur a pour objectif d'effectuer une tâche qui lui est propre dans le traitement des données. Ces acteurs définissent un environnement symbolisant une boucle utilisant de l'événementiel :
 
 
@@ -54,7 +54,7 @@ prenez un peu de temps pour bien ancrer ce schéma dans votre tête, sans lui vo
 
 Maintenant les présentations faites, nous allons nous intéresser à la partie conception. 
 
-> Qu'allez-vous devoir dire à javascript pour qu'il vous fabrique un compteur qui s'incrémente avec un bouton ?
+> Qu'allez-vous devoir dire dans votre implémentation javascript pour fabriquer un compteur qui s'incrémente avec un bouton ?
 
 Pour répondre à cette question, je vais énumérer les différentes entités que vous allez devoir développer et la manière dont vous allez les utiliser.
 
@@ -101,6 +101,8 @@ export class StoreCounter extends Store {
 
 - le StoreData qui est un schéma des données qui doivent être stockées
 ```javascript
+export const COUNT_STORE = 'COUNT_STORE'
+
 /**
  * @extends DataStoreInterface
  */
@@ -115,6 +117,7 @@ export class StoreDataCounter extends DataStoreInterface {
   }
 }
 ```
+
 - le StoreHandler qui permet d'effectuer des accès en lecture sur le store (poxy)
  ```javascript
 /**
@@ -175,6 +178,86 @@ component.componentContext.listenAction(
 Une fois l'action capturée dans ce listener, le callback va se charger d'exécuter le code (doSomeThings), dans le cas de notre compteur, 
 l'action "ActionIncrement" devrait permettre de changer le contenu du store. 
 
+### Component
+Le component est l'élément princiaple, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
+Il est constitué d'un component context qui permet de :
+   - ajouter des actions et de les écouter,
+   - dispatcher (envoyer) des actions,
+   - ajouter des stores,
+   - ajouter des conteneurs de vues.
+   
+Il va devoir initialiser les stores qui veut utiliser : 
+```javascript
+export const addStoreCounter = (component) => {
+  return component.componentContext.addStore(
+    new StoreCounter(
+      COUNTER_STORE,
+      new InMemoryStorage(
+        new State(NAVBAR_STORE, new StoreDataCounter(0)),
+        new StoreDataCounter()
+      )
+    )
+  )
+}
+```
+Ici le component, passé en paramètre, va ajouter, à l'aide du component context, le store StoreCounter. Un store a besoin
+d'un id : COUNTER_STORE et d'un moyen de stockage, ici en mémoire.
+Le store est initialisé avec le schéma StoreDataCounter contenant l'attribut value initilisaé à 0.
+
+Le component va également enregistrer les actions qu'il a besoin d'écouter : 
+```javascript
+export const addActionIncrementCounter = (component) => {
+  component.componentContext.listenAction(
+    DispatcherEventListenerFactory.listen(
+      new ActionIncrement())
+      .callback((payload) => {
+        let result = component.counterStore.data().value + 1
+        component.counterStore.set(new StoreDataCounter(result))
+      })
+      .build()
+  )
+}
+```
+On va donc ajouter un listener comme décrit plus haut, et dans le callback, on va récupérer le
+résultat de "value" contenu dans le store counterStore. On va ensuite redéfinir la donnée de counterStore
+avec la valeur actuelle incrémenté. 
+
+On initialise enfin le ViewContainer, il doit être branché sur des stores pour que les vues puissent les utiliser.
+```javascript 
+export const addExampleViewContainer = (component) => {
+  const VIEWCONTAINER_ID = component.componentContext.nextID()
+  return component.componentContext.addViewContainer(
+    new ViewContainerCounter(
+      new ViewContainerParameters(
+        component.componentContext,
+        VIEWCONTAINER_ID,
+        component.parentNode
+      ),
+      new ContainerStores(component.counterStoreHandler)
+    )
+  )
+}
+```
+Le ViewContainer est obligatoirement initialisé avec un object permettant de définir les 
+paramètres de celui-ci. Ces paramètres contiennent le componentContext du component, un id (ici géneré par le
+componentContext et le noeud du DOM sur lequel sera branché les vues du ViewContainer.
+
+Il peut également contenir des stores même si cela n'est pas obligatoire. 
+ContainerStores représente ici un ValueObject qui permet de containeriser les différents stores
+qui vont être utilisé par le viewContainer : 
+```javascript 
+export class CounterContainerStoresParams {
+  constructor(counterStore) {
+    this.__counterStore = TypeCheck.assertStoreBase(counterStore)
+  }
+
+  get counterStore() {
+    return this.__counterStore
+  }
+}
+```
+
+
 ### Views
 Pour créer une vue, on écrit un tempate qui va décrire ce que le doit afficher la vue. Cette vue est branchée sur des stores qui vont 
 permettre de mettre à jour cette vue. On écrit un tempate de cette manière : 
@@ -213,9 +296,28 @@ sur celui-ci, un évènement INCREMENT_EVENT va être dispatché.
 
 
 ### ViewContainers
-Enregistre les views et les évènements associés à ces views pour dispatcher des actions en fonction de ces évènement
+Comme décrit plus haut, une vue envoie des événements. Ceux-ci vont être captés par le ViewContainer. Il a pour but
+d'enregistrer les vues et les différents événements associés à ces vues.
 
-Ecouter un event :
+Pour enregister une vue :
+```javascript
+this.addView(
+      new CounterViewSimple(
+        new ViewParameters(COUNTER_VIEW, this),
+        new CounterContainerStoresParameters(this.stores.counterStore)
+      )
+    )
+```
+Chaque vue contient un viewParamter constitué d'un id : COUNTER_VIEW initialisé de la sorte : 
+```javascript
+const COUNTER_VIEW = Symbol('COUNTER_VIEW')
+```
+Et le container qui contient cette vue.
+Elle peut également contenir un ou des stores, mais cela n'est pas obligatoire, auquel cas la vue n'aura pas besoin d'être mise à jour.
+
+
+Une fois la vue ajoutée au container, on peut écouter les événements qui proviennent de 
+cette vue :
 ```javascript
 this.view(COUNTER_VIEW).on(
   ViewEventListenerFactory
@@ -229,107 +331,26 @@ this.view(COUNTER_VIEW).on(
     }).build()
 )
 ```
+Quand la vue avec l'id COUNTER_VIEW envoie l'événement INCREMENT_EVENT, il est capté par ce listener
+qui va dans ce cas dispatcher l'action ActionIncrement.
 
-### Component
-constitué d'un component context. 
-Le component context permet :
-   - d'ajouter des actions et de les écouter,
-   - de dispatch (envoyer) des actions,
-   - d'ajouter des stores,
-   - d'ajouter des conteneurs de vues.
-   
 
 ![ComponentUse](./basicComponent.svg)
 
 1. On crée un componentContext. 
 2. On initialise le Component en lui passant le nouveau componentContext ainsi que le noeud sur lequel il sera branché
 3. InitComponent définit les stores auquel le component à accès.
-    Les stores sont initialisés de la sorte :
-    ```javascript
-    export const addStoreNavbar = (component) => {
-      return component.__componentContext.addStore(
-        new StoreCounter(
-          COUNTER_STORE,
-          new InMemoryStorage(
-            new State(NAVBAR_STORE, new StoreDataCounter(0)),
-            new StoreDataCounter()
-          )
-        )
-      )
-    }
-    ```
 4. InitComponent définit les Actions sur lesquels le component est branché.
-On branche les actions sur un component en créant un listener sur celle-ci :
-    ```javascript
-   export const addActionExample = (component) => {
-     component.componentContext.listenAction(
-       DispatcherEventListenerFactory.listen(
-         new ActionExample())
-         .callback((payload) => {
-           doSomeThing(payload)
-         })
-         .build()
-     )
-   }
-    ```
+On branche les actions sur un component en créant un listener sur celle-ci.
 5. On initialise le ViewContainer, il doit être branché sur des stores pour que les vues puissent les utiliser.
+6. Enregistrements de vues appartenant au Conteneur de vues   
+7. La vue est créée en fonction d'un template de view, qui est mis à jour en fonction du store.
 
-   ```javascript 
-    export const addExampleViewContainer = (component) => {
-      const VIEWCONTAINER_ID = component.componentContext.nextID()
-      let VIEWCONTAINER_INST
-      VIEWCONTAINER_INST = component.componentContext.addViewContainer(
-        new ContainerExample(
-          new ViewContainerParameters(
-            component.componentContext,
-            VIEWCONTAINER_ID,
-            component.parentNode
-          ),
-          new CalculatorContainerStoresParameters(component.exampleStoreHandler)
-        )
-      )
-      return VIEWCONTAINER_INST
-    }
-    ```
-    
-6. Enregistrements de vues appartenant au Conteneur de vues : 
-    ```javascript 
-        this.addView(
-              new ExampleView(
-                new ViewParameters(EXAMPLE_VIEW, this),
-                new ExampleStoresParameters(this.exampleStore)
-              )
-            )
-    ```
-    
-7. La vue est créée en fonction d'un template de view, qui est mis à jour en fonction du store :
-    ```javascript 
-    template() {
-      return this.html('div#divExample.divExample',
-        HtmlParams.withText(this.stores.exampleStore.value)
-          .addChildNodes([
-            this.html('input#example.button',
-              HtmlParams
-                .withAttributes(
-                  { value: 'text', type: 'button' })
-                .addEventListener(
-                  NodeEventListenerFactory.listen('click')
-                    .callback((e) => {
-                      this.dispatch(EXAMPLE_EVENT, null)
-                    })
-                    .build()
-                )
-            )
-          ])          
-      )    
-    }
-    ```
-   
 ![RouterUse](./Router.svg)
 
 
 
-- le développement des applications hot balloon est fait en fonction des tests
+- le développement des applications HotBalloon est fait en fonction des tests
 - les workers ne peuvent pas être utilisés dans node JS donc dans les tests nons plus
 - le métier s'effectue dans la partie component et non dans la vue
 - Bien implémenter la JsDOC
@@ -339,3 +360,4 @@ On branche les actions sur un component en créant un listener sur celle-ci :
 - injection action change route, on passe une fonction d'instanciation aux autres components qui en ont besoin
 - le store appartient au component, dans le viewContainer / View, on utilise un storeHandler pour accéder à son contenu
 - Pas d'inserssion en dur dans le Haed (trouver une solution)
+- seul le component peut modifier le store, et uniquement s'il lui appartient
