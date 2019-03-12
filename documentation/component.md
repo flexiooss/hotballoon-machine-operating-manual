@@ -61,28 +61,32 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
 ### structure du projet
 
 ```
-├── Module
+└── ComponentCounter
       ├── __tests__
-      ├── actions
-            └── ActionIncrement.js
       ├── assets
-            ├── css
-            └── img
+      │     ├── css
+      │     └── img
       ├── component
-            ├── catalogActions
-                   └── addActionIncrement.js 
-            ├── catalogContainersViews
-                   └── addViewContainerCounter.js 
-            ├── catalogStores
-                   └── addStoreCounter.js 
-            └── Component.js
-      ├── stores
-            ├── StoreDataCounter.js
-            ├── StoreHandlerCounter.js
-            └── StoreCounter.js
+      │     ├── ComponentCounter.js
+      │     └── InitComponentCounter.js
+      ├── events
+      │     └── counter
+      │             ├── actions
+      │             │     └── ActionIncrement
+      │             │             ├── ActionIncrement.js
+      │             │             ├── InitActionIncrement.js
+      │             │             └── ListenActionIncrement.js
+      │             └── stores
+      │                   └── counterStore
+      │                           ├── InitSoreCounter.js
+      │                           ├── StoreCounter.js
+      │                           └── StoreHandlerCounter.js
       ├── views
-            ├── ContainerCounter.js
-            └── ViewCounter.js
+      │     └── counterView
+      │         ├── ContainerCounter.js
+      │         ├── InitViewContainerCounter.js
+      │         └── views
+      │                 └── ViewCounter.js
       ├── index.js
       └── package.json
 ```
@@ -304,7 +308,7 @@ Pour enregister une vue :
 this.addView(
       new CounterViewSimple(
         new ViewParameters(COUNTER_VIEW, this),
-        new CounterContainerStoresParameters(this.stores.counterStore)
+        new ContainerStore(this.stores.counterStore)
       )
     )
 ```
@@ -361,3 +365,4 @@ On branche les actions sur un component en créant un listener sur celle-ci.
 - le store appartient au component, dans le viewContainer / View, on utilise un storeHandler pour accéder à son contenu
 - Pas d'inserssion en dur dans le Haed (trouver une solution)
 - seul le component peut modifier le store, et uniquement s'il lui appartient
+- parler des payloads

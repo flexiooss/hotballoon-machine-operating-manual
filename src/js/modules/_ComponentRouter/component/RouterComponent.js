@@ -1,12 +1,13 @@
 'use strict'
 import {assert} from 'flexio-jshelpers'
-import {DispatcherEventListenerFactory, TypeCheck} from 'hotballoon'
-import {ChangeRouteAction} from '../actions/ChangeRouteAction'
+import {TypeCheck} from 'hotballoon'
 import {RouterBuilder} from 'flexio-jsrouter'
 import {UrlConfiguration} from 'flexio-jsrouter/src/UrlConfiguration'
 import {PublicRouteHandler} from 'flexio-jsrouter/src/Route/PublicRouteHandler'
 import {Route} from 'flexio-jsrouter/src/Route/Route'
-import {ChangeRoutePayload} from '../actions/ChangeRoutePayload'
+import {ActionChangeRoute} from '../actions/ActionChangeRoute/ActionChangeRoute'
+import {initActionChangeRoute} from '../actions/ActionChangeRoute/InitActionChangeRoute'
+import {listenActionChangeRoute} from '../actions/ActionChangeRoute/ListenActionChangeRoute'
 
 export class RouterComponent {
   /**
@@ -22,7 +23,7 @@ export class RouterComponent {
     this.__router = RouterBuilder.build(new UrlConfiguration('https', 'localhost', '8080'))
     this.__routeHandler = new PublicRouteHandler(this.__router, Route)
 
-    this.__initListener()
+    this.addActionChangeRoute()
   }
 
   /**
@@ -31,6 +32,14 @@ export class RouterComponent {
    */
   get routeHandler() {
     return this.__routeHandler
+  }
+
+  /**
+   *
+   * @returns {Action}
+   */
+  get actionChangeRoute() {
+    return this.__actionChangeRoute
   }
 
   /**
@@ -47,30 +56,9 @@ export class RouterComponent {
    *
    * @private
    */
-  __initListener() {
-    this.__componentContext.listenAction(
-      DispatcherEventListenerFactory.listen(
-        new ChangeRouteAction())
-        .callback((payload) => {
-          let routePathname = this.__router.urlHandler.urlToPathname(payload.url)
-          console.log(routePathname)
-          const routeWithParams = this.__router.routeByPathname(routePathname)
-          routeWithParams.route.callback(
-            routeWithParams.route.builder(routeWithParams.params)
-          )
-        })
-        .build()
-    )
-  }
-
-  /**
-   *
-   * @param {URL} url
-   * @returns {Action}
-   */
-  static changeRoute(url) {
-    return ChangeRouteAction.withPayload(
-      new ChangeRoutePayload(url)
-    )
+  addActionChangeRoute() {
+    this.__actionChangeRoute = initActionChangeRoute(this)
+    console.log(this.__actionChangeRoute)
+    listenActionChangeRoute(this)
   }
 }
