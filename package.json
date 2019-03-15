@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "hotballoon-shed": "node ./node_modules/hotballoon-shed",
+    "build": "yarn hotballoon-shed --operation=production",
     "prod": "yarn hotballoon-shed --operation=production",
     "dev": "yarn hotballoon-shed --operation=development -v",
     "test": "yarn hotballoon-shed --test"

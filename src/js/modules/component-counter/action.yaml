@@ -1,0 +1,2 @@
+ActionModifyCounter:
+  sum: int

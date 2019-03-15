@@ -61,7 +61,7 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
 ### structure du projet
 
 ```
-└── ComponentCounter
+└── component-counter
       ├── __tests__
       ├── assets
       │     ├── css
@@ -69,18 +69,16 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
       ├── component
       │     ├── ComponentCounter.js
       │     └── InitComponentCounter.js
-      ├── events
-      │     └── counter
-      │             ├── actions
-      │             │     └── ActionIncrement
-      │             │             ├── ActionIncrement.js
-      │             │             ├── InitActionIncrement.js
-      │             │             └── ListenActionIncrement.js
-      │             └── stores
-      │                   └── counterStore
-      │                           ├── InitSoreCounter.js
-      │                           ├── StoreCounter.js
-      │                           └── StoreHandlerCounter.js
+      ├── actions
+      │     └── ActionIncrement
+      │             ├── ActionIncrement.js
+      │             ├── InitActionIncrement.js
+      │             └── ListenActionIncrement.js
+      └── stores
+      │     └── counterStore
+      │             ├── InitSoreCounter.js
+      │             ├── StoreCounter.js
+      │             └── StoreHandlerCounter.js
       ├── views
       │     └── counterView
       │         ├── ContainerCounter.js
@@ -105,8 +103,6 @@ export class StoreCounter extends Store {
 
 - le StoreData qui est un schéma des données qui doivent être stockées
 ```javascript
-export const COUNT_STORE = 'COUNT_STORE'
-
 /**
  * @extends DataStoreInterface
  */
@@ -185,12 +181,12 @@ l'action "ActionIncrement" devrait permettre de changer le contenu du store.
 ### Component
 Le component est l'élément princiaple, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
 Il est constitué d'un component context qui permet de :
-   - ajouter des actions et de les écouter,
-   - dispatcher (envoyer) des actions,
-   - ajouter des stores,
+   - ajouter des actionsUtil et de les écouter,
+   - dispatcher (envoyer) des actionsUtil,
+   - ajouter des storesBuilder,
    - ajouter des conteneurs de vues.
    
-Il va devoir initialiser les stores qui veut utiliser : 
+Il va devoir initialiser les storesBuilder qui veut utiliser : 
 ```javascript
 export const addStoreCounter = (component) => {
   return component.componentContext.addStore(
@@ -208,7 +204,7 @@ Ici le component, passé en paramètre, va ajouter, à l'aide du component conte
 d'un id : COUNTER_STORE et d'un moyen de stockage, ici en mémoire.
 Le store est initialisé avec le schéma StoreDataCounter contenant l'attribut value initilisaé à 0.
 
-Le component va également enregistrer les actions qu'il a besoin d'écouter : 
+Le component va également enregistrer les actionsUtil qu'il a besoin d'écouter : 
 ```javascript
 export const addActionIncrementCounter = (component) => {
   component.componentContext.listenAction(
@@ -226,7 +222,7 @@ On va donc ajouter un listener comme décrit plus haut, et dans le callback, on 
 résultat de "value" contenu dans le store counterStore. On va ensuite redéfinir la donnée de counterStore
 avec la valeur actuelle incrémenté. 
 
-On initialise enfin le ViewContainer, il doit être branché sur des stores pour que les vues puissent les utiliser.
+On initialise enfin le ViewContainer, il doit être branché sur des storesBuilder pour que les vues puissent les utiliser.
 ```javascript 
 export const addExampleViewContainer = (component) => {
   const VIEWCONTAINER_ID = component.componentContext.nextID()
@@ -246,8 +242,8 @@ Le ViewContainer est obligatoirement initialisé avec un object permettant de d�
 paramètres de celui-ci. Ces paramètres contiennent le componentContext du component, un id (ici géneré par le
 componentContext et le noeud du DOM sur lequel sera branché les vues du ViewContainer.
 
-Il peut également contenir des stores même si cela n'est pas obligatoire. 
-ContainerStores représente ici un ValueObject qui permet de containeriser les différents stores
+Il peut également contenir des storesBuilder même si cela n'est pas obligatoire. 
+ContainerStores représente ici un ValueObject qui permet de containeriser les différents storesBuilder
 qui vont être utilisé par le viewContainer : 
 ```javascript 
 export class CounterContainerStoresParams {
@@ -263,7 +259,7 @@ export class CounterContainerStoresParams {
 
 
 ### Views
-Pour créer une vue, on écrit un tempate qui va décrire ce que le doit afficher la vue. Cette vue est branchée sur des stores qui vont 
+Pour créer une vue, on écrit un tempate qui va décrire ce que le doit afficher la vue. Cette vue est branchée sur des storesBuilder qui vont 
 permettre de mettre à jour cette vue. On écrit un tempate de cette manière : 
 ```javascript 
 /**
@@ -317,7 +313,7 @@ Chaque vue contient un viewParamter constitué d'un id : COUNTER_VIEW initialis�
 const COUNTER_VIEW = Symbol('COUNTER_VIEW')
 ```
 Et le container qui contient cette vue.
-Elle peut également contenir un ou des stores, mais cela n'est pas obligatoire, auquel cas la vue n'aura pas besoin d'être mise à jour.
+Elle peut également contenir un ou des storesBuilder, mais cela n'est pas obligatoire, auquel cas la vue n'aura pas besoin d'être mise à jour.
 
 
 Une fois la vue ajoutée au container, on peut écouter les événements qui proviennent de 
@@ -343,10 +339,10 @@ qui va dans ce cas dispatcher l'action ActionIncrement.
 
 1. On crée un componentContext. 
 2. On initialise le Component en lui passant le nouveau componentContext ainsi que le noeud sur lequel il sera branché
-3. InitComponent définit les stores auquel le component à accès.
+3. InitComponent définit les storesBuilder auquel le component à accès.
 4. InitComponent définit les Actions sur lesquels le component est branché.
-On branche les actions sur un component en créant un listener sur celle-ci.
-5. On initialise le ViewContainer, il doit être branché sur des stores pour que les vues puissent les utiliser.
+On branche les actionsUtil sur un component en créant un listener sur celle-ci.
+5. On initialise le ViewContainer, il doit être branché sur des storesBuilder pour que les vues puissent les utiliser.
 6. Enregistrements de vues appartenant au Conteneur de vues   
 7. La vue est créée en fonction d'un template de view, qui est mis à jour en fonction du store.
 
@@ -360,7 +356,7 @@ On branche les actions sur un component en créant un listener sur celle-ci.
 - Bien implémenter la JsDOC
 - utiliser les '__' pour rendre un attribut privé et des getters pour y accéder
 - tag DOM link au lieu de a
-- les proxy stores -> instancié par le viewContainer et branché sur le store
+- les proxy storesBuilder -> instancié par le viewContainer et branché sur le store
 - injection action change route, on passe une fonction d'instanciation aux autres components qui en ont besoin
 - le store appartient au component, dans le viewContainer / View, on utilise un storeHandler pour accéder à son contenu
 - Pas d'inserssion en dur dans le Haed (trouver une solution)

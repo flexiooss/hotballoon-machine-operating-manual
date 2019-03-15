@@ -13,7 +13,7 @@ autonumber
 InitComponent -> InitComponent : create new\nComponentContext
 InitComponent->Component : initialize with\nComponentContext\nand parentNode
 activate Component
-Component -> Component : init stores
+Component -> Component : init storesBuilder
 Component -> Component : init Listeners Actions
 Component -> ViewContainer : initialize
 deactivate Component

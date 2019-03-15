@@ -1,0 +1,2 @@
+StoreCounter:
+  count: int

@@ -1,7 +1,7 @@
 import {App} from './app/App'
 import {AppDispatcher} from './app/AppDispatcher'
 
-import {InitMainComponent} from './modules/ComponentMain/component/InitMainComponent'
+import {InitMainComponent} from './modules/component-main/component/InitMainComponent'
 import {ExecutorWorker} from 'hotballoon'
 
 export const APP = new App('Documentation', new AppDispatcher())
