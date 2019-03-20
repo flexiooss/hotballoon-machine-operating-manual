@@ -6,18 +6,23 @@ export class Job extends JobInterface {
   /**
    *
    * @param payload
-   * @param {ComponentCalculator} component
+   * @param {ListenerActionResultInputParams} params
    */
-  constructor(payload, component) {
+  constructor(payload, params) {
     super()
-    this.__message = {
-      lexp: component.__resultStoreHandler.data().lexp(),
-      rexp: component.__resultStoreHandler.data().rexp(),
-      operator: component.__resultStoreHandler.data().operator()
+
+    this.payload = payload
+    this.ticket = params.ID
+    this.actionResultInput = params.actionResultInput
+    this.resultStore = params.resultStore
+    this.resultStoreHandler = params.resultStoreHandler
+    this.transactionActionDispatcher = params.transactionActionDispatcher
+
+    this.message = {
+      lexp: this.resultStoreHandler.data().lexp(),
+      rexp: this.resultStoreHandler.data().rexp(),
+      operator: this.resultStoreHandler.data().operator()
     }
-    this.__component = component
-    this.__payload = payload
-    this.ticket = component.__componentContext.nextID()
   }
   processInline() {
     const result = new OpertorJob(this.__message).exec()
@@ -25,21 +30,21 @@ export class Job extends JobInterface {
   }
 
   processWorker() {
-    this.__component.__transactionActionDispatcher.actionTansaction(this.ticket, true)
+    this.transactionActionDispatcher.actionTansaction(this.ticket, true)
     const worker = new Worker()
-    worker.postMessage(this.__message)
+    worker.postMessage(this.message)
     worker.addEventListener('message', (event) => {
       this.finish(event.data)
       worker.terminate()
-      this.__component.__transactionActionDispatcher.actionTansaction(this.ticket, false)
+      this.transactionActionDispatcher.actionTansaction(this.ticket, false)
     })
   }
 
   finish(result) {
-    this.__component.__resultStore.set(
-      this.__component.__resultStore.state().data
+    this.resultStore.set(
+      this.resultStore.state().data
         .withLexp(result.toString())
-        .withOperator(this.__payload.operator() === '=' ? '' : this.__payload.operator())
+        .withOperator(this.payload.operator() === '=' ? '' : this.payload.operator())
         .withRexp('')
     )
   }

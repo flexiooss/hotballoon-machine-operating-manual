@@ -2,23 +2,23 @@ import {ViewContainerParameters} from 'hotballoon'
 import {ContainerTransaction} from './ContainerTransaction'
 import {StoreContainer} from '../StoreContainer'
 
-export const addTransactionViewContainer = (component) => {
-  const TRANSACTION_VIEWCONTAINER_ID = component.__componentContext.nextID()
+export const addTransactionViewContainer = (componentContext, parentNode, transactionStoreHandler) => {
+  const TRANSACTION_VIEWCONTAINER_ID = componentContext.nextID()
   let TRANSACTION_VIEWCONTAINER_INST
-  TRANSACTION_VIEWCONTAINER_INST = component.__componentContext.addViewContainer(
+  TRANSACTION_VIEWCONTAINER_INST = componentContext.addViewContainer(
     new ContainerTransaction(
       new ViewContainerParameters(
-        component.__componentContext,
+        componentContext,
         TRANSACTION_VIEWCONTAINER_ID,
-        component.__parentNode
+        parentNode
       ),
-      new StoreContainer(component.__transactionStoreHandler)
+      new StoreContainer(transactionStoreHandler)
     )
   )
 
-  component.__componentContext.debug.log('CALCULATOR_VIEWCONTAINER_INST')
-  component.__componentContext.debug.object(TRANSACTION_VIEWCONTAINER_INST)
-  component.__componentContext.debug.print()
+  componentContext.debug.log('CALCULATOR_VIEWCONTAINER_INST')
+  componentContext.debug.object(TRANSACTION_VIEWCONTAINER_INST)
+  componentContext.debug.print()
 
   return TRANSACTION_VIEWCONTAINER_INST
 }

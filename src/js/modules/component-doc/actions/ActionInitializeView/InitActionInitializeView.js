@@ -1,28 +1,42 @@
-import {ActionBuilder, ActionParams} from 'hotballoon'
+import {ActionBuilder, ActionParams, ActionTypeParam} from 'hotballoon'
 import {ActionInitializeView} from './ActionInitializeView'
-import {assert} from 'flexio-jshelpers'
+import {isNull} from 'flexio-jshelpers'
 
 /**
  *
- * @param {DocComponent} component
+ * @param {Dispatcher} dispatcher
  * @returns {!Action<ActionInitializeView>}
  */
-export const initActionInitializeView = (component) => {
+export const initActionInitializeView = (dispatcher) => {
   /**
    *
    * @type {!Action<ActionInitializeView>}
    */
   return ActionBuilder.build(
     new ActionParams(
-      ActionInitializeView,
-      (payload) => {
-        assert(
-          payload instanceof ActionInitializeView,
-          'ActionInitializeView:validate: `payload` argument should be an instance of ActionInitializeView'
-        )
-        return true
-      },
-      component.__componentContext.dispatcher()
+      new ActionTypeParam(
+        ActionInitializeView,
+        /**
+         *
+         * @param {ActionInitialize} data
+         * @return {ActionInitialize}
+         */
+        (data) => {
+          if (isNull(data.message)) {
+            return data.withMessage('Default message')
+          }
+          return data
+        },
+        /**
+         *
+         * @param {ActionInitialize} payload
+         * @return {boolean}
+         */
+        (payload) => {
+          return !isNull(payload.message)
+        }
+      ),
+      dispatcher
     )
   )
 }

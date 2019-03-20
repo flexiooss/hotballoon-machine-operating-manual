@@ -1,1 +1,1 @@
-export {InitRouterComponent} from './component/InitRouterComponent'
+export {ComponentRouterBuilder} from './component/ComponentRouterBuilder'

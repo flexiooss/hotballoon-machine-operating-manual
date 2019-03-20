@@ -23,27 +23,30 @@ Une application HotBalloon a pour avantage d'être très verbeuse, chaque inform
 précise, ce qui permet une relecture et une maintenabilité du code aisée. En parlant de maintenabilité, sachez que l'ajout de nouvelles fonctionnalités
 est rapide, et tout en respectant la lisibilité de l'application.
 
-
 Dans une application HotBalloon, chaque acteur a sa propre place et ne joue pas plusieurs rôles. 
 Chaque acteur a pour objectif d'effectuer une tâche qui lui est propre dans le traitement des données. Ces acteurs définissent un environnement symbolisant une boucle utilisant de l'événementiel :
 
-
 ![PatternHB](./patternHB.svg)
 
-Ici, le bouton de la vue permet d'incrémenter un compteur. La vue déclenche cette fameuse boucle. Elle n'a pas du tout conscience de ce qu'elle va déclencher,
-elle va simplement envoyer un signal qui va être reçu par quiconque veut l'entendre.
+1. le bouton de la vue permet d'incrémenter un compteur. La vue déclenche cette fameuse boucle. Elle n'a pas du tout conscience de ce qu'elle va déclencher,
 
-Là intervient un acteur nommé View Container qui va s'intéresser à ce signal, qu'il va traduire en une 
-action qui va permettre d'incrémenter un compteur qu'il va envoyer au dispatcher.
+   elle va simplement envoyer un signal qui va être reçu par quiconque veut l'entendre.
 
-Le dispatcher a pour rôle d'envoyer l'action. Il va effectuer le rôle de facteur en envoyant un signalement 
-auprès de chaque Component qui aura souscrit un abonnement auprès de cette action.
+2. Là intervient un acteur nommé View Container qui va s'intéresser à ce signal, qu'il va traduire en une 
 
-Le component traitera ensuite le signal, il va traduire comme l'action d'incrémenter un compteur, il va donc s'exécuter à l'aide d'une logique métier qu'il connaît.
-Cette logique va permettre de mettre à jour un centre de stockage où est située la valeur du compteur appelé le store.
+   action qui va permettre d'incrémenter un compteur qu'il va envoyer au dispatcher.
 
-Une fois la valeur modifiée dans le store (modification par incrémentation), le store va envoyer un signal pour dire qu'il a changé.
-Ce signal sera reçu par le ViewContainer qui va relayer cette information à la vue qui affiche le compteur pour mettre à jour la valeur affichée.
+3. Le dispatcher a pour rôle d'envoyer l'action. Il va effectuer le rôle de facteur en envoyant un signalement 
+
+   auprès de chaque Component qui aura souscrit un abonnement auprès de cette action.
+
+4. Le component traitera ensuite le signal, il va traduire comme l'action d'incrémenter un compteur, il va donc s'exécuter à l'aide d'une logique métier qu'il connaît.
+
+   Cette logique va permettre de mettre à jour un centre de stockage où est située la valeur du compteur appelé le store.
+
+5. Une fois la valeur modifiée dans le store (modification par incrémentation), le store va envoyer un signal pour dire qu'il a changé.
+
+6. Ce signal sera reçu par le ViewContainer qui va relayer cette information à la vue qui affiche le compteur pour mettre à jour la valeur affichée.
 
 > Notez que le component a également la possibilité de dispatcher une action, à destination de lui-même ou d'un autre component de l'application.
 > Oui ! On peut avoir plusieurs components dans la même application, on peut donc avoir plusieurs boucles événementielles au sein de la même application.
@@ -60,246 +63,157 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
 
 ### structure du projet
 
-```
+```latex
 └── component-counter
       ├── __tests__
       ├── assets
-      │     ├── css
-      │     └── img
+      │     ├── css                              % feuilles css uniquement pour ce component
+      │     └── img                              % images uniquement pour ce component
       ├── component
-      │     ├── ComponentCounter.js
-      │     └── InitComponentCounter.js
+      │     ├── ComponentCounter.js              % "main" du component
+      │     └── ComponentCounterBuilder.js       % proxy pour initialiser le component
       ├── actions
       │     └── ActionIncrement
-      │             ├── ActionIncrement.js
-      │             ├── InitActionIncrement.js
-      │             └── ListenActionIncrement.js
+      │             ├── ActionIncrement.js       % value object
+      │             ├── InitActionIncrement.js   % initialisation de l'action d'incrémentation
+      │             └── ListenActionIncrement.js % listener d'action de type ActionIncrement
       └── stores
       │     └── counterStore
-      │             ├── InitSoreCounter.js
-      │             ├── StoreCounter.js
-      │             └── StoreHandlerCounter.js
+      │             ├── InitSoreCounter.js       % initialisation du store contenant le compteur
+      │             ├── StoreCounter.js          % value object 
+      │             └── StoreHandlerCounter.js   % proxy des données du store
       ├── views
       │     └── counterView
-      │         ├── ContainerCounter.js
-      │         ├── InitViewContainerCounter.js
+      │         ├── ContainerCounter.js          % conteneur et gestionnaire de vues
+      │         ├── InitViewContainerCounter.js  % initialisation du view container
       │         └── views
-      │                 └── ViewCounter.js
+      │                 └── ViewCounter.js       % vue qui décrit l'affichage du compteur
       ├── index.js
       └── package.json
 ```
 
+Le `component` est l'élement principale de l'application, il est l'ochestrateur de l'pplication. Il a pourtant pas tant de responsabilité sur celle-ci, on lui demande simplement de mettre en place les différentes briques de l'application :
+
+- les `actions`, qui contiennent la logique métier
+
+- les `stores`, qui contiennet la data
+
+- les `viewContainers`, qui sont des gestionnaires de vue
+
+Sans ces briques, le component n'est pas grand chose.
+
+Nous allons donc détailler d'abord chacunes de briques du component 
 
 ### Stores
-Trois classes représentent un store : 
-- le store qui est l'entitée qui stock
-```javascript
-/**
- * @extends Store
- */
-export class StoreCounter extends Store {
-}
-```
 
-- le StoreData qui est un schéma des données qui doivent être stockées
+Le `store` est l'entité qui va contenir les données.
+On a besoind'un value object qui va contenir la data du store :
+
 ```javascript
-/**
- * @extends DataStoreInterface
- */
-export class StoreDataCounter extends DataStoreInterface {
-  /**
-   *
-   * @param {int} value
-   */
-  constructor(value = 0) {
-    super()
-    this.value = value
+export class StoreCounter {
+  constructor(count) {
+    this.count = count
   }
 }
 ```
 
-- le StoreHandler qui permet d'effectuer des accès en lecture sur le store (poxy)
- ```javascript
-/**
- * @extends PublicStoreHandler
- */
-export class StoreHandlerCounter extends PublicStoreHandler {
-  /**
-   *
-   * @returns {int}
-   */
-  get value() {
-    return this.data().value
-  }
+On peut ensuite initialiser le store :
+
+```javascript
+const counterStore = StoreBuilder.InMemory(
+  new InMemoryStoreParams(
+    StoreCounter,
+    (data) => {
+      return data instanceof StoreCounter
+    },
+    new StoreCounter(0)
+  )
+)
+component.componentContext.addStore(counterStore)
+```
+
+On crée un Store en mémoire, il est du type **StoreCounter**, et est initilalisé avec count = 0.
+
+Le StoreHandler qui permet d'effectuer des accès en lecture sur le store (poxy) :
+
+```javascript
+export class StoreDataCounter extends PublicStoreHandler {
+  get count() {
+    return this.state().data.count()
+  } 
 }
- ```   
-    
+```
+
 ### Actions
 
-L'action, comme dit plus haut, est un "singal", elle permet de mettre en relation la vue et le component.
-
-On crée une action de cette manière :
+`L'action`, comme dit plus haut, est un "singal", elle permet de mettre en relation la vue et le component.
+Une action est constitué d'un value object qui va permetttre de transmettre des données avec les signal.
+Dans notre cas le counter est un simple signal qui n'a pas besoin de contenir de données :
 
 ```javascript
-const ACTIONS_EXAMPLE = 'ACTIONS_ADD_NUMBER'
-/**
- * @extends Action
- */
-export class ActionIncrement extends Action {
-  constructor() {
-    super(new ActionParams(ACTIONS_EXAMPLE, ActionPayload))
-  }
+export class ActionIncrement {
+
 }
 ```
 
-Pour dispatcher (envoyer au postier) une nouvelle action :
+On peut ensuite initialiser l'action :
+
+```javascript
+const actionIncrement = ActionBuilder.build(
+  new ActionParams(
+    ActionIncrement,
+    (payload) => {
+      assert(
+        payload instanceof ActionIncrement,
+        'ActionIncrement:validate: `payload` argument should be an instance of ActionIncrement'
+      )
+      return true
+    },
+    component.__componentContext.dispatcher()
+  )
+)
+```
+
+Pour `dispatcher` (envoyer au postier) une nouvelle action :
+
 ```javascript
 this.dispatchAction(
-  ActionIncrement.withPayload(
-    new ActionPayload()
+  actionIncrement.dispatch(
+    new ActionIncrement()
   )
 )
 ```
-Ici, on dispatch une action "ActionIncrement"
 
-> le mot Payload vous attire forcément l'œil, sachez que nous en reparlerons en détail, mais gardez à l'esprit qu'une action peut être plus qu'un simple signal,
-> elle peut transporter des données avec elle ! Bonne nouvelle non ?
+Ici, on `Dispatch` une action "ActionIncrement"
 
 Une fois dispatché, on pourra écouter cette action de la manière suivante :
-```javascript
-component.componentContext.listenAction(
-  DispatcherEventListenerFactory.listen(
-    new ActionIncrement())
-    .callback((payload) => {
-      doSomeThings()
-    })
-)
-```
-Une fois l'action capturée dans ce listener, le callback va se charger d'exécuter le code (doSomeThings), dans le cas de notre compteur, 
-l'action "ActionIncrement" devrait permettre de changer le contenu du store. 
 
-### Component
-Le component est l'élément princiaple, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
-Il est constitué d'un component context qui permet de :
-   - ajouter des actionsUtil et de les écouter,
-   - dispatcher (envoyer) des actionsUtil,
-   - ajouter des storesBuilder,
-   - ajouter des conteneurs de vues.
-   
-Il va devoir initialiser les storesBuilder qui veut utiliser : 
 ```javascript
-export const addStoreCounter = (component) => {
-  return component.componentContext.addStore(
-    new StoreCounter(
-      COUNTER_STORE,
-      new InMemoryStorage(
-        new State(NAVBAR_STORE, new StoreDataCounter(0)),
-        new StoreDataCounter()
+export const listenActionModifyCounter = (component) => {
+  assert(component.actionIncrement !== 'undefined',
+    'listenActionModifyCounter: ActionChangeAction should be initialized before using it'
+  )
+
+  component.actionIncrement
+    .listenWithCallback((payload) => {
+      component.__counterStore.set(
+        component.__counterStore.state().data
+          .withCount(component.__counterStore.state().data.count() + 1)
       )
-    )
-  )
-}
-```
-Ici le component, passé en paramètre, va ajouter, à l'aide du component context, le store StoreCounter. Un store a besoin
-d'un id : COUNTER_STORE et d'un moyen de stockage, ici en mémoire.
-Le store est initialisé avec le schéma StoreDataCounter contenant l'attribut value initilisaé à 0.
-
-Le component va également enregistrer les actionsUtil qu'il a besoin d'écouter : 
-```javascript
-export const addActionIncrementCounter = (component) => {
-  component.componentContext.listenAction(
-    DispatcherEventListenerFactory.listen(
-      new ActionIncrement())
-      .callback((payload) => {
-        let result = component.counterStore.data().value + 1
-        component.counterStore.set(new StoreDataCounter(result))
-      })
-      .build()
-  )
-}
-```
-On va donc ajouter un listener comme décrit plus haut, et dans le callback, on va récupérer le
-résultat de "value" contenu dans le store counterStore. On va ensuite redéfinir la donnée de counterStore
-avec la valeur actuelle incrémenté. 
-
-On initialise enfin le ViewContainer, il doit être branché sur des storesBuilder pour que les vues puissent les utiliser.
-```javascript 
-export const addExampleViewContainer = (component) => {
-  const VIEWCONTAINER_ID = component.componentContext.nextID()
-  return component.componentContext.addViewContainer(
-    new ViewContainerCounter(
-      new ViewContainerParameters(
-        component.componentContext,
-        VIEWCONTAINER_ID,
-        component.parentNode
-      ),
-      new ContainerStores(component.counterStoreHandler)
-    )
-  )
-}
-```
-Le ViewContainer est obligatoirement initialisé avec un object permettant de définir les 
-paramètres de celui-ci. Ces paramètres contiennent le componentContext du component, un id (ici géneré par le
-componentContext et le noeud du DOM sur lequel sera branché les vues du ViewContainer.
-
-Il peut également contenir des storesBuilder même si cela n'est pas obligatoire. 
-ContainerStores représente ici un ValueObject qui permet de containeriser les différents storesBuilder
-qui vont être utilisé par le viewContainer : 
-```javascript 
-export class CounterContainerStoresParams {
-  constructor(counterStore) {
-    this.__counterStore = TypeCheck.assertStoreBase(counterStore)
-  }
-
-  get counterStore() {
-    return this.__counterStore
-  }
+    })
 }
 ```
 
-
-### Views
-Pour créer une vue, on écrit un tempate qui va décrire ce que le doit afficher la vue. Cette vue est branchée sur des storesBuilder qui vont 
-permettre de mettre à jour cette vue. On écrit un tempate de cette manière : 
-```javascript 
-/**
- *
- * @return {Element}
- */
-template() {
-  return this.html('div#divCounter.containerCounter',
-    HtmlParams
-      .addChildNodes([
-        this.html('span#counter.counter', HtmlParams.withText(this.__stores.counterStore.value)),
-        this.html('input#increment.button',
-          HtmlParams
-            .withAttributes(
-              { value: 'Increment', type: 'button' })
-            .addEventListener(
-              NodeEventListenerFactory.listen('click')
-                .callback((e) => {
-                  this.dispatch(INCREMENT_EVENT, null)
-                })
-                .build()
-            )
-        )
-      ])          
-  )    
-}
-```
-Ce tempate nous permet de créer un noeud div, constitué d'un id divCounter et d'une classe nommée containerCounter.
-Ce noeud est composé de 2 nœud fils : 
-- un nœud span qui a pour texte la valeur contenue dans le store counterStore.
-- un nœud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
-sur celui-ci, un évènement INCREMENT_EVENT va être dispatché.
-
-
+Une fois l'action capturée dans ce listener, le callback va se charger d'exécuter le code, dans le cas de notre compteur, 
+l'action **ActionIncrement** va ajouter +1 au compteur.
 
 ### ViewContainers
+
 Comme décrit plus haut, une vue envoie des événements. Ceux-ci vont être captés par le ViewContainer. Il a pour but
 d'enregistrer les vues et les différents événements associés à ces vues.
 
 Pour enregister une vue :
+
 ```javascript
 this.addView(
       new CounterViewSimple(
@@ -308,16 +222,19 @@ this.addView(
       )
     )
 ```
+
 Chaque vue contient un viewParamter constitué d'un id : COUNTER_VIEW initialisé de la sorte : 
+
 ```javascript
 const COUNTER_VIEW = Symbol('COUNTER_VIEW')
 ```
+
 Et le container qui contient cette vue.
 Elle peut également contenir un ou des storesBuilder, mais cela n'est pas obligatoire, auquel cas la vue n'aura pas besoin d'être mise à jour.
 
-
 Une fois la vue ajoutée au container, on peut écouter les événements qui proviennent de 
 cette vue :
+
 ```javascript
 this.view(COUNTER_VIEW).on(
   ViewEventListenerFactory
@@ -331,9 +248,157 @@ this.view(COUNTER_VIEW).on(
     }).build()
 )
 ```
+
 Quand la vue avec l'id COUNTER_VIEW envoie l'événement INCREMENT_EVENT, il est capté par ce listener
 qui va dans ce cas dispatcher l'action ActionIncrement.
 
+#### Views
+
+Pour créer une vue, on écrit un tempate qui va décrire ce que doit afficher la vue. Cette vue est branchée sur des storesBuilder qui vont
+ permettre de mettre à jour cette vue. On écrit un tempate de cette manière :
+
+```javascript
+template() {
+  return this.html(
+  e('div#divCounter.containerCounter')
+    .childNodes(
+      this.html(
+        e('span#counter.counter')
+          .text(this.__stores.counterStore.value)
+      ),
+      this.html(
+        e('input#increment.button')
+          .attributes({ value: 'Increment', type: 'button' })
+          .listenEvent(
+            ElementEventListenerBuilder.listen('click')
+              .callback((e) => {
+                 this.dispatch(INCREMENT_EVENT, null)
+              })
+          .build()
+      )
+    )
+  )
+}
+```
+
+Ce tempate nous permet de créer un noeud div, constitué d'un id divCounter et d'une classe nommée containerCounter.
+Ce noeud est composé de 2 nœud fils :
+
+- un nœud span qui a pour texte la valeur contenue dans le store counterStore.
+
+- un nœud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
+
+  sur celui-ci, un évènement INCREMENT_EVENT va être dispatché.
+
+
+
+### Component
+
+Le component est l'élément princiaple, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
+Il est constitué d'un component context qui permet de :
+
+- ajouter des `ActionsUtil` et de les écouter;
+
+- dispatcher (envoyer) des `ActionsUtil`;
+
+- ajouter des `StoresBuilder`;
+
+- ajouter des `ViewContainers` de vues.
+
+Il va devoir initialiser les storesBuilder qui veut utiliser.
+
+```javascript
+export const initActionModifyCounter = (component) => {
+  const counterStore = StoreBuilder.InMemory(
+    new InMemoryStoreParams(
+      StoreCounter,
+      (data) => {
+        return data instanceof StoreCounter
+      },
+      new StoreCounter(0)
+    ) 
+  )
+  component.componentContext.addStore(counterStore)
+  return counterStore
+}
+```
+
+On initialise un store comme décrit plus haut est on l'ajoute au `ComponentContext`.
+
+Le component va également enregistrer les `ActionsUtil` qu'il a besoin d'écouter :
+
+```javascript
+export const initActionModifyCounter = (component) => {
+  return ActionBuilder.build(
+    new ActionParams(
+      ActionIncrement,
+      (payload) => {
+        assert(
+          payload instanceof ActionIncrement,
+          'ActionIncrement:validate: `payload` argument should be an instance of ActionIncrement'
+        )
+        return true
+      },
+      component.componentContext.dispatcher()
+    )
+  )
+}
+```
+
+On initialise enfin le `ViewContainer`, il doit être branché sur des `StoresBuilder` pour que les vues puissent les utiliser.
+
+```javascript
+export const addExampleViewContainer = (component) => {
+  const VIEWCONTAINER_ID = component.componentContext.nextID()
+  return component.componentContext.addViewContainer(
+    new ViewContainerCounter(
+      new ViewContainerParameters(
+        component.componentContext,
+        VIEWCONTAINER_ID,
+        component.parentNode
+      ),
+      new ContainerStores(component.counterStoreHandler),
+      new ContainerActions(component.actionIncrement)
+    )
+  )
+}
+```
+
+Le `ViewContainer` est obligatoirement initialisé avec un object permettant de définir les
+ paramètres de celui-ci. Ces paramètres contiennent le `ComponentContext` du component, un id (ici géneré par le `ComponentContext` et le noeud du DOM sur lequel sera branché les vues du `ViewContainer`.
+
+Il peut également contenir des `StoresBuilder` même si cela n'est pas obligatoire.
+ **ContainerStores** représente ici un ValueObject qui permet de containeriser les différents `StoresBuilder`
+qui vont être utilisé par le `viewContainer` :
+
+```javascript
+export class ContainerStore {
+  constructor(counterStore) {
+    assert(
+      counterStore.isTypeOf(StoreCounter),
+      'ContainerStores: `counterStore ` should be a Store of CounterStore')
+    this.__counterStore = TypeCheck.assertStoreBase(counterStore)
+  }
+
+  get counterStore() {
+    return this.__counterStore
+  }
+}
+```
+
+On peut effectuer le même procedé pour les actions qui vont être utilisé par le `ViewContainer`:
+
+```javascript
+export class ContainerAction {
+  constructor(counterIncrementAction) {
+    this.__counterIncrementAction = TypeCheck.assertIsAction(counterIncrementAction)
+  }
+
+  get counterIncrementAction() {
+    return this.__counterIncrementAction
+  }
+}
+```
 
 ![ComponentUse](./basicComponent.svg)
 
@@ -341,14 +406,13 @@ qui va dans ce cas dispatcher l'action ActionIncrement.
 2. On initialise le Component en lui passant le nouveau componentContext ainsi que le noeud sur lequel il sera branché
 3. InitComponent définit les storesBuilder auquel le component à accès.
 4. InitComponent définit les Actions sur lesquels le component est branché.
-On branche les actionsUtil sur un component en créant un listener sur celle-ci.
+
+   On branche les actions sur un component en créant un listener sur celle-ci.
 5. On initialise le ViewContainer, il doit être branché sur des storesBuilder pour que les vues puissent les utiliser.
 6. Enregistrements de vues appartenant au Conteneur de vues   
 7. La vue est créée en fonction d'un template de view, qui est mis à jour en fonction du store.
 
 ![RouterUse](./Router.svg)
-
-
 
 - le développement des applications HotBalloon est fait en fonction des tests
 - les workers ne peuvent pas être utilisés dans node JS donc dans les tests nons plus

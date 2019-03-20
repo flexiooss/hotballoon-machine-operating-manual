@@ -1,17 +1,20 @@
 'use strict'
 import {TypeCheck} from 'hotballoon'
 import {isNode, assert} from 'flexio-jshelpers'
-import {initDocViewContainer} from '../views/doc/InitDocViewContainer'
+import {initDocViewContainer, InitDocViewContainerParams} from '../views/doc/InitDocViewContainer'
 import {addDocRoute} from './catalogRoutes/addRouteDoc'
 import {initStoreNavbar} from '../stores/storeNavbar/InitStoreNavbar'
 import {initActionInitializeView} from '../actions/ActionInitializeView/InitActionInitializeView'
 import {initActionChangeView} from '../actions/ActionChangeView/InitActionChangeView'
-import {listenActionChangeView} from '../actions/ActionChangeView/ListenActionChangeView'
-import {listenActionInitializeView} from '../actions/ActionInitializeView/ListenActionInitializeView'
+import {listenActionChangeView, ListenActionChangeViewParams} from '../actions/ActionChangeView/ListenActionChangeView'
+import {
+  listenActionInitializeView,
+  ListenActionInitializeViewParams
+} from '../actions/ActionInitializeView/ListenActionInitializeView'
 import {ActionInitializeView} from '../actions/ActionInitializeView/ActionInitializeView'
 import {StoreHandlerNavbar} from '../stores/storeNavbar/StoreHandlerNavbar'
 
-export class DocComponent {
+export class ComponentDoc {
   /**
    *
    * @param {ComponentContext} componentContext
@@ -23,7 +26,7 @@ export class DocComponent {
    */
   constructor(componentContext, parentNode, routeHandler, routerActionDispatcher, executor, transactionActionDispatcher) {
     assert(!!isNode(parentNode),
-      'RouterComponent:constructor: `parentNode` argument should be NodeType, %s given',
+      'ComponentRouter:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
 
     assert(
@@ -39,6 +42,10 @@ export class DocComponent {
     this.__executor = executor
     this.__viewContainerID = this.__componentContext.nextID()
     this.__transactionActionDispatcher = transactionActionDispatcher
+    this.__actionChangeView = null
+    this.__actionInitializeView = null
+    this.__navbarStore = null
+    this.__navbarStoreHandler = null
   }
 
   addDocRoute() {
@@ -47,41 +54,63 @@ export class DocComponent {
   }
 
   addStoreNavbar() {
-    this.__navbarStore = initStoreNavbar(this)
+    this.__navbarStore = initStoreNavbar(this.__componentContext, this.__routeHandler)
     this.__navbarStoreHandler = new StoreHandlerNavbar(this.__navbarStore)
     return this
   }
 
   addActionInitializer() {
-    this.__actionInitializeView = initActionInitializeView(this)
-    listenActionInitializeView(this)
+    this.__actionInitializeView = initActionInitializeView(this.__componentContext.dispatcher())
+    listenActionInitializeView(
+      new ListenActionInitializeViewParams(
+        this.__actionInitializeView,
+        this.__actionChangeView
+      )
+    )
     return this
   }
 
   addActionChangeView() {
-    this.__actionChangeView = initActionChangeView(this)
-    listenActionChangeView(this)
+    this.__actionChangeView = initActionChangeView(this.__componentContext.dispatcher())
+    listenActionChangeView(
+      new ListenActionChangeViewParams(
+        this.__actionChangeView,
+        this.__navbarStoreHandler,
+        this.__componentContext,
+        this.__viewContainerID,
+        this.__executor,
+        this.__transactionActionDispatcher
+      )
+    )
     return this
   }
 
   /**
    *
-   * @returns {DocComponent}
+   * @returns {ComponentDoc}
    */
   setEventLoop() {
     this.addDocRoute()
     this.addStoreNavbar()
-    this.addActionInitializer()
     this.addActionChangeView()
+    this.addActionInitializer()
     return this
   }
 
   /**
    *
-   * @returns {DocComponent}
+   * @returns {ComponentDoc}
    */
   mountView() {
-    initDocViewContainer(this).renderAndMount(this.__parentNode)
+    initDocViewContainer(
+      this.__componentContext,
+      this.__parentNode,
+      new InitDocViewContainerParams(
+        this.__navbarStoreHandler,
+        this.__viewContainerID,
+        this.__routerActionDispatcher
+      )
+    ).renderAndMount(this.__parentNode)
     return this
   }
 
@@ -113,7 +142,7 @@ export class DocComponent {
    * @param {RouterActionDispatcher} routerActionDispatcher
    * @param {ExecutorInterface} executor
    * @param {TransactionActionDispatcher} transactionActionDispatcher
-   * @return {DocComponent}
+   * @return {ComponentDoc}
    * @constructor
    * @static
    */

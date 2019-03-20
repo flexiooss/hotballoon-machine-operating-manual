@@ -1,0 +1,2 @@
+ActionInitialize:
+  message: string

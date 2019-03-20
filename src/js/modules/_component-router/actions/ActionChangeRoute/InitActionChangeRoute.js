@@ -1,24 +1,35 @@
-import {ActionBuilder, ActionParams} from 'hotballoon'
-import {assert} from 'flexio-jshelpers'
+import {ActionBuilder, ActionParams, ActionTypeParam} from 'hotballoon'
+import {isNull} from 'flexio-jshelpers'
 import {ActionChangeRoute} from './ActionChangeRoute'
 
 /**
  *
- * @param {RouterComponent} component
+ * @param {Dispatcher} dispatcher
  * @returns {!Action<ActionChangeRoute>}
  */
-export const initActionChangeRoute = (component) => {
+export const initActionChangeRoute = (dispatcher) => {
   return ActionBuilder.build(
     new ActionParams(
-      ActionChangeRoute,
-      (payload) => {
-        assert(
-          payload instanceof ActionChangeRoute,
-          'ActionChangeRoute:validate: `payload` argument should be an instance of ActionChangeRoute'
-        )
-        return true
-      },
-      component.__componentContext.dispatcher()
+      new ActionTypeParam(
+        ActionChangeRoute,
+        /**
+         *
+         * @param {ActionChangeRoute} data
+         * @return {ActionChangeRoute}
+         */
+        (data) => {
+          return data
+        },
+        /**
+         *
+         * @param {ActionChangeRoute} payload
+         * @return {boolean}
+         */
+        (payload) => {
+          return !isNull(payload.url)
+        }
+      ),
+      dispatcher
     )
   )
 }

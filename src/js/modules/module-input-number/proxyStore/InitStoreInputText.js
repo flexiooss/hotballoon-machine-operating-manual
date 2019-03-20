@@ -1,4 +1,4 @@
-import {ProxyStoreParams, StoreBuilder} from 'hotballoon'
+import {ProxyStoreParams, StoreBuilder, StoreTypeParam} from 'hotballoon'
 import {StoreInputText} from './StoreInputText'
 
 /**
@@ -7,21 +7,35 @@ import {StoreInputText} from './StoreInputText'
  * @returns {Store}
  */
 export const initStoreInputText = (view) => {
-  /**
-   *
-   * @type {Store<StoreCounter>}
-   */
-  console.log(view.__store.state().data)
-  const resultStore = StoreBuilder.Proxy(
+  return StoreBuilder.Proxy(
     new ProxyStoreParams(
-      StoreInputText,
-      (data) => {
-        return data instanceof StoreInputText
-      },
+      new StoreTypeParam(
+        StoreInputText,
+        /**
+         *
+         * @param {StoreInputText} data
+         * @return {StoreInputText}
+         */
+        (data) => {
+          return data
+        },
+        /**
+         *
+         * @param {StoreInputText} data
+         * @return {boolean}
+         */
+        (data) => {
+          return true
+        },
+        /**
+         *
+         * @param {Object} obj
+         * @return {StoreInputText}
+         */
+        (obj) => obj
+      ),
       view.__store,
       view.__mapper
     )
   )
-  view.subscribeToStore(resultStore)
-  return resultStore
 }

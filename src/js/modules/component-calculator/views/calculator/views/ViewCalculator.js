@@ -14,7 +14,7 @@ export default class ViewCalculator extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
-   * @param {StoreContainer} storeContainer
+   * @param {ContainerStore} storeContainer
    */
   constructor(viewParameters, storeContainer) {
     super(viewParameters)
@@ -38,7 +38,6 @@ export default class ViewCalculator extends View {
          * @returns {ProxyStoreInputText}
          */
         function(data) {
-          console.log(data)
           return new ProxyStoreInputText(new DataHandlerResult(data).display())
         }
       )
@@ -155,7 +154,7 @@ export default class ViewCalculator extends View {
                 .attributes({type: 'button', value: (y * 3 + i + 1)})
                 .listenEvent(ElementEventListenerBuilder.listen('click')
                   .callback((e) => {
-                    this.dispatch(INPUT_NUMBER_EVENT, { number: e.target.value })
+                    this.dispatch(INPUT_NUMBER_EVENT, { number: e.target.value.toString() })
                   })
                   .build()
                 )

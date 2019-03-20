@@ -6,7 +6,6 @@
 //  * @returns {Multimeter}
 //  */
 // export const addMultimeter = (component) => {
-//   console.log(component.__counterStoreHandler)
 //   const COUNTER_VIEWCONTAINER_ID = component.__componentContext.nextID()
 //   let COUNTER_VIEWCONTAINER_INST
 //   COUNTER_VIEWCONTAINER_INST =

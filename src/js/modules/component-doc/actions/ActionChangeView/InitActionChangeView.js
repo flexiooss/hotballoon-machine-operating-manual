@@ -1,24 +1,34 @@
-import {ActionBuilder, ActionParams} from 'hotballoon'
+import {ActionBuilder, ActionParams, ActionTypeParam} from 'hotballoon'
 import {ActionChangeView} from './ActionChangeView'
-import {assert} from 'flexio-jshelpers'
 
 /**
  *
- * @param {DocComponent} component
+ * @param {Dispatcher} dispatcher
  * @returns {!Action<ActionChangeView>}
  */
-export const initActionChangeView = (component) => {
+export const initActionChangeView = (dispatcher) => {
   return ActionBuilder.build(
     new ActionParams(
-      ActionChangeView,
-      (payload) => {
-        assert(
-          payload instanceof ActionChangeView,
-          'ActionChangeView:validate: `payload` argument should be an instance of ActionChangeView'
-        )
-        return true
-      },
-      component.__componentContext.dispatcher()
+      new ActionTypeParam(
+        ActionChangeView,
+        /**
+         *
+         * @param {ActionChangeView} data
+         * @return {ActionChangeView}
+         */
+        (data) => {
+          return data
+        },
+        /**
+         *
+         * @param {ActionChangeView} payload
+         * @return {boolean}
+         */
+        (payload) => {
+          return true
+        }
+      ),
+      dispatcher
     )
   )
 }

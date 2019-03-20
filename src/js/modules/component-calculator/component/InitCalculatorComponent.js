@@ -10,7 +10,7 @@ export class InitCalculatorComponent {
    * @param {TransactionActionDispatcher} transactionActionDispatcher
    */
   constructor(payload, APP, parentNode, executor, transactionActionDispatcher) {
-    ComponentCalculator.create(
+    new ComponentCalculator(
       APP.addComponentContext(),
       parentNode,
       executor,

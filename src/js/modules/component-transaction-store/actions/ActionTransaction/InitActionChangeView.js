@@ -1,24 +1,40 @@
-import {ActionBuilder, ActionParams} from 'hotballoon'
-import {assert} from 'flexio-jshelpers'
-import {ActionTransaction} from './ActionTransaction'
+import {ActionBuilder, ActionParams, ActionTypeParam} from 'hotballoon'
+import {FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
+import '../../generated/io/package'
+
+const ActionTransaction = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.actions.ActionTransaction
 
 /**
  *
- * @param {DocComponent} component
+ * @param {Dispatcher} dispatcher
  * @returns {!Action<ActionTransaction>}
  */
-export const initActionTransaction = (component) => {
+export const initActionTransaction = (dispatcher) => {
   return ActionBuilder.build(
     new ActionParams(
-      ActionTransaction,
-      (payload) => {
-        assert(
-          payload instanceof ActionTransaction,
-          'ActionTransaction:validate: `payload` argument should be an instance of ActionTransaction'
-        )
-        return true
-      },
-      component.__componentContext.dispatcher()
+      new ActionTypeParam(
+        ActionTransaction,
+        /**
+         *
+         * @param {ActionTransaction} data
+         * @return {ActionTransaction}
+         */
+        (data) => {
+          if (isNull(data.active()) || isNull(data.ticket())) {
+            return data.withActive(false).withTicket('default ticket')
+          }
+          return data
+        },
+        /**
+         *
+         * @param {ActionTransaction} payload
+         * @return {boolean}
+         */
+        (payload) => {
+          return !isNull(payload.active()) && !isNull(payload.ticket())
+        }
+      ),
+      dispatcher
     )
   )
 }

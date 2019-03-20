@@ -8,15 +8,8 @@ import '../../assets/css/style.css'
 import {FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
 import '../../generated/io/package'
 
-/**
- * @type {ActionNumberInput}
- */
-const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCalculator.ActionNumberInput
-
-/**
- * @type {ActionOperatorInput}
- */
-const ActionOperatorInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCalculator.ActionOperatorInput
+const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionNumberInput
+const ActionOperatorInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionOperatorInput
 
 const CALCULATOR_VIEW = Symbol('CALCULATOR_VIEW')
 

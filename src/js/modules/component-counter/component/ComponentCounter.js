@@ -1,9 +1,12 @@
 'use strict'
 import {isNode, assert, isBoolean} from 'flexio-jshelpers'
-import {initCounterViewContainer} from '../views/Counter/InitCounterViewContainer'
+import {initCounterViewContainer, InitCounterViewContainerParams} from '../views/Counter/InitCounterViewContainer'
 import {TypeCheck} from 'hotballoon'
 import {initActionModifyCounter} from '../actions/ActionModifyCounter/InitActionModifyCounter'
-import {listenActionModifyCounter} from '../actions/ActionModifyCounter/ListenActionModifyCounter'
+import {
+  listenActionModifyCounter,
+  ListenActionModifyCounterParams
+} from '../actions/ActionModifyCounter/ListenActionModifyCounter'
 import {initStoreCounter} from '../stores/CounterStore/InitStoreCounter'
 import {StoreHandlerCounter} from '../stores/CounterStore/StoreHandlerCounter'
 
@@ -31,28 +34,27 @@ export class ComponentCounter {
 
     this.__componentContext = componentContext
     this.__parentNode = parentNode
-    this.withSubView = withSubView
+    this.__withSubView = withSubView
+    this.__actionModifyCounter = null
+    this.__counterStore = null
+    this.__counterStoreHandler = null
   }
 
   addActionModifyCounter() {
-    this.__actionModifyCounter = initActionModifyCounter(this)
-    listenActionModifyCounter(this)
+    this.__actionModifyCounter = initActionModifyCounter(this.__componentContext.dispatcher())
+    listenActionModifyCounter(
+      new ListenActionModifyCounterParams(
+        this.__actionModifyCounter, this.__counterStore
+      )
+    )
     return this
   }
 
   addStoreCounter() {
-    this.__counterStore = initStoreCounter(this)
+    this.__counterStore = initStoreCounter(this.__componentContext)
     this.__counterStoreHandler = new StoreHandlerCounter(this.__counterStore)
     return this
   }
-
-  // /**
-  //  *
-  //  * @returns {Multimeter}
-  //  */
-  // addMultimeter() {
-  //   return addMultimeter(this)
-  // }
 
   setEventLoop() {
     this.addStoreCounter()
@@ -61,7 +63,13 @@ export class ComponentCounter {
   }
 
   mountView() {
-    let counterViewContainer = initCounterViewContainer(this)
+    let counterViewContainer = initCounterViewContainer(
+      this.__componentContext,
+      this.__parentNode,
+      new InitCounterViewContainerParams(
+        this.__actionModifyCounter, this.__counterStoreHandler, this.__withSubView
+      )
+    )
 
     if (counterViewContainer !== undefined) {
       counterViewContainer.renderAndMount(this.__parentNode)

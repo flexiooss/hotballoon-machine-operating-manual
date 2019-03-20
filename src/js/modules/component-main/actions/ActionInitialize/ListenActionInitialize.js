@@ -1,26 +1,55 @@
-import {assert} from 'flexio-jshelpers'
 import {InitDocComponent} from '../../../component-doc/component/InitDocComponent'
+import {TypeCheck} from 'hotballoon'
+import {isNode, assertType} from 'flexio-jshelpers'
+import {ComponentDoc} from '../../../component-doc'
+import {ComponentDocBuilder} from '../../../component-doc/component/ComponentDocBuilder'
+
+export class ListenActionInitializeParams {
+  constructor(actionInitialize, app, parentNode, routeHandler, routerActionDispatcher, executor, transactionActionDispatcher) {
+    assertType(TypeCheck.isAction(actionInitialize),
+      'ComponentMain:ListenActionInitializeParams: actionInitialize should be an action'
+    )
+    assertType(TypeCheck.isHotballoonApplication(app),
+      'ComponentMain:ListenActionInitializeParam: `app` should be a HotBalloonApplication'
+    )
+    assertType(isNode(parentNode),
+      'ComponentMain:ListenActionInitializeParam: `parentNode` should be an Element'
+    )
+    this.actionInitialize = actionInitialize
+    this.app = app
+    this.parentNode = parentNode
+    this.routeHandler = routeHandler
+    this.routerActionDispatcher = routerActionDispatcher
+    this.executor = executor
+    this.transactionActionDispatcher = transactionActionDispatcher
+  }
+}
 
 /**
  *
- * @param {MainComponent} component
+ * @param {ListenActionInitializeParams} params
  */
-export const listenActionInitialize = (component) => {
-  assert(component.__actionInitialize !== 'undefined',
-    'listenActionInitialize: ActionChangeView should be initialized before using it'
+export const listenActionInitialize = (params) => {
+  assertType(params instanceof ListenActionInitializeParams,
+    'ComponentMain:listenActionInitialize: `params` should be ListenActionInitializeParams'
   )
 
-  component.__actionInitialize
-    .listenWithCallback((payload) => {
-      console.log(payload.message)
-      InitDocComponent.create(
-        payload,
-        component.componentContext.APP(),
-        component.__parentNode,
-        component.__routeHandler,
-        component.__routerActionDispatcher,
-        component.__executor,
-        component.__transactionActionDispatcher
-      ).dispatchActionInitialize()
-    })
+  params.actionInitialize
+    .listenWithCallback(
+      /**
+       *
+       * @param {ActionInitialize} payload
+       */
+      (payload) => {
+        ComponentDocBuilder.build(
+          payload,
+          params.app,
+          params.parentNode,
+          params.routeHandler,
+          params.routerActionDispatcher,
+          params.executor,
+          params.transactionActionDispatcher
+        ).initAndMount().dispatchActionInitialize()
+      }
+    )
 }

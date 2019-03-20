@@ -1,4 +1,4 @@
-import {e, View} from 'hotballoon'
+import {e, StoreBuilder, View} from 'hotballoon'
 import {initStoreInputText} from '../proxyStore/InitStoreInputText'
 import {StoreHandlerInputText} from '../proxyStore/StoreHandlerInputText'
 
@@ -14,6 +14,7 @@ export class ModuleInputNumber extends View {
     this.__store = store
     this.__mapper = mapper
     this.__storeInputText = initStoreInputText(this)
+    this.subscribeToStore(this.__storeInputText)
     this.__storeHandlerInputText = new StoreHandlerInputText(this.__storeInputText)
   }
 

@@ -17,7 +17,6 @@ export class ContainerTransaction extends ViewContainer {
     super(viewContainerParameters)
     this.__stores = storeContainer
     this.__registerViews()
-    console.log(this.__stores.transactionStore.isActive)
   }
 
   /**
@@ -33,5 +32,3 @@ export class ContainerTransaction extends ViewContainer {
     )
   }
 }
-
-

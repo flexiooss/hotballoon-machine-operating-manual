@@ -1,39 +1,55 @@
 import {InitCounterComponent} from '../../../component-counter/component/InitCounterComponent'
 import {InitCalculatorComponent} from '../../../component-calculator/component/InitCalculatorComponent'
-import {assert} from 'flexio-jshelpers'
+import {assertType} from 'flexio-jshelpers'
+import {TypeCheck} from 'hotballoon'
+
+export class ListenActionChangeViewParams {
+  constructor(actionChangeView, navbarStoreHandler, componentContext, viewContainerID, executor, transactionActionDispatcher) {
+    assertType(TypeCheck.isAction(actionChangeView),
+      'ComponentDoc:ListenActionChangeViewParams: actionChangeView should be an action'
+    )
+
+    assertType(TypeCheck.isComponentContext(componentContext),
+      'ComponentDoc:ListenActionChangeViewParams: componentContext should be a ComponentContext'
+    )
+
+    this.actionChangeView = actionChangeView
+    this.navbarStoreHandler = navbarStoreHandler
+    this.componentContext = componentContext
+    this.viewContainerID = viewContainerID
+    this.executor = executor
+    this.transactionActionDispatcher = transactionActionDispatcher
+  }
+}
 
 /**
  *
- * @param {DocComponent} component
+ * @param {ListenActionChangeViewParams} params
  */
-export const listenActionChangeView = (component) => {
-  assert(component.__actionChangeView !== 'undefined',
-    'listenActionInitialize: ActionChangeView should be initialized before using it'
-  )
-
-  component.__actionChangeView
+export const listenActionChangeView = (params) => {
+  params.actionChangeView
     .listenWithCallback((payload) => {
-      if (component.__navbarStoreHandler.data().selected === 0) {
+      if (params.navbarStoreHandler.data().selected === 0) {
         InitCounterComponent.create(
           payload,
-          component.__componentContext.APP(),
-          component.__componentContext.viewContainer(component.__viewContainerID).getDemoNode(),
+          params.componentContext.APP(),
+          params.componentContext.viewContainer(params.viewContainerID).getDemoNode(),
           false
         )
-      } else if (component.__navbarStoreHandler.data().selected === 1) {
+      } else if (params.navbarStoreHandler.data().selected === 1) {
         InitCounterComponent.create(
           payload,
-          component.__componentContext.APP(),
-          component.__componentContext.viewContainer(component.__viewContainerID).getDemoNode(),
+          params.componentContext.APP(),
+          params.componentContext.viewContainer(params.viewContainerID).getDemoNode(),
           true
         )
-      } else if (component.__navbarStoreHandler.data().selected === 2) {
+      } else if (params.navbarStoreHandler.data().selected === 2) {
         InitCalculatorComponent.create(
           null,
-          component.__componentContext.APP(),
-          component.__componentContext.viewContainer(component.__viewContainerID).getDemoNode(),
-          component.__executor,
-          component.__transactionActionDispatcher
+          params.componentContext.APP(),
+          params.componentContext.viewContainer(params.viewContainerID).getDemoNode(),
+          params.executor,
+          params.transactionActionDispatcher
         )
       }
     })

@@ -1,1 +1,1 @@
-export { DocComponent } from './component/DocComponent'
+export { ComponentDoc } from './component/ComponentDoc'

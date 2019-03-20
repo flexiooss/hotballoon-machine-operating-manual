@@ -4,7 +4,7 @@ import {StoreNavbar} from '../stores/storeNavbar/StoreNavbar'
 
 /**
  */
-export class StoreContainer {
+export class ContainerStore {
   /**
    *
    * @param {PublicStoreHandler} navbarStore

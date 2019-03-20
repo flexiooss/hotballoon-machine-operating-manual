@@ -1,15 +1,24 @@
 'use strict'
 import {TypeCheck} from 'hotballoon'
-import {initStoreResult} from '../storesBuilder/StoreResult/InitStoreResult'
+import {initStoreResult} from '../stores/StoreResult/InitStoreResult'
 import {isNode, assert} from 'flexio-jshelpers'
-import {addCalculatorViewContainer} from '../views/calculator/addCalculatorViewContainer'
-import {initActionResultInput} from '../actionsUtil/ActionResultInput/InitActionResultInput'
-import {initActionNumberInput} from '../actionsUtil/ActionNumberInput/InitActionNumberInput'
-import {initActionOperatorInput} from '../actionsUtil/ActionOperatorInput/InitActionOperatorInput'
-import {listenActionNumberInput} from '../actionsUtil/ActionNumberInput/ListenActionNumberInput'
-import {listenActionResultInput} from '../actionsUtil/ActionResultInput/ListenActionResultInput'
-import {listenActionOperatorInput} from '../actionsUtil/ActionOperatorInput/ListenActionOperatorInput'
-import {StoreHandlerResult} from '../storesBuilder/StoreResult/StoreHandlerResult'
+import {initCalculatorViewContainer, CalculatorViewContainerParams} from '../views/calculator/initCalculatorViewContainer'
+import {initActionResultInput} from '../actions/ActionResultInput/InitActionResultInput'
+import {initActionNumberInput} from '../actions/ActionNumberInput/InitActionNumberInput'
+import {initActionOperatorInput} from '../actions/ActionOperatorInput/InitActionOperatorInput'
+import {
+  listenActionNumberInput,
+  ListenerActionNumberInputParams
+} from '../actions/ActionNumberInput/ListenActionNumberInput'
+import {
+  listenActionResultInput,
+  ListenerActionResultInputParams
+} from '../actions/ActionResultInput/ListenActionResultInput'
+import {
+  listenActionOperatorInput,
+  ListenerActionOperatorInputParams
+} from '../actions/ActionOperatorInput/ListenActionOperatorInput'
+import {StoreHandlerResult} from '../stores/StoreResult/StoreHandlerResult'
 
 export class ComponentCalculator {
   /**
@@ -21,42 +30,78 @@ export class ComponentCalculator {
    */
   constructor(componentContext, parentNode, executor, transactionActionDispatcher) {
     assert(!!isNode(parentNode),
-      'ComponentTransaction:constructor: `parentNode` argument should be NodeType, %s given',
-      typeof parentNode)
+      'ComponentTransaction:constructor: `parentNode` argument should be NodeType'
+    )
     assert(
       TypeCheck.isComponentContext(componentContext),
-      'ComponentTransaction:constructor: `componentContext` argument should be ComponentContext, %s given',
-      typeof componentContext
+      'ComponentTransaction:constructor: `componentContext` argument should be ComponentContext'
     )
 
     this.__executor = executor
     this.__parentNode = parentNode
     this.__componentContext = componentContext
     this.__transactionActionDispatcher = transactionActionDispatcher
+    this.__resultStore = null
+    this.__resultStoreHandler = null
+    this.__actionNumberInput = null
+    this.__actionOperatorInput = null
+    this.__actionResultInput = null
   }
 
   addResultStore() {
-    this.__resultStore = initStoreResult(this)
+    this.__resultStore = initStoreResult(this.__componentContext)
+    console.log(this.__resultStore)
     this.__resultStoreHandler = new StoreHandlerResult(this.__resultStore)
     return this
   }
 
   addActionInput() {
-    this.__actionNumberInput = initActionNumberInput(this)
-    this.__actionOperatorInput = initActionOperatorInput(this)
-    this.__actionResultInput = initActionResultInput(this)
+    this.__actionNumberInput = initActionNumberInput(this.__componentContext.dispatcher())
+    this.__actionOperatorInput = initActionOperatorInput(this.__componentContext.dispatcher())
+    this.__actionResultInput = initActionResultInput(this.__componentContext.dispatcher())
     return this
   }
 
   listenActionInput() {
-    listenActionNumberInput(this)
-    listenActionOperatorInput(this)
-    listenActionResultInput(this)
+    listenActionNumberInput(
+      new ListenerActionNumberInputParams(
+        this.__actionNumberInput,
+        this.__resultStoreHandler,
+        this.__resultStore
+      )
+    )
+    listenActionOperatorInput(
+      new ListenerActionOperatorInputParams(
+        this.__actionOperatorInput,
+        this.__actionResultInput,
+        this.__resultStoreHandler,
+        this.__resultStore
+      )
+    )
+    listenActionResultInput(
+      new ListenerActionResultInputParams(
+        this.__actionResultInput,
+        this.__resultStoreHandler,
+        this.__resultStore,
+        this.__transactionActionDispatcher,
+        this.__componentContext.nextID(),
+        this.__executor
+      )
+    )
     return this
   }
 
   mountView() {
-    addCalculatorViewContainer(this)
+    initCalculatorViewContainer(
+      this.__componentContext,
+      this.__parentNode,
+      new CalculatorViewContainerParams(
+        this.__resultStoreHandler,
+        this.__actionNumberInput,
+        this.__actionOperatorInput,
+        this.__actionResultInput
+      )
+    )
       .renderAndMount(this.__parentNode)
     return this
   }

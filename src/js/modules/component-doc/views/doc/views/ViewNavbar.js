@@ -6,7 +6,7 @@ export default class ViewNavbar extends View {
   /**
    *
    * @param {ViewParameters} viewParameters
-   * @param {StoreContainer} storeContainer
+   * @param {ContainerStore} storeContainer
    */
   constructor(viewParameters, storeContainer) {
     super(viewParameters)

@@ -9,7 +9,7 @@ import '../../generated/io/package'
 /**
  * @type {ActionModifyCounter}
  */
-const ActionModifyCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCounter.ActionModifyCounter
+const ActionModifyCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.actions.ActionModifyCounter
 
 const MAIN_VIEW = Symbol('MAIN_VIEW')
 

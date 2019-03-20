@@ -8,7 +8,7 @@ import ViewHeader from './views/ViewHeader'
 import ViewNavbar, {CHANGE_COMPONENT_EVENT} from './views/ViewNavbar'
 import ViewMain from './views/ViewMain'
 import ViewFooter from './views/ViewFooter'
-import {StoreContainer} from '../StoreContainer'
+import {ContainerStore} from '../ContainerStore'
 
 const HEADER_VIEW = Symbol('HEADER_VIEW')
 const FOOTER_VIEW = Symbol('FOOTER_VIEW')
@@ -40,7 +40,7 @@ export class ViewContainerDoc extends ViewContainer {
     this.addView(
       new ViewNavbar(
         new ViewParameters(NAVBAR_VIEW, this),
-        new StoreContainer(this.__stores.navbarStore)
+        new ContainerStore(this.__stores.navbarStore)
       )
     )
     this.__main = new ViewMain(new ViewParameters(MAIN_VIEW, this))

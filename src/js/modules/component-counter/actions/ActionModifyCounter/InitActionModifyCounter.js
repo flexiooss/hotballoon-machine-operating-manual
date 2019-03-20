@@ -1,30 +1,44 @@
-import {ActionBuilder, ActionParams} from 'hotballoon'
-import {FLEXIO_IMPORT_OBJECT, assert} from 'flexio-jshelpers'
+import {ActionBuilder, ActionParams, ActionTypeParam} from 'hotballoon'
+import {FLEXIO_IMPORT_OBJECT, assert, isNull} from 'flexio-jshelpers'
 import '../../generated/io/package'
 
 /**
  *
  * @type {ActionModifyCounter}
  */
-const ActionModifyCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCounter.ActionModifyCounter
+const ActionModifyCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.actions.ActionModifyCounter
 
 /**
  *
- * @param component
+ * @param {Dispatcher} dispatcher
  * @returns {!Action<ActionModifyCounter>}
  */
-export const initActionModifyCounter = (component) => {
+export const initActionModifyCounter = (dispatcher) => {
   return ActionBuilder.build(
     new ActionParams(
-      ActionModifyCounter,
-      (payload) => {
-        assert(
-          payload instanceof ActionModifyCounter,
-          'ActionModifyCounter:validate: `payload` argument should be an instance of ActionModifyCounter'
-        )
-        return true
-      },
-      component.__componentContext.dispatcher()
+      new ActionTypeParam(
+        ActionModifyCounter,
+        /**
+         *
+         * @param {ActionModifyCounter} data
+         * @return {ActionModifyCounter}
+         */
+        (data) => {
+          if (isNull(data.sum())) {
+            return data.withSum(0)
+          }
+          return data
+        },
+        /**
+         *
+         * @param {ActionModifyCounter} payload
+         * @return {boolean}
+         */
+        (payload) => {
+          return !isNull(payload.sum())
+        }
+      ),
+      dispatcher
     )
   )
 }

@@ -1,21 +1,29 @@
 import {ActionChangeView} from '../ActionChangeView/ActionChangeView'
 import {assert} from 'flexio-jshelpers'
+import {TypeCheck} from 'hotballoon'
+
+export class ListenActionInitializeViewParams {
+  constructor(actionInitializeView, actionChangeView) {
+    assert(TypeCheck.isAction(actionInitializeView),
+      'ComponentDoc:ListenActionInitializeViewParams: actionInitializeView should be an action, %s given'
+    )
+    assert(TypeCheck.isAction(actionChangeView),
+      'ComponentDoc:ListenActionInitializeViewParams: actionChangeView should be an action, %s given'
+    )
+
+    this.actionInitializeView = actionInitializeView
+    this.actionChangeView = actionChangeView
+  }
+}
 
 /**
  *
- * @param {DocComponent} component
+ * @param {ListenActionInitializeViewParams} params
  */
-export const listenActionInitializeView = (component) => {
-  assert(component.__actionInitializeView !== 'undefined',
-    'listenActionInitializeView: ActionInitializeView should be initialized before using it'
-  )
-  assert(component.__actionChangeView !== 'undefined',
-    'listenActionInitializeView: ActionChangeView should be initialized before using it'
-  )
-
-  component.__actionInitializeView
+export const listenActionInitializeView = (params) => {
+  params.actionInitializeView
     .listenWithCallback((payload) => {
-      component.__actionChangeView
+      params.actionChangeView
         .dispatch(
           new ActionChangeView()
         )

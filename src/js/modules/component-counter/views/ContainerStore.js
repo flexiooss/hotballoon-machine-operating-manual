@@ -6,7 +6,7 @@ import '../generated/io/package'
  *
  * @type {StoreCounter}
  */
-const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCounter.StoreCounter
+const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounter
 
 export class ContainerStore {
   /**

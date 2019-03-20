@@ -6,7 +6,7 @@ import '../generated/io/package'
  *
  * @type {StoreResult}
  */
-const StoreResult = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCalculator.StoreResult
+const StoreResult = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.stores.StoreResult
 
 /**
  */

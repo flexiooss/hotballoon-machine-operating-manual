@@ -1,33 +1,55 @@
-import {StoreBuilder, InMemoryStoreParams} from 'hotballoon'
-import {assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
+import {StoreBuilder, InMemoryStoreParams, StoreTypeParam} from 'hotballoon'
+import {FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
 import '../../generated/io/package'
 
 /**
  *
  * @type {StoreCounter}
  */
-const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCounter.StoreCounter
+const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounter
+const StoreCounterBuilder = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounterBuilder
 
 /**
  *
- * @param {ComponentCounter} component
+ * @param {ComponentContext} componentContext
  * @return {Store}
  */
-export const initStoreCounter = (component) => {
+export const initStoreCounter = (componentContext) => {
   /**
    *
    * @type {Store<StoreCounter>}
    */
-  const counterStore = StoreBuilder.InMemory(
+  return componentContext.addStore(StoreBuilder.InMemory(
     new InMemoryStoreParams(
-      StoreCounter,
-      (data) => {
-        return data instanceof StoreCounter
-      },
-      new StoreCounter(0)
+      new StoreTypeParam(
+        StoreCounter,
+        /**
+         *
+         * @param {StoreCounter} data
+         * @return {StoreCounter}
+         */
+        (data) => {
+          if (isNull(data.count())) {
+            return data.withCount(0)
+          }
+          return data
+        },
+        /**
+         *
+         * @param {StoreCounter} data
+         * @return {boolean}
+         */
+        (data) => {
+          return !isNull(data.count())
+        },
+        /**
+         *
+         * @param {Object} obj
+         * @return {StoreCounter}
+         */
+        (obj) => StoreCounterBuilder.fromObject(obj).build()
+      ),
+      new StoreCounterBuilder().count(0).build()
     )
-  )
-
-  component.__componentContext.addStore(counterStore)
-  return counterStore
+  ))
 }
