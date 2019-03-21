@@ -11,7 +11,7 @@ Cette documentation a pour but de vous procurer les
 éléments nécessaires pour atteindre ces objectifs.
 
 Vous avez à votre disposition le code source du site que vous êtes 
-en train de lire qui a été développé à l'aide d'HotBalloon! Vous avez donc un premier exemple de développement, vous permettant ainsi d'apprendre par le code.
+en train de lire qui a été développé à l'aide d'HotBalloon ! Vous avez donc un premier exemple de développement, vous permettant ainsi d'apprendre par le code.
 Le code que je vais passer au projecteur dans ce document ne permettra pas à lui seul de vous permettre 
 d'implémenter une application utilisant HotBalloon, ce document donne uniquement un fil conducteur vous permettant de 
 saisir la logique associée à cet outil. 
@@ -92,22 +92,22 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
       └── package.json
 ```
 
-Le `component` est l'élement principale de l'application, il est l'ochestrateur de l'pplication. Il a pourtant pas tant de responsabilité sur celle-ci, on lui demande simplement de mettre en place les différentes briques de l'application :
+Le `component` est l'élement principal de l'application, il est l'ochestrateur de l'pplication. Il a pourtant pas tant de responsabilité sur celle-ci, on lui demande simplement de mettre en place les différentes briques de l'application :
 
 - les `actions`, qui contiennent la logique métier
 
-- les `stores`, qui contiennet la data
+- les `stores`, qui contiennent la data
 
 - les `viewContainers`, qui sont des gestionnaires de vue
 
 Sans ces briques, le component n'est pas grand chose.
 
-Nous allons donc détailler d'abord chacunes de briques du component 
+Nous allons donc détailler d'abord chacune de briques du component.
 
 ### Stores
 
 Le `store` est l'entité qui va contenir les données.
-On a besoind'un value object qui va contenir la data du store :
+On a besoin d'un value object qui va contenir la data du store :
 
 ```javascript
 export class StoreCounter {
@@ -146,8 +146,8 @@ export class StoreDataCounter extends PublicStoreHandler {
 
 ### Actions
 
-`L'action`, comme dit plus haut, est un "singal", elle permet de mettre en relation la vue et le component.
-Une action est constitué d'un value object qui va permetttre de transmettre des données avec les signal.
+`L'action`, comme dit plus haut, est un "signal", elle permet de mettre en relation la vue et le component.
+Une action est constituée d'un value object qui va permetttre de transmettre des données avec les signaux.
 Dans notre cas le counter est un simple signal qui n'a pas besoin de contenir de données :
 
 ```javascript
@@ -294,7 +294,7 @@ Ce noeud est composé de 2 nœud fils :
 
 ### Component
 
-Le component est l'élément princiaple, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
+Le component est l'élément principal, c'est notre point d'entré pour l'initialisation de toute la boucle d'événementielle.
 Il est constitué d'un component context qui permet de :
 
 - ajouter des `ActionsUtil` et de les écouter;
@@ -415,7 +415,7 @@ export class ContainerAction {
 ![RouterUse](./Router.svg)
 
 - le développement des applications HotBalloon est fait en fonction des tests
-- les workers ne peuvent pas être utilisés dans node JS donc dans les tests nons plus
+- les workers ne peuvent pas être utilisés dans node JS donc dans les tests non plus
 - le métier s'effectue dans la partie component et non dans la vue
 - Bien implémenter la JsDOC
 - utiliser les '__' pour rendre un attribut privé et des getters pour y accéder
@@ -423,6 +423,6 @@ export class ContainerAction {
 - les proxy storesBuilder -> instancié par le viewContainer et branché sur le store
 - injection action change route, on passe une fonction d'instanciation aux autres components qui en ont besoin
 - le store appartient au component, dans le viewContainer / View, on utilise un storeHandler pour accéder à son contenu
-- Pas d'inserssion en dur dans le Haed (trouver une solution)
+- Pas d'insertion en dur dans le Head (trouver une solution)
 - seul le component peut modifier le store, et uniquement s'il lui appartient
 - parler des payloads
