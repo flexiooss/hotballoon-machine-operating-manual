@@ -1,0 +1,24 @@
+{
+  "name": "component-doc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Antoine bachetti (https://github.com/Basheitan)",
+  "license": "no",
+  "hotballoon-shed": {
+    "builder": "webpack4",
+    "test": {
+      "tester": "code-altimeter-js",
+      "path": "__tests__"
+    },
+    "generate-sources": {
+      "value-objects": {
+        "extension": ".spec"
+      }
+    }
+  },
+  "peerDependencies": {
+    "flexio-jshelpers": "https://github.com/flexiooss/flexio-jshelpers.git",
+    "flexio-nodes-reconciliation": "https://github.com/flexiooss/flexio-nodes-reconciliation.git",
+    "hotballoon": "https://github.com/flexiooss/hotballoon.git"
+  }
+}

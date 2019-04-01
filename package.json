@@ -1,17 +1,9 @@
 {
-  "name": "hotballoon-visitation-ticket",
+  "name": "hotballoon-machine-operating-manual",
   "version": "0.1.0",
   "main": "index.js",
   "repository": "git@github.com:flexiooss/hotballoon-machine-operating-manual.git",
-  "author": "Thomas Chatelain (https://github.com/TomAchT)",
-  "private": true,
-  "scripts": {
-    "hotballoon-shed": "node ./node_modules/hotballoon-shed",
-    "build": "yarn hotballoon-shed --operation=production",
-    "prod": "yarn hotballoon-shed --operation=production",
-    "dev": "yarn hotballoon-shed --operation=development -v",
-    "test": "yarn hotballoon-shed --test"
-  },
+  "author": "Antoine Bachetti (https://github.com/Basheitan)",
   "devDependencies": {
     "code-altimeter-js": "https://github.com/flexiooss/code-altimeter-js.git",
     "eslint": "^5.2.0",
@@ -22,13 +14,37 @@
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
-    "hotballoon-shed": "https://github.com/flexiooss/hotballoon-shed.git",
-    "hotballoon-test-dummies": "https://github.com/flexiooss/hotballoon-test-dummies.git"
+    "hotballoon-test-dummies": "https://github.com/flexiooss/hotballoon-test-dummies.git",
+    "stylelint": "^9.6.0",
+    "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
     "flexio-jshelpers": "https://github.com/flexiooss/flexio-jshelpers.git",
-    "flexio-jsrouter": "https://github.com/flexiooss/flexio-jsrouter.git",
     "flexio-nodes-reconciliation": "https://github.com/flexiooss/flexio-nodes-reconciliation.git",
-    "hotballoon": "https://github.com/flexiooss/hotballoon.git"
+    "hotballoon": "https://github.com/flexiooss/hotballoon.git",
+    "flexio-jsrouter": "https://github.com/flexiooss/flexio-jsrouter.git"
+  },
+  "hotballoon-shed": {
+    "build": {
+      "builder": "webpack4",
+      "entries": [
+        "src/main/js/bootstrap.js"
+      ],
+      "html_template": "src/main/js/index.html",
+      "output": "./dist"
+    },
+    "test": {
+      "tester": "code-altimeter-js",
+      "path": "src/test"
+    },
+    "modules": {
+      "component-router": "src/main/js/modules/_component-router",
+      "component-calculator": "src/main/js/modules/component-calculator",
+      "component-counter": "src/main/js/modules/component-counter",
+      "component-doc": "src/main/js/modules/component-doc",
+      "component-main": "src/main/js/modules/component-main",
+      "component-transaction-store": "src/main/js/modules/component-transaction-store",
+      "module-input-text": "src/main/js/modules/module-input-text"
+    }
   }
 }

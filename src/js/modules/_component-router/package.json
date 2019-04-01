@@ -1,8 +1,0 @@
-{
-  "name": "router-component",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Antoine Bachetti (https://github.com/Basheitan)",
-  "license": "no",
-  "private": true
-}

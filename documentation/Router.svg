@@ -7,11 +7,11 @@ participant InitialComponent
 participant SecondComponent
 Actor USER
 
-title basic use of a addRouter
+title basic use of a __addRouter
 
 autonumber
 ComponentRouter<-MainCompoent : instanciate
-ComponentRouter->ComponentRouter : init addRouter with\nURL configuration
+ComponentRouter->ComponentRouter : init __addRouter with\nURL configuration
 ComponentRouter->ComponentRouter : init listener\nAction change route
 ComponentRouter->MainCompoent : send PublicRouteHandler
 MainCompoent->Switchman : instanciate with\nPublicRouteHandler

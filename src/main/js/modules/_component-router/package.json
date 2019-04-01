@@ -1,0 +1,25 @@
+{
+  "name": "component-router",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Antoine Bachetti (https://github.com/Basheitan)",
+  "license": "no",
+  "hotballoon-shed": {
+    "builder": "webpack4",
+    "test": {
+      "tester": "code-altimeter-js",
+      "path": "__tests__"
+    },
+    "generate-sources": {
+      "value-objects": {
+        "extension": ".spec"
+      }
+    }
+  },
+  "peerDependencies": {
+    "flexio-jshelpers": "https://github.com/flexiooss/flexio-jshelpers.git",
+    "flexio-nodes-reconciliation": "https://github.com/flexiooss/flexio-nodes-reconciliation.git",
+    "hotballoon": "https://github.com/flexiooss/hotballoon.git",
+    "flexio-jsrouter": "https://github.com/flexiooss/flexio-jsrouter.git"
+  }
+}
