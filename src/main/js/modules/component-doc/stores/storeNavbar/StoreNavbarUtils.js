@@ -7,7 +7,7 @@ import {StoreHandlerNavbar} from './StoreHandlerNavbar'
 export class StoreNavbarUtils {
   constructor(componentContext, routeHandler) {
     assertType(TypeCheck.isComponentContext(componentContext),
-      'StoreCounterUtils:constructor: `componentContext` should be a ComponentContext'
+      'StoreLogsUtils:constructor: `componentContext` should be a ComponentContext'
     )
     this.__componentContext = componentContext
     this.__store = null

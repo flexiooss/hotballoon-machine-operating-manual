@@ -1,6 +1,6 @@
 'use strict'
-import {ViewContainer, ViewParameters, ViewEventListenerBuilder} from 'hotballoon'
-import {ViewCounter, INCREMENT_EVENT, DECREMENT_EVENT, ADD_NUMBER_EVENT} from './views/ViewCounter'
+import {ViewContainer} from 'hotballoon'
+import {ViewCounter} from './views/ViewCounter'
 import {ContainerStore} from '../ContainerStore'
 
 import {FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
@@ -29,6 +29,7 @@ export class ContainerCounter extends ViewContainer {
     this.__stores = counterContainerStore
     this.__actions = counterContainerAction
     this.__withSubView = withSubView
+    this.__main = null
     this.__registerViews()
   }
 
@@ -37,9 +38,9 @@ export class ContainerCounter extends ViewContainer {
    * @private
    */
   __registerViews() {
-    this.addView(
+    this.__main = this.addView(
       new ViewCounter(
-        new ViewParameters(MAIN_VIEW, this),
+        this,
         new ContainerStore(this.__stores.counterStore),
         this.__withSubView
       )
@@ -52,34 +53,23 @@ export class ContainerCounter extends ViewContainer {
    * @private
    */
   __handleEvents() {
-    this.view(MAIN_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(INCREMENT_EVENT)
-        .callback((payload) => {
-          this.__actions.counterIncrementAction.dispatch(
-            new ActionModifyCounter(1)
-          )
-        }).build()
-    )
-
-    this.view(MAIN_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(DECREMENT_EVENT)
-        .callback((payload) => {
-          this.__actions.counterIncrementAction.dispatch(
-            new ActionModifyCounter(-1)
-          )
-        }).build()
-    )
-
-    this.view(MAIN_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(ADD_NUMBER_EVENT)
-        .callback((payload) => {
-          this.__actions.counterIncrementAction.dispatch(
-            new ActionModifyCounter(payload.value)
-          )
-        }).build()
-    )
+    this.__main.on()
+      .increment((payload) => {
+        this.__actions.counterIncrementAction.dispatch(
+          new ActionModifyCounter(1)
+        )
+      })
+    this.__main.on()
+      .decrement((payload) => {
+        this.__actions.counterIncrementAction.dispatch(
+          new ActionModifyCounter(-1)
+        )
+      })
+    this.__main.on()
+      .add((payload) => {
+        this.__actions.counterIncrementAction.dispatch(
+          new ActionModifyCounter(payload.value)
+        )
+      })
   }
 }

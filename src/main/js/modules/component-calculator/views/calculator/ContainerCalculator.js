@@ -1,6 +1,6 @@
 'use strict'
-import {ViewContainer, ViewParameters, ViewEventListenerBuilder} from 'hotballoon'
-import { default as Main, INPUT_NUMBER_EVENT, INPUT_OPERATOR_EVENT, INPUT_RESULT_EVENT } from './views/ViewCalculator'
+import {ViewContainer} from 'hotballoon'
+import { default as Main } from './views/ViewCalculator'
 import {StoreContainer} from '../StoreContainer'
 
 import '../../assets/css/style.css'
@@ -10,8 +10,6 @@ import '../../generated/io/package'
 
 const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionNumberInput
 const ActionOperatorInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionOperatorInput
-
-const CALCULATOR_VIEW = Symbol('CALCULATOR_VIEW')
 
 export class ContainerCalculator extends ViewContainer {
   /**
@@ -24,6 +22,8 @@ export class ContainerCalculator extends ViewContainer {
     super(viewContainerParameters)
     this.__stores = storeContainer
     this.__actions = actionContainer
+    this.__viewMain = null
+
     this.__registerViews()
   }
 
@@ -32,9 +32,9 @@ export class ContainerCalculator extends ViewContainer {
    * @private
    */
   __registerViews() {
-    this.addView(
+    this.__viewMain = this.addView(
       new Main(
-        new ViewParameters(CALCULATOR_VIEW, this),
+        this,
         new StoreContainer(this.__stores.resultStore)
       )
     )
@@ -42,34 +42,23 @@ export class ContainerCalculator extends ViewContainer {
   }
 
   __handleEvents() {
-    this.view(CALCULATOR_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(INPUT_NUMBER_EVENT)
-        .callback((payload) => {
-          this.__actions.actionNumberInput.dispatch(
-            new ActionNumberInput(payload.number)
-          )
-        }).build()
-    )
-
-    this.view(CALCULATOR_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(INPUT_OPERATOR_EVENT)
-        .callback((payload) => {
-          this.__actions.actionOperatorInput.dispatch(
-            new ActionOperatorInput(payload.operator)
-          )
-        }).build()
-    )
-
-    this.view(CALCULATOR_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(INPUT_RESULT_EVENT)
-        .callback((payload) => {
-          this.__actions.actionOperatorInput.dispatch(
-            new ActionOperatorInput(payload.operator)
-          )
-        }).build()
-    )
+    this.__viewMain.on()
+      .addNumber((payload) => {
+        this.__actions.actionNumberInput.dispatch(
+          new ActionNumberInput(payload.number)
+        )
+      })
+    this.__viewMain.on()
+      .addOperator((payload) => {
+        this.__actions.actionOperatorInput.dispatch(
+          new ActionOperatorInput(payload.operator)
+        )
+      })
+    this.__viewMain.on()
+      .addResult((payload) => {
+        this.__actions.actionOperatorInput.dispatch(
+          new ActionOperatorInput(payload.operator)
+        )
+      })
   }
 }

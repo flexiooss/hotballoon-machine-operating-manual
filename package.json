@@ -33,6 +33,11 @@
       "html_template": "src/main/js/index.html",
       "output": "./dist"
     },
+    "dev": {
+      "server": {
+        "host": "ui.flexio.io"
+      }
+    },
     "test": {
       "tester": "code-altimeter-js",
       "path": "src/test"

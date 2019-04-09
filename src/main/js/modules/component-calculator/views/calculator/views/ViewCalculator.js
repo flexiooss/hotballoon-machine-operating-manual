@@ -1,23 +1,23 @@
-import {View, ElementEventListenerBuilder, e, ViewParameters} from 'hotballoon'
+import {View, ElementEventListenerBuilder, e, ViewParameters, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 import {DataHandlerResult} from './DataHandlerResult'
 import {ModuleInputNumber, ProxyStoreInputText} from '../../../../module-input-text'
+import {assertType, isFunction} from 'flexio-jshelpers'
 
-export const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
-export const INPUT_OPERATOR_EVENT = 'INPUT_OPERATOR_EVENT'
-export const INPUT_RESULT_EVENT = 'INPUT_RESULT_EVENT'
-
+const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
+const INPUT_OPERATOR_EVENT = 'INPUT_OPERATOR_EVENT'
+const INPUT_RESULT_EVENT = 'INPUT_RESULT_EVENT'
 const INPUT_NUMBER = 'INPUT_NUMBER'
 
 export default class ViewCalculator extends View {
   /**
    *
-   * @param {ViewParameters} viewParameters
+   * @param {ViewContainerBase} container
    * @param {ContainerStore} storeContainer
    */
-  constructor(viewParameters, storeContainer) {
-    super(viewParameters)
+  constructor(container, storeContainer) {
+    super(container)
     this.__stores = storeContainer
     this.subscribeToStore(this.__stores.resultStore)
     this.__registerSubViews()
@@ -30,7 +30,7 @@ export default class ViewCalculator extends View {
   __registerSubViews() {
     this.addView(
       new ModuleInputNumber(
-        new ViewParameters(INPUT_NUMBER, this),
+        this,
         this.__stores.resultStore,
         /**
          *
@@ -42,6 +42,16 @@ export default class ViewCalculator extends View {
         }
       )
     )
+  }
+
+  /**
+   *
+   * @return {ViewCalculatorEvent}
+   */
+  on() {
+    return new ViewCalculatorEvent((a) => {
+      return this._on(a)
+    })
   }
 
   /**
@@ -164,4 +174,70 @@ export default class ViewCalculator extends View {
     }
     return res
   }
+}
+
+class ViewCalculatorEvent extends ViewPublicEventHandler {
+  /**
+   *
+   * @param {ViewCalculatorEvent~addNumber} clb
+   * @return {String}
+   */
+  addNumber(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(INPUT_NUMBER_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   *
+   * @param {ViewCalculatorEvent~addOperator} clb
+   * @return {String}
+   */
+  addOperator(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(INPUT_OPERATOR_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   *
+   * @param {ViewCalculatorEvent~addResult} clb
+   * @return {String}
+   */
+  addResult(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(INPUT_RESULT_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   * @callback ViewCounterEvent~incrementClb
+   */
 }

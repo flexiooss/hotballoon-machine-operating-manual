@@ -1,14 +1,13 @@
-/* global Blob:false */
 import {View, HtmlParams, e} from 'hotballoon'
 
 export class ViewPeer extends View {
   /**
    *
-   * @param {ViewParameters} viewParameters
+   * @param {ViewContainerBase} container
    * @param {ContainerStore} counterContainerStoresParameters
    */
-  constructor(viewParameters, counterContainerStoresParameters) {
-    super(viewParameters)
+  constructor(container, counterContainerStoresParameters) {
+    super(container)
     this.__stores = counterContainerStoresParameters
     this.subscribeToStore(this.__stores.counterStore)
   }

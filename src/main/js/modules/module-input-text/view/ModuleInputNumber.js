@@ -5,12 +5,12 @@ import {StoreHandlerInputText} from '../proxyStore/StoreHandlerInputText'
 export class ModuleInputNumber extends View {
   /**
    *
-   * @param {ViewParameters} viewParameters
+   * @param {} container
    * @param {StoreInterface} store
    * @param {function} mapper
    */
-  constructor(viewParameters, store, mapper) {
-    super(viewParameters)
+  constructor(container, store, mapper) {
+    super(container)
     this.__store = store
     this.__mapper = mapper
     this.__storeInputText = initStoreInputText(this)

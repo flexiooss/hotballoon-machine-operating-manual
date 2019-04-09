@@ -29,6 +29,12 @@ export class ViewContainerDoc extends ViewContainer {
     super(viewContainerParameters)
     this.__stores = containerStore
     this.__routerActionDispatcher = routerActionDispatcher
+
+    this.__viewHeader = null
+    this.__viewNavbar = null
+    this.__viewMain = null
+    this.__viewFooter = null
+
     this.__registerViews()
   }
   /**
@@ -36,16 +42,10 @@ export class ViewContainerDoc extends ViewContainer {
    * @private
    */
   __registerViews() {
-    this.addView(new ViewHeader(new ViewParameters(HEADER_VIEW, this)))
-    this.addView(
-      new ViewNavbar(
-        new ViewParameters(NAVBAR_VIEW, this),
-        new ContainerStore(this.__stores.navbarStore)
-      )
-    )
-    this.__main = new ViewMain(new ViewParameters(MAIN_VIEW, this))
-    this.addView(this.__main)
-    this.addView(new ViewFooter(new ViewParameters(FOOTER_VIEW, this)))
+    this.__viewHeader = this.addView(new ViewHeader(this))
+    this.__viewNavbar = this.addView(new ViewNavbar(this, new ContainerStore(this.__stores.navbarStore)))
+    this.__viewMain = this.addView(new ViewMain(this))
+    this.__viewFooter = this.addView(new ViewFooter(this))
     this.__handleEvents()
   }
 
@@ -54,14 +54,10 @@ export class ViewContainerDoc extends ViewContainer {
    * @private
    */
   __handleEvents() {
-    this.view(NAVBAR_VIEW).on(
-      ViewEventListenerBuilder
-        .listen(CHANGE_COMPONENT_EVENT)
-        .callback((payload) => {
-          this.__routerActionDispatcher.changeRoute(payload.link)
-        })
-        .build()
-    )
+    this.__viewNavbar.on()
+      .changeView((payload) => {
+        this.__routerActionDispatcher.changeRoute(payload.link)
+      })
   }
 
   /**
@@ -69,10 +65,10 @@ export class ViewContainerDoc extends ViewContainer {
    * @returns {Node}
    */
   getDemoNode() {
-    return this.__main.getDemoDiv()
+    return this.__viewMain.getDemoDiv()
   }
 
   resetDemoDiv() {
-    this.__main.resetDemoDiv()
+    this.__viewMain.resetDemoDiv()
   }
 }

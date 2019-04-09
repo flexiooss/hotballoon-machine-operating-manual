@@ -1,8 +1,9 @@
-import {View, ViewParameters, ElementEventListenerBuilder, e} from 'hotballoon'
+import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
 import balloon from '../../../assets/img/balloon.svg'
 import {ViewPeer} from './subViews/ViewPeer'
 import {ContainerStore} from '../../ContainerStore'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
+import {assertType, isFunction} from 'flexio-jshelpers'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
@@ -13,15 +14,18 @@ const PEER_SUBVIEW = 'PEER_SUBVIEW'
 export class ViewCounter extends View {
   /**
    *
-   * @param {ViewParameters} viewParameters
+   * @param {ViewContainerBase} container
    * @param {ContainerStore} containerStore
    * @param {boolean} withSubView
    */
-  constructor(viewParameters, containerStore, withSubView) {
-    super(viewParameters)
+  constructor(container, containerStore, withSubView) {
+    super(container)
     this.__stores = containerStore
+    this.__viewPeer = null
     this.subscribeToStore(this.__stores.counterStore)
-    this.__subView = this.html(e('section#' + PEER_SUBVIEW + '.section'))
+    this.__subView = this.html(
+      e('section#' + PEER_SUBVIEW + '.section')
+    )
     if (withSubView) {
       this.__registerSubViews()
     }
@@ -32,17 +36,28 @@ export class ViewCounter extends View {
    * @private
    */
   __registerSubViews() {
-    this.addView(
+    this.__viewPeer = this.addView(
       new ViewPeer(
-        new ViewParameters(PEER_SUBVIEW, this),
+        this,
         new ContainerStore(this.__stores.counterStore)
       )
     )
     this.__subView = this.html(
       e('section#' + PEER_SUBVIEW + '.section')
-        .views(this.view(PEER_SUBVIEW))
+        .views(this.view(this.__viewPeer))
     )
   }
+
+  /**
+   *
+   * @return {ViewCounterEvent}
+   */
+  on() {
+    return new ViewCounterEvent((a) => {
+      return this._on(a)
+    })
+  }
+
   /**
    *
    * @return {Element}
@@ -110,4 +125,70 @@ export class ViewCounter extends View {
         )
     )
   }
+}
+
+class ViewCounterEvent extends ViewPublicEventHandler {
+  /**
+   *
+   * @param {ViewCounterEvent~incrementClb} clb
+   * @return {String}
+   */
+  increment(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(INCREMENT_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   *
+   * @param {ViewCounterEvent~incrementClb} clb
+   * @return {String}
+   */
+  decrement(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(DECREMENT_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   *
+   * @param {ViewCounterEvent~incrementClb} clb
+   * @return {String}
+   */
+  add(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(ADD_NUMBER_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   * @callback ViewCounterEvent~incrementClb
+   */
 }

@@ -1,17 +1,28 @@
-import {e, ElementEventListenerBuilder, View} from 'hotballoon'
+import {e, ElementEventListenerBuilder, View, ViewPublicEventHandler,EventListenerOrderedBuilder} from 'hotballoon'
+import {assertType, isFunction} from 'flexio-jshelpers'
 
 export const CHANGE_COMPONENT_EVENT = 'CHANGE_COMPONENT_EVENT'
 
 export default class ViewNavbar extends View {
   /**
    *
-   * @param {ViewParameters} viewParameters
+   * @param {ViewContainerBase} container
    * @param {ContainerStore} storeContainer
    */
-  constructor(viewParameters, storeContainer) {
-    super(viewParameters)
+  constructor(container, storeContainer) {
+    super(container)
     this.__stores = storeContainer
     this.subscribeToStore(this.__stores.navbarStore)
+  }
+
+  /**
+   *
+   * @return {ViewCounterEvent}
+   */
+  on() {
+    return new ViewNavbarEvent((a) => {
+      return this._on(a)
+    })
   }
 
   /**
@@ -59,4 +70,30 @@ export default class ViewNavbar extends View {
     }
     return linksTempate
   }
+}
+
+class ViewNavbarEvent extends ViewPublicEventHandler {
+  /**
+   *
+   * @param {ViewCounterEvent~incrementClb} clb
+   * @return {String}
+   */
+  changeView(clb) {
+    assertType(
+      isFunction(clb),
+      'ViewContainerPublicEventHandler:beforeRemove: `clb` should be a function'
+    )
+    return this._subscriber(
+      EventListenerOrderedBuilder
+        .listen(CHANGE_COMPONENT_EVENT)
+        .callback(() => {
+          clb()
+        })
+        .build()
+    )
+  }
+
+  /**
+   * @callback ViewCounterEvent~incrementClb
+   */
 }

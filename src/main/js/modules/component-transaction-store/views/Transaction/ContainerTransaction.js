@@ -1,5 +1,5 @@
 'use strict'
-import {ViewContainer, ViewParameters} from 'hotballoon'
+import {ViewContainer} from 'hotballoon'
 
 import '../../assets/css/style.css'
 import {StoreContainer} from '../StoreContainer'
@@ -26,7 +26,7 @@ export class ContainerTransaction extends ViewContainer {
   __registerViews() {
     this.addView(
       new ViewTransaction(
-        new ViewParameters(TRANSACTION_VIEW, this),
+        this,
         new StoreContainer(this.__stores.transactionStore)
       )
     )

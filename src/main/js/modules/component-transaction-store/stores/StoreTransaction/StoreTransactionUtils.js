@@ -9,7 +9,7 @@ const StoreTransactionRegisteredList = window[FLEXIO_IMPORT_OBJECT].io.flexio.co
 export class StoreTransactionUtils {
   constructor(componentContext) {
     assertType(TypeCheck.isComponentContext(componentContext),
-      'StoreCounterUtils:constructor: `componentContext` should be a ComponentContext'
+      'StoreLogsUtils:constructor: `componentContext` should be a ComponentContext'
     )
     this.__componentContext = componentContext
     this.__store = null
