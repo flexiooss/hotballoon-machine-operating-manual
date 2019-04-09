@@ -84,7 +84,7 @@ export class ComponentDoc {
    */
   __addEventStoreChangeView() {
     new EventStoreChangeViewUtils(
-      this.__navbarStore.store(),
+      this.__navbarStore.storePublic(),
       this.__componentContext,
       this.__viewContainer.ID(),
       this.__executor,

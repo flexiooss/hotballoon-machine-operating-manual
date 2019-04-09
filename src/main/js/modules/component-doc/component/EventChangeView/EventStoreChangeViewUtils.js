@@ -7,20 +7,20 @@ import {ComponentCalculatorBuilder} from '../../../component-calculator/componen
 export class EventStoreChangeViewUtils {
   /**
    *
-   * @param {Store<StoreNavbar>} store
+   * @param {PublicStoreHandler} storePublic
    * @param {ComponentContext} componentContext
    * @param viewContainerID
    * @param executor
    * @param transactionActionDispatcher
    */
-  constructor(store, componentContext, viewContainerID, executor, transactionActionDispatcher) {
-    assertType(TypeCheck.isStore(store),
+  constructor(storePublic, componentContext, viewContainerID, executor, transactionActionDispatcher) {
+    assertType(TypeCheck.isPublicStoreHandler(storePublic),
       'ActionChangeViewUtils:constructor: `store` should be a Store'
     )
     assertType(TypeCheck.isComponentContext(componentContext),
       'ActionChangeViewUtils:constructor: `componentContext` should be a ComponentContext'
     )
-    this.__store = store
+    this.__store = storePublic
     this.__componentContext = componentContext
     this.__viewContainerID = viewContainerID
     this.__executor = executor
@@ -33,25 +33,26 @@ export class EventStoreChangeViewUtils {
    * @returns {EventStoreChangeViewUtils}
    */
   listen() {
+    console.log(this.__store)
     this.__store.listenChanged((payload) => {
       if (!isNull(this.__choosedComponent)) {
         this.__choosedComponent.delete()
       }
-      if (this.__store.state().data.selected === 0) {
+      if (this.__store.selected(0)) {
         this.__choosedComponent = ComponentCounterBuilder.build(
           payload,
           this.__componentContext.APP(),
           this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
           false
         ).mountView()
-      } else if (this.__store.state().data.selected === 1) {
+      } else if (this.__store.selected(1)) {
         this.__choosedComponent = ComponentCounterBuilder.build(
           payload,
           this.__componentContext.APP(),
           this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
           true
         ).mountView()
-      } else if (this.__store.state().data.selected === 2) {
+      } else if (this.__store.selected(2)) {
         this.__choosedComponent = ComponentCalculatorBuilder.build(
           this.__componentContext.APP(),
           this.__componentContext.viewContainer(this.__viewContainerID).getDemoNode(),
