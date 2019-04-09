@@ -34,7 +34,6 @@ export class ComponentCounterPublic {
    */
   delete() {
     this[__component].unmountView()
-    this[__component].componentContext.APP().removeComponentContext(this[__component].componentContext.ID)
     return this
   }
 }

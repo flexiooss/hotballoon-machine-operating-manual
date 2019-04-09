@@ -86,8 +86,8 @@ class ViewNavbarEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(CHANGE_COMPONENT_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )

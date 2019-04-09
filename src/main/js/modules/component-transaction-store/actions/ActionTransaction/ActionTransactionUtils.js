@@ -80,6 +80,7 @@ export class ActionTransactionUtils {
         let registered = new StoreTransactionRegisteredList(...this.__store.state().data.registered())
         if (payload.active()) {
           if (!this.__publicStore.isRegistered(payload.ticket())) {
+            console.log(payload)
             registered.push(payload.ticket())
             this.__store.set(
               this.__store.state().data.withRegistered(registered)

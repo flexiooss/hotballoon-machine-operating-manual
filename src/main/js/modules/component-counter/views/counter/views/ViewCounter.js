@@ -44,7 +44,7 @@ export class ViewCounter extends View {
     )
     this.__subView = this.html(
       e('section#' + PEER_SUBVIEW + '.section')
-        .views(this.view(this.__viewPeer))
+        .views(this.__viewPeer)
     )
   }
 
@@ -141,8 +141,8 @@ class ViewCounterEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(INCREMENT_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )
@@ -161,8 +161,8 @@ class ViewCounterEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(DECREMENT_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )
@@ -181,8 +181,8 @@ class ViewCounterEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(ADD_NUMBER_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )

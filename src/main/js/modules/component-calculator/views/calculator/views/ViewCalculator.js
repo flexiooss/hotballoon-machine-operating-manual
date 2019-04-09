@@ -1,4 +1,4 @@
-import {View, ElementEventListenerBuilder, e, ViewParameters, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
+import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 import {DataHandlerResult} from './DataHandlerResult'
@@ -20,6 +20,7 @@ export default class ViewCalculator extends View {
     super(container)
     this.__stores = storeContainer
     this.subscribeToStore(this.__stores.resultStore)
+    this.__numberInput = null
     this.__registerSubViews()
   }
 
@@ -28,7 +29,7 @@ export default class ViewCalculator extends View {
    * @private
    */
   __registerSubViews() {
-    this.addView(
+    this.__numberInput = this.addView(
       new ModuleInputNumber(
         this,
         this.__stores.resultStore,
@@ -65,7 +66,7 @@ export default class ViewCalculator extends View {
 
           this.html(
             e('section#' + INPUT_NUMBER + '.section')
-              .views(this.view(INPUT_NUMBER))
+              .views(this.__numberInput)
           ),
 
           this.html(
@@ -190,8 +191,8 @@ class ViewCalculatorEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(INPUT_NUMBER_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )
@@ -210,8 +211,8 @@ class ViewCalculatorEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(INPUT_OPERATOR_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )
@@ -230,8 +231,8 @@ class ViewCalculatorEvent extends ViewPublicEventHandler {
     return this._subscriber(
       EventListenerOrderedBuilder
         .listen(INPUT_RESULT_EVENT)
-        .callback(() => {
-          clb()
+        .callback((payload) => {
+          clb(payload)
         })
         .build()
     )

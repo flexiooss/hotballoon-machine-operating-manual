@@ -14,7 +14,7 @@ export class ViewPeer extends View {
 
   /**
    *
-   * @return {Node}
+   * @return {Element}
    */
   template() {
     return this.html(
