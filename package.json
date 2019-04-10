@@ -35,7 +35,7 @@
     },
     "dev": {
       "server": {
-        "host": "localhost"
+        "host": "ui.flexio.io"
       }
     },
     "test": {

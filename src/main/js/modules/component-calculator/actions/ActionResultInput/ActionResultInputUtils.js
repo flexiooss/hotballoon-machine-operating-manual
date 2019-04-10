@@ -8,16 +8,15 @@ const ActionResultInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calcu
 export class ActionResultInputUtils {
   /**
    *
-   * @param {Dispatcher} dispatcher
+   * @param {ComponentContext} componentContext
    * @param {Store} store
    * @param {PublicStoreHandler} storeHandler
    * @param transactionActionDispatcher
-   * @param ID
    * @param executor
    */
-  constructor(dispatcher, store, storeHandler, transactionActionDispatcher, ID, executor) {
-    assertType(TypeCheck.isDispatcher(dispatcher),
-      'ActionResultInputUtils:constructor: `dispatcher` should be a Dispatcher'
+  constructor(componentContext, store, storeHandler, transactionActionDispatcher, executor) {
+    assertType(TypeCheck.isComponentContext(componentContext),
+      'ActionResultInputUtils:constructor: `componentContext` should be a ComponentContext'
     )
     assertType(TypeCheck.isStore(store),
       'ActionResultInputUtils:constructor: `store` should be a Store'
@@ -26,12 +25,11 @@ export class ActionResultInputUtils {
       'ActionResultInputUtils:constructor: `storeHandler` should be a PublicStoreHandler'
     )
 
-    this.__dispatcher = dispatcher
+    this.__componentContext = componentContext
     this.__action = null
     this.__store = store
     this.__storeHandler = storeHandler
     this.__transactionActionDispatcher = transactionActionDispatcher
-    this.__ID = ID
     this.__executor = executor
   }
 
@@ -64,7 +62,7 @@ export class ActionResultInputUtils {
             return !isNull(payload.operator())
           }
         ),
-        this.__dispatcher
+        this.__componentContext.dispatcher()
       )
     )
     return this
@@ -93,7 +91,7 @@ export class ActionResultInputUtils {
               this.__store,
               this.__storeHandler,
               this.__transactionActionDispatcher,
-              this.__ID
+              this.__componentContext.nextID()
             )
           )
         }

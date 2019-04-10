@@ -60,11 +60,10 @@ export class ComponentCalculator {
       this.__resultStore.storePublic()
     ).init()
     this.__actionResultInput = new ActionResultInputUtils(
-      this.__componentContext.dispatcher(),
+      this.__componentContext,
       this.__resultStore.store(),
       this.__resultStore.storePublic(),
       this.__transactionActionDispatcher,
-      this.__componentContext.nextID(),
       this.__executor
     ).init()
     this.__actionOperatorInput = new ActionOperatorInputUtils(

@@ -1,5 +1,5 @@
-import { assertType, FLEXIO_IMPORT_OBJECT, isNull } from 'flexio-jshelpers'
-import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from 'hotballoon'
+import {assertType, FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
+import {ActionBuilder, ActionParams, ActionTypeParam, TypeCheck} from 'hotballoon'
 import '../../generated/io/package'
 import {StoreTransactionRegisteredList} from '../../generated/io/flexio/component_transaction_store/stores/storetransaction/StoreTransactionRegisteredList'
 
@@ -77,10 +77,10 @@ export class ActionTransactionUtils {
        * @param {ActionTransaction} payload
        */
       (payload) => {
+        console.log(payload)
         let registered = new StoreTransactionRegisteredList(...this.__store.state().data.registered())
         if (payload.active()) {
           if (!this.__publicStore.isRegistered(payload.ticket())) {
-            console.log(payload)
             registered.push(payload.ticket())
             this.__store.set(
               this.__store.state().data.withRegistered(registered)
@@ -88,9 +88,15 @@ export class ActionTransactionUtils {
           }
         } else {
           if (this.__publicStore.isRegistered(payload.ticket())) {
-            registered = registered.filter(ticket => ticket !== payload.ticket())
+            let newRegistered = new StoreTransactionRegisteredList()
+            registered.forEach(function(ticket) {
+              if (ticket !== payload.ticket()) {
+                newRegistered.push(ticket)
+              }
+            })
+            console.log(newRegistered)
             this.__store.set(
-              this.__store.state().data.withRegistered(registered)
+              this.__store.state().data.withRegistered(newRegistered)
             )
           }
         }
