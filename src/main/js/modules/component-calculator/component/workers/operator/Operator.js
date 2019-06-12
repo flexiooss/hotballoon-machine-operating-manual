@@ -1,4 +1,4 @@
-// import {CoreException} from 'hotballoon'
+// import {CoreException} from '@flexio-oss/hotballoon'
 
 /**
  * @interface

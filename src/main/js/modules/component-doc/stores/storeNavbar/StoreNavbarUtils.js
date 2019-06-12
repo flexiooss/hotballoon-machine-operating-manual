@@ -1,5 +1,5 @@
-import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from 'hotballoon'
-import {assertType} from 'flexio-jshelpers'
+import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from '@flexio-oss/hotballoon'
+import {assertType} from '@flexio-oss/assert'
 import {StoreNavbar} from './StoreNavbar'
 import {SchemaLink} from './SchemaLink'
 import {StoreHandlerNavbar} from './StoreHandlerNavbar'

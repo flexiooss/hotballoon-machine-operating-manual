@@ -1,9 +1,8 @@
-import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
+import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder, RECONCILIATION_RULES} from '@flexio-oss/hotballoon'
 import balloon from '../../../assets/img/balloon.svg'
 import {ViewPeer} from './subViews/ViewPeer'
 import {ContainerStore} from '../../ContainerStore'
-import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
-import {assertType, isFunction} from 'flexio-jshelpers'
+import {assertType, isFunction} from '@flexio-oss/assert'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
@@ -86,6 +85,7 @@ export class ViewCounter extends View {
                         })
                         .build())
                     .styles({ visibility: (this.__stores.counterStore.count < 1 ? 'hidden' : 'visible') })
+                    .reconciliationRules(RECONCILIATION_RULES.BYPASS_LISTENERS)
                 ),
 
                 this.html(
@@ -97,7 +97,7 @@ export class ViewCounter extends View {
                           this.dispatch(INCREMENT_EVENT, null)
                         })
                         .build())
-                    .reconciliationRules([RECONCILIATION_RULES.BYPATH])
+                    .reconciliationRules(RECONCILIATION_RULES.BYPASS_LISTENERS)
                 ),
 
                 this.html(
@@ -110,6 +110,7 @@ export class ViewCounter extends View {
                       })
                       .build()
                     )
+                    .reconciliationRules(RECONCILIATION_RULES.BYPASS_LISTENERS)
                 ),
 
                 this.html(

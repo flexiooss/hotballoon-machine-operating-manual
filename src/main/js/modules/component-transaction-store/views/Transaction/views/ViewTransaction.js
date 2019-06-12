@@ -1,4 +1,4 @@
-import {View, e} from 'hotballoon'
+import {View, e} from '@flexio-oss/hotballoon'
 
 export class ViewTransaction extends View {
   /**

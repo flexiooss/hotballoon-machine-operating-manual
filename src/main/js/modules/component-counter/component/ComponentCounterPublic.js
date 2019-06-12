@@ -1,4 +1,4 @@
-import {assertType} from 'flexio-jshelpers'
+import {assertType} from '@flexio-oss/assert'
 import {ComponentCounter} from './ComponentCounter'
 
 const __component = Symbol('__componentMainPublic')

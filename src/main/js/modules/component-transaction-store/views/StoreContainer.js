@@ -1,8 +1,9 @@
-import {assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import {TypeCheck} from 'hotballoon'
-import '../generated/io/package'
+import {assert} from '@flexio-oss/assert'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
-const StoreTransaction = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.stores.StoreTransaction
+
+const StoreTransaction = globalFlexioImport.io.flexio.component_transaction_store.stores.StoreTransaction
 
 export class StoreContainer {
   /**

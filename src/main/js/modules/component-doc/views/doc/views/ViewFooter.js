@@ -1,4 +1,4 @@
-import {View, HtmlParams, e} from 'hotballoon'
+import {View, HtmlParams, e} from '@flexio-oss/hotballoon'
 import * as demoComponentPackage from '../../../../../../../../package.json'
 
 export default class ViewFooter extends View {

@@ -1,1 +1,1 @@
-export { Dispatcher as AppDispatcher } from 'hotballoon'
+export { Dispatcher as AppDispatcher } from '@flexio-oss/hotballoon'

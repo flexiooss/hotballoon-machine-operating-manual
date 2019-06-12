@@ -1,10 +1,10 @@
-import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from 'hotballoon'
-import {assertType, FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
-import '../../generated/io/package'
+import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from '@flexio-oss/hotballoon'
+import {assertType, isNull} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 import {StoreHandlerCounter} from './StoreHandlerCounter'
 
-const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounter
-const StoreCounterBuilder = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounterBuilder
+const StoreCounter = globalFlexioImport.io.flexio.component_counter.stores.StoreCounter
+const StoreCounterBuilder = globalFlexioImport.io.flexio.component_counter.stores.StoreCounterBuilder
 
 export class StoreCounterUtils {
   constructor(componentContext) {

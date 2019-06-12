@@ -1,12 +1,12 @@
-import {TypeCheck} from 'hotballoon'
-import {assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import '../generated/io/package'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
 /**
  *
  * @type {StoreCounter}
  */
-const StoreCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.stores.StoreCounter
+const StoreCounter = globalFlexioImport.io.flexio.component_counter.stores.StoreCounter
 
 export class ContainerStore {
   /**

@@ -1,4 +1,4 @@
-import {ProxyStoreParams, StoreBuilder, StoreTypeParam} from 'hotballoon'
+import {ProxyStoreParams, StoreBuilder, StoreTypeParam} from '@flexio-oss/hotballoon'
 import {StoreInputText} from './StoreInputText'
 
 /**

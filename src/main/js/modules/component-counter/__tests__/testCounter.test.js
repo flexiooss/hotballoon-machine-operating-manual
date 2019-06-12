@@ -1,7 +1,7 @@
 /* global runTest */
 
 import {TestCase} from 'code-altimeter-js'
-import {HotBalloonApplication, Dispatcher as AppDispatcher} from 'hotballoon'
+import {HotBalloonApplication, Dispatcher as AppDispatcher} from '@flexio-oss/hotballoon'
 import {ComponentCounter} from '../index'
 import {ActionModifyCounter} from '../actions/ActionModifyCounter/ActionModifyCounter'
 const assert = require('assert')

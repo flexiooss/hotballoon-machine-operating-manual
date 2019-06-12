@@ -1,4 +1,4 @@
-import {View, HtmlParams, e} from 'hotballoon'
+import {View, HtmlParams, e} from '@flexio-oss/hotballoon'
 
 export default class ViewMain extends View {
   /**

@@ -1,4 +1,4 @@
-import {PublicStoreHandler} from 'hotballoon'
+import {PublicStoreHandler} from '@flexio-oss/hotballoon'
 
 /**
  * @extends PublicStoreHandler

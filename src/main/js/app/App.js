@@ -1,1 +1,1 @@
-export {HotBalloonApplication as App} from 'hotballoon'
+export {HotBalloonApplication as App} from '@flexio-oss/hotballoon'

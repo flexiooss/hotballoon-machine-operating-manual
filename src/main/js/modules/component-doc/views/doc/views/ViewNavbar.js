@@ -1,5 +1,5 @@
-import {e, ElementEventListenerBuilder, View, ViewPublicEventHandler,EventListenerOrderedBuilder} from 'hotballoon'
-import {assertType, isFunction} from 'flexio-jshelpers'
+import {e, ElementEventListenerBuilder, View, ViewPublicEventHandler,EventListenerOrderedBuilder} from '@flexio-oss/hotballoon'
+import {assertType, isFunction} from '@flexio-oss/assert'
 
 export const CHANGE_COMPONENT_EVENT = 'CHANGE_COMPONENT_EVENT'
 

@@ -1,1 +1,1 @@
-export { ComponentMainBuilder } from './component/ComponentMainBuilder'
+export { ComponentMainBuilder } from './ComponentMainBuilder'

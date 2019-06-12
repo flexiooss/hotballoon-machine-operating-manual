@@ -1,9 +1,9 @@
-import {assertType, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
+import {assertType} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 import {ComponentTransaction} from './ComponentTransaction'
-import '../generated/io/package'
 
 const __component = Symbol('__componentMainPublic')
-const ActionTransaction = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.actions.ActionTransaction
+const ActionTransaction = globalFlexioImport.io.flexio.component_transaction_store.actions.ActionTransaction
 
 export class ComponentTransactionPublic {
   constructor(component) {

@@ -1,9 +1,9 @@
-import {assertType, FLEXIO_IMPORT_OBJECT, isNode, isNull} from 'flexio-jshelpers'
-import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from 'hotballoon'
-import '../../generated/io/package'
-import {ComponentDocBuilder} from '../../../component-doc/component/ComponentDocBuilder'
+import {assertType, isNode, isNull} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
+import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from '@flexio-oss/hotballoon'
+import {ComponentDocBuilder} from '../../../component-doc/ComponentDocBuilder'
 
-const ActionInitialize = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_main.actions.ActionInitialize
+const ActionInitialize = globalFlexioImport.io.flexio.component_main.actions.ActionInitialize
 
 export class ActionInitializeUtils {
   /**

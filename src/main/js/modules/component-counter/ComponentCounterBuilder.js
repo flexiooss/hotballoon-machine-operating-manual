@@ -1,7 +1,7 @@
-import {TypeCheck} from 'hotballoon'
-import {assert, isNode} from 'flexio-jshelpers'
-import {ComponentCounterPublic} from './ComponentCounterPublic'
-import {ComponentCounter} from './ComponentCounter'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert, isNode} from '@flexio-oss/assert'
+import {ComponentCounterPublic} from './component/ComponentCounterPublic'
+import {ComponentCounter} from './component/ComponentCounter'
 
 export class ComponentCounterBuilder {
   /**

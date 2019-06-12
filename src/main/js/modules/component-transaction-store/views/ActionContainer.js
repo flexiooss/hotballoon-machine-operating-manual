@@ -1,4 +1,4 @@
-import {TypeCheck} from 'hotballoon'
+import {TypeCheck} from '@flexio-oss/hotballoon'
 
 export class ActionContainer {
   /**

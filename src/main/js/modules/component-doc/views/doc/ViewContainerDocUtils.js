@@ -1,5 +1,5 @@
-import {TypeCheck, ViewContainerParameters} from 'hotballoon'
-import {assertType, isNode} from 'flexio-jshelpers'
+import {TypeCheck, ViewContainerParameters} from '@flexio-oss/hotballoon'
+import {assertType, isNode} from '@flexio-oss/assert'
 import {ContainerStore} from '../ContainerStore'
 import {ViewContainerDoc} from './ViewContainerDoc'
 
@@ -38,10 +38,6 @@ export class ViewContainerDocUtils {
         this.__routerActionDispatcher
       )
     )
-
-    this.__componentContext.debug.log('VIEWCONTAINER_INST')
-    this.__componentContext.debug.object(this.__viewContainer)
-    this.__componentContext.debug.print()
 
     this.__viewContainer.renderAndMount(this.__parentNode)
     return this

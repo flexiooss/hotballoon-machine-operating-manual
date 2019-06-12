@@ -1,4 +1,4 @@
-import {assertType} from 'flexio-jshelpers'
+import {assertType} from '@flexio-oss/assert'
 import {ComponentRouter} from './ComponentRouter'
 import {ActionChangeRoute} from '../actions/ActionChangeRoute/ActionChangeRoute'
 

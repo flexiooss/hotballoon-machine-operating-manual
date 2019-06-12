@@ -1,4 +1,4 @@
-import {e, StoreBuilder, View} from 'hotballoon'
+import {e, StoreBuilder, View} from '@flexio-oss/hotballoon'
 import {initStoreInputText} from '../proxyStore/InitStoreInputText'
 import {StoreHandlerInputText} from '../proxyStore/StoreHandlerInputText'
 

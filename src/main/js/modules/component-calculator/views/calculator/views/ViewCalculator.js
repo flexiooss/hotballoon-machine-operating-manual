@@ -1,9 +1,9 @@
-import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder} from 'hotballoon'
+import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListenerOrderedBuilder} from '@flexio-oss/hotballoon'
 import {RECONCILIATION_RULES} from 'flexio-nodes-reconciliation'
 
 import {DataHandlerResult} from './DataHandlerResult'
 import {ModuleInputNumber, ProxyStoreInputText} from '../../../../module-input-text'
-import {assertType, isFunction} from 'flexio-jshelpers'
+import {assertType, isFunction} from '@flexio-oss/assert'
 
 const INPUT_NUMBER_EVENT = 'INPUT_NUMBER_EVENT'
 const INPUT_OPERATOR_EVENT = 'INPUT_OPERATOR_EVENT'

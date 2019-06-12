@@ -71,10 +71,10 @@ Pour répondre à cette question, je vais énumérer les différentes entités q
       │     └── img                              % images uniquement pour ce component
       ├── component
       │     ├── ComponentCounter.js              % "main" du component
-      │     └── ComponentCounterBuilder.js       % proxy pour initialiser le component
+      │     └── ComponentCounterBuilder.js       % proxy pour initialiser le component
       ├── actions
       │     └── ActionIncrement
-      │             ├── ActionIncrement.js       % value object
+      │             ├── ActionIncrement.js       % value object
       │             ├── InitActionIncrement.js   % initialisation de l'action d'incrémentation
       │             └── ListenActionIncrement.js % listener d'action de type ActionIncrement
       └── stores
@@ -117,16 +117,18 @@ export class StoreCounter {
 }
 ```
 
+Notez que cette utilisation n'est pas la plus conseillée, il existe un outil permettant de génerer des values objects avec des builders en JS à l'aide de l'outil hotballoon-shed disponible sur [ce repository github]([https://github.com/flexiooss/hotballoon-shed](https://github.com/flexiooss/hotballoon-shed).
+
 On peut ensuite initialiser le store :
 
 ```javascript
 const counterStore = StoreBuilder.InMemory(
   new InMemoryStoreParams(
-    StoreCounter,
-    (data) => {
-      return data instanceof StoreCounter
-    },
-    new StoreCounter(0)
+    StoreCounter,
+    (data) => {
+      return data instanceof StoreCounter
+    },
+    new StoreCounter(0)
   )
 )
 component.componentContext.addStore(counterStore)
@@ -138,9 +140,9 @@ Le StoreHandler qui permet d'effectuer des accès en lecture sur le store (poxy)
 
 ```javascript
 export class StoreDataCounter extends PublicStoreHandler {
-  get count() {
-    return this.state().data.count()
-  } 
+  get count() {
+    return this.state().data.count()
+  } 
 }
 ```
 
@@ -155,6 +157,8 @@ export class ActionIncrement {
 
 }
 ```
+
+Ce value Object peut également être géneré à l'aide de hotballon shed.
 
 On peut ensuite initialiser l'action :
 
@@ -289,8 +293,6 @@ Ce noeud est composé de 2 nœud fils :
 - un nœud input de type bouton et qui a pour valeur "increment". Ce bouton contient un listener, en cas de click
 
   sur celui-ci, un évènement INCREMENT_EVENT va être dispatché.
-
-
 
 ### Component
 

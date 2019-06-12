@@ -1,8 +1,8 @@
-import { assertType, FLEXIO_IMPORT_OBJECT, isNull } from 'flexio-jshelpers'
-import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from 'hotballoon'
-import '../../generated/io/package'
+import { assertType, isNull } from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
+import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from '@flexio-oss/hotballoon'
 
-const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionNumberInput
+const ActionNumberInput = globalFlexioImport.io.flexio.component_calculator.actions.ActionNumberInput
 
 export class ActionNumberInputUtils {
   /**

@@ -1,9 +1,9 @@
-import {TypeCheck} from 'hotballoon'
-import {assert, isNode} from 'flexio-jshelpers'
-import {ComponentTransactionPublic} from './ComponentTransactionPublic'
-import {ComponentTransaction} from './ComponentTransaction'
+import {ComponentMain} from './component/ComponentMain'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert, isNode} from '@flexio-oss/assert'
+import {ComponentMainPublic} from './component/ComponentMainPublic'
 
-export class ComponentTransactionBuilder {
+export class ComponentMainBuilder {
   /**
    *
    * @param {HotBalloonApplication} APP
@@ -19,10 +19,11 @@ export class ComponentTransactionBuilder {
       'ComponentMain:constructor: `parentNode` argument should be NodeType, %s given',
       typeof parentNode)
 
-    return new ComponentTransactionPublic(
-      new ComponentTransaction(
+    return new ComponentMainPublic(
+      new ComponentMain(
         APP.addComponentContext(),
-        parentNode
+        parentNode,
+        executor
       )
     )
   }

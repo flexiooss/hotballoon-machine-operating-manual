@@ -1,7 +1,7 @@
-import {ComponentCalculatorPublic} from './ComponentCalculatorPublic'
-import {TypeCheck} from 'hotballoon'
-import {assert, isNode} from 'flexio-jshelpers'
-import {ComponentCalculator} from './ComponentCalculator'
+import {ComponentCalculatorPublic} from './component/ComponentCalculatorPublic'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert, isNode} from '@flexio-oss/assert'
+import {ComponentCalculator} from './component/ComponentCalculator'
 
 export class ComponentCalculatorBuilder {
   /**

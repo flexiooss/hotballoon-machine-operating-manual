@@ -1,13 +1,15 @@
 'use strict'
-import {TypeCheck} from 'hotballoon'
-import {isNode, assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
+import '../import'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {isNode, assert} from '@flexio-oss/assert'
 import {ViewContainerDocUtils} from '../views/doc/ViewContainerDocUtils'
 import {ActionInitializeViewUtils} from '../actions/ActionInitializeView/ActionInitializeViewUtils'
 import {Route} from 'flexio-jsrouter/src/Route/Route'
 import {StoreNavbarUtils} from '../stores/storeNavbar/StoreNavbarUtils'
 import {EventStoreChangeViewUtils} from './EventChangeView/EventStoreChangeViewUtils'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
-const ActionInitializeView = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_doc.actions.ActionInitializeView
+const ActionInitializeView = globalFlexioImport.io.flexio.component_doc.actions.ActionInitializeView
 
 export class ComponentDoc {
   /**

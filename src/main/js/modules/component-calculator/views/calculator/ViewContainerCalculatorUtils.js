@@ -1,5 +1,5 @@
-import {TypeCheck, ViewContainerParameters} from 'hotballoon'
-import {assertType, isNode} from 'flexio-jshelpers'
+import {TypeCheck, ViewContainerParameters} from '@flexio-oss/hotballoon'
+import {assertType, isNode} from '@flexio-oss/assert'
 import {StoreContainer} from '../StoreContainer'
 import {ActionContainer} from '../ActionContainer'
 import {ContainerCalculator} from './ContainerCalculator'
@@ -50,10 +50,6 @@ export class ViewContainerCalculatorUtils {
         new ActionContainer(this.__actionNumberInput, this.__actionOperatorInput, this.__actionResultInput)
       )
     )
-
-    this.__componentContext.debug.log('VIEWCONTAINER_INST')
-    this.__componentContext.debug.object(this.__viewContainer)
-    this.__componentContext.debug.print()
 
     this.__viewContainer.renderAndMount(this.__parentNode)
     return this

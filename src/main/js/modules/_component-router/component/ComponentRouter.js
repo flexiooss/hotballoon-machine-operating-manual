@@ -1,6 +1,6 @@
 'use strict'
-import {assert} from 'flexio-jshelpers'
-import {TypeCheck} from 'hotballoon'
+import {assert} from '@flexio-oss/assert'
+import {TypeCheck} from '@flexio-oss/hotballoon'
 import {RouterBuilder} from 'flexio-jsrouter'
 import {UrlConfiguration} from 'flexio-jsrouter/src/UrlConfiguration'
 import {PublicRouteHandler} from 'flexio-jsrouter/src/Route/PublicRouteHandler'

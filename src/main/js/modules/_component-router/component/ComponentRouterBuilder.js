@@ -1,6 +1,6 @@
 import {ComponentRouterPublic} from './ComponentRouterPublic'
-import {TypeCheck} from 'hotballoon'
-import {assert} from 'flexio-jshelpers'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert} from '@flexio-oss/assert'
 import {ComponentRouter} from './ComponentRouter'
 
 export class ComponentRouterBuilder {

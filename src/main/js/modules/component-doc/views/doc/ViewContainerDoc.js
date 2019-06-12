@@ -1,5 +1,5 @@
 'use strict'
-import {ViewContainer, ViewParameters, ViewEventListenerBuilder} from 'hotballoon'
+import {ViewContainer, ViewParameters, ViewEventListenerBuilder} from '@flexio-oss/hotballoon'
 
 import '../../assets/css/style.css'
 import '../../assets/css/normalize.css'

@@ -1,5 +1,5 @@
 'use strict'
-import {ViewContainer} from 'hotballoon'
+import {ViewContainer} from '@flexio-oss/hotballoon'
 
 import '../../assets/css/style.css'
 import {StoreContainer} from '../StoreContainer'

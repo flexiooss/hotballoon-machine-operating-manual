@@ -1,15 +1,14 @@
 'use strict'
-import {ViewContainer} from 'hotballoon'
+import {ViewContainer} from '@flexio-oss/hotballoon'
 import {ViewCounter} from './views/ViewCounter'
 import {ContainerStore} from '../ContainerStore'
 
-import {FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import '../../generated/io/package'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
 /**
  * @type {ActionModifyCounter}
  */
-const ActionModifyCounter = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_counter.actions.ActionModifyCounter
+const ActionModifyCounter = globalFlexioImport.io.flexio.component_counter.actions.ActionModifyCounter
 
 const MAIN_VIEW = Symbol('MAIN_VIEW')
 

@@ -1,12 +1,11 @@
-import {TypeCheck} from 'hotballoon'
-import {assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import '../generated/io/package'
-
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 /**
  *
  * @type {StoreResult}
  */
-const StoreResult = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.stores.StoreResult
+const StoreResult = globalFlexioImport.io.flexio.component_calculator.stores.StoreResult
 
 /**
  */

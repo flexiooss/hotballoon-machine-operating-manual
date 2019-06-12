@@ -1,10 +1,11 @@
-import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from 'hotballoon'
-import {assertType, FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
+import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from '@flexio-oss/hotballoon'
+import {assertType, isNull} from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 import {StoreHandlerTransaction} from './StoreHandlerTransaction'
 
-const StoreTransaction = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.stores.StoreTransaction
-const StoreTransactionBuilder = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.stores.StoreTransactionBuilder
-const StoreTransactionRegisteredList = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_transaction_store.stores.storetransaction.StoreTransactionRegisteredList
+const StoreTransaction = globalFlexioImport.io.flexio.component_transaction_store.stores.StoreTransaction
+const StoreTransactionBuilder = globalFlexioImport.io.flexio.component_transaction_store.stores.StoreTransactionBuilder
+const StoreTransactionRegisteredList = globalFlexioImport.io.flexio.component_transaction_store.stores.storetransaction.StoreTransactionRegisteredList
 
 export class StoreTransactionUtils {
   constructor(componentContext) {

@@ -1,9 +1,9 @@
-import { assertType, FLEXIO_IMPORT_OBJECT, isNull } from 'flexio-jshelpers'
-import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from 'hotballoon'
-import '../../generated/io/package'
+import { assertType, isNull } from '@flexio-oss/assert'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
+import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from '@flexio-oss/hotballoon'
 import {StoreNavbar} from '../../stores/storeNavbar/StoreNavbar'
 
-const ActionInitializeView = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_doc.actions.ActionInitializeView
+const ActionInitializeView = globalFlexioImport.io.flexio.component_doc.actions.ActionInitializeView
 
 export class ActionInitializeViewUtils {
   /**

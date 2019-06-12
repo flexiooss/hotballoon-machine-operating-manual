@@ -1,7 +1,7 @@
 /* global runTest */
 
 import {TestCase} from 'code-altimeter-js'
-import {HotBalloonApplication as App, Dispatcher as AppDispatcher} from 'hotballoon'
+import {HotBalloonApplication as App, Dispatcher as AppDispatcher} from '@flexio-oss/hotballoon'
 
 import {ComponentDoc} from '../index'
 import {ComponentRouterBuilder} from '../../_component-router/component/ComponentRouterBuilder'

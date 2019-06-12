@@ -1,10 +1,10 @@
-import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from 'hotballoon'
-import {assertType, FLEXIO_IMPORT_OBJECT, isNull} from 'flexio-jshelpers'
-import '../../generated/io/package'
+import {StoreBuilder, InMemoryStoreParams, StoreTypeParam, TypeCheck} from '@flexio-oss/hotballoon'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
+import {assertType, isNull} from '@flexio-oss/assert'
 import {StoreHandlerResult} from './StoreHandlerResult'
 
-const StoreResult = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.stores.StoreResult
-const StoreResultBuilder = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.stores.StoreResultBuilder
+const StoreResult = globalFlexioImport.io.flexio.component_calculator.stores.StoreResult
+const StoreResultBuilder = globalFlexioImport.io.flexio.component_calculator.stores.StoreResultBuilder
 
 export class StoreResultUtils {
   constructor(componentContext) {

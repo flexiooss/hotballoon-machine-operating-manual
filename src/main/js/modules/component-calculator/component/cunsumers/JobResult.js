@@ -1,6 +1,6 @@
 import Worker from '../workers/compute.worker'
 import {OpertorJob} from '../workers/OperatorExecutor'
-import {JobInterface} from 'hotballoon'
+import {JobInterface} from '@flexio-oss/hotballoon'
 
 export class Job extends JobInterface {
   /**

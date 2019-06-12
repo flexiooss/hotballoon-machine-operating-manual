@@ -19,9 +19,12 @@
     "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
-    "flexio-jshelpers": "https://github.com/flexiooss/flexio-jshelpers.git",
-    "flexio-nodes-reconciliation": "https://github.com/flexiooss/flexio-nodes-reconciliation.git",
-    "hotballoon": "https://github.com/flexiooss/hotballoon.git",
+    "@flexio-oss/hotballoon": "0.1.0-dev",
+    "@flexio-oss/assert": "0.1.0-dev",
+    "@flexio-oss/js-generator-helpers": "0.0.0",
+    "@flexio-oss/global-import-registry": "0.0.0",
+    "@flexio-oss/js-logger": "0.1.0-dev",
+    "@flexio-oss/extended-flex-types": "0.1.0-dev",
     "flexio-jsrouter": "https://github.com/flexiooss/flexio-jsrouter.git"
   },
   "hotballoon-shed": {

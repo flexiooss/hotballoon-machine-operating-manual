@@ -1,5 +1,5 @@
-import { assertType, isNull } from 'flexio-jshelpers'
-import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from 'hotballoon'
+import { assertType, isNull } from '@flexio-oss/assert'
+import { ActionBuilder, ActionParams, ActionTypeParam, TypeCheck } from '@flexio-oss/hotballoon'
 import {ActionChangeRoute} from './ActionChangeRoute'
 
 export class ActionChangeRouteUtils {

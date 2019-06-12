@@ -1,19 +1,18 @@
 /* global runTest */
 
 import {TestCase} from 'code-altimeter-js'
-import {HotBalloonApplication, Dispatcher, ExecutorInline} from 'hotballoon'
+import {HotBalloonApplication, Dispatcher, ExecutorInline} from '@flexio-oss/hotballoon'
 import {OperatorPlus} from '../component/workers/operator/OperatorPlus'
 import {OperatorNull} from '../component/workers/operator/OperatorNull'
 import {ComponentCalculator} from '../index'
 import {OperatorDiv} from '../component/workers/operator/OperatorDiv'
 
-import {FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import '../generated/io/package'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
 /**
  * @type {ActionNumberInput}
  */
-const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.ComponentCalculator.ActionNumberInput
+const ActionNumberInput = globalFlexioImport.io.flexio.ComponentCalculator.ActionNumberInput
 
 /**
  * @type {ActionOperatorInput}

@@ -1,5 +1,5 @@
-import {TypeCheck} from 'hotballoon'
-import {assert} from 'flexio-jshelpers'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert} from '@flexio-oss/assert'
 import {StoreNavbar} from '../stores/storeNavbar/StoreNavbar'
 
 /**

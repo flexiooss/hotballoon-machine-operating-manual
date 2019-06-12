@@ -1,7 +1,7 @@
-import {TypeCheck} from 'hotballoon'
-import {assert, isNode} from 'flexio-jshelpers'
-import {ComponentDoc} from './ComponentDoc'
-import {ComponentDocPublic} from './ComponentDocPublic'
+import {TypeCheck} from '@flexio-oss/hotballoon'
+import {assert, isNode} from '@flexio-oss/assert'
+import {ComponentDoc} from './component/ComponentDoc'
+import {ComponentDocPublic} from './component/ComponentDocPublic'
 
 export class ComponentDocBuilder {
   /**

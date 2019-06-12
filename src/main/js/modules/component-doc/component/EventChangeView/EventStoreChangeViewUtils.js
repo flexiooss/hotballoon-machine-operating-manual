@@ -1,8 +1,7 @@
-import {assertType, isNull} from 'flexio-jshelpers'
-import { TypeCheck } from 'hotballoon'
-import '../../generated/io/package'
-import {ComponentCounterBuilder} from '../../../component-counter/component/ComponentCounterBuilder'
-import {ComponentCalculatorBuilder} from '../../../component-calculator/component/ComponentCalculatorBuilder'
+import {assertType, isNull} from '@flexio-oss/assert'
+import { TypeCheck } from '@flexio-oss/hotballoon'
+import {ComponentCounterBuilder} from '../../../component-counter/ComponentCounterBuilder'
+import {ComponentCalculatorBuilder} from '../../../component-calculator/ComponentCalculatorBuilder'
 
 export class EventStoreChangeViewUtils {
   /**

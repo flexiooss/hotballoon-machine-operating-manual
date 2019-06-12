@@ -1,12 +1,13 @@
 'use strict'
-import {isNode, assert, FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import {TypeCheck} from 'hotballoon'
+import '../import'
+import {isNode, assert} from '@flexio-oss/assert'
+import {TypeCheck} from '@flexio-oss/hotballoon'
 import {ComponentRouterBuilder} from '../../_component-router'
-import {ComponentTransactionBuilder} from '../../component-transaction-store/component/ComponentTransactionBuilder'
-import '../generated/io/package'
+import {ComponentTransactionBuilder} from '../../component-transaction-store/ComponentTransactionBuilder'
 import {ActionInitializeUtils} from '../actions/ActionInitialize/ActionInitializeUtils'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
-const ActionInitialize = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_main.actions.ActionInitialize
+const ActionInitialize = globalFlexioImport.io.flexio.component_main.actions.ActionInitialize
 
 export class ComponentMain {
   /**

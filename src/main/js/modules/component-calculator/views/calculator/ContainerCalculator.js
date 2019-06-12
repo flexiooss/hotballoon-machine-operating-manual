@@ -1,15 +1,14 @@
 'use strict'
-import {ViewContainer} from 'hotballoon'
+import {ViewContainer} from '@flexio-oss/hotballoon'
 import { default as Main } from './views/ViewCalculator'
 import {StoreContainer} from '../StoreContainer'
 
 import '../../assets/css/style.css'
 
-import {FLEXIO_IMPORT_OBJECT} from 'flexio-jshelpers'
-import '../../generated/io/package'
+import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 
-const ActionNumberInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionNumberInput
-const ActionOperatorInput = window[FLEXIO_IMPORT_OBJECT].io.flexio.component_calculator.actions.ActionOperatorInput
+const ActionNumberInput = globalFlexioImport.io.flexio.component_calculator.actions.ActionNumberInput
+const ActionOperatorInput = globalFlexioImport.io.flexio.component_calculator.actions.ActionOperatorInput
 
 export class ContainerCalculator extends ViewContainer {
   /**
