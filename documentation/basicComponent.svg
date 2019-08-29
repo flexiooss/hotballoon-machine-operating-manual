@@ -17,7 +17,7 @@ Component -> Component : init storesBuilder
 Component -> Component : init Listeners Actions
 Component -> ViewContainer : initialize
 deactivate Component
-ViewContainer -> View : mount view
+ViewContainer -> View : mount views
 View -> View : render
 hnote over Component : idle
 ......

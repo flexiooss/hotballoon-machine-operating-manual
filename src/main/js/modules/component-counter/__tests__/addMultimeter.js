@@ -1,4 +1,4 @@
-// import {ContainerStore} from '../views/ContainerStore'
+// import {NavbarStoreManager} from '../views/NavbarStoreManager'
 //
 // /**
 //  *
@@ -14,7 +14,7 @@
 //         component.__componentContext,
 //         COUNTER_VIEWCONTAINER_ID
 //       ),
-//       new ContainerStore(component.__counterStoreHandler)
+//       new NavbarStoreManager(component.__counterStoreHandler)
 //     )
 //
 //   component.__componentContext.debug.log('COUNTER_VIEWCONTAINER_INST')

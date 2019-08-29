@@ -20,17 +20,17 @@ export class ComponentCalculatorPublic {
   }
 
   /**
-   *
-   * @returns {ComponentCalculatorPublic}
+   * @param {Element} parentNode
+   * @returns {this}
    */
-  mountView() {
-    this[__component].mountView()
+  mountView(parentNode) {
+    this[__component].mountView(parentNode)
     return this
   }
 
   /**
    *
-   * @returns {ComponentCalculatorPublic}
+   * @returns {this}
    */
   delete() {
     this[__component].unmountView()

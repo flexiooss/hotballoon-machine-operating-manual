@@ -163,8 +163,8 @@ Ce value Object peut également être géneré à l'aide de hotballon shed.
 On peut ensuite initialiser l'action :
 
 ```javascript
-const actionIncrement = ActionBuilder.build(
-  new ActionParams(
+const actionIncrement = ActionDispatcherBuilder.build(
+  new ActionDispatcherConfig(
     ActionIncrement,
     (payload) => {
       assert(
@@ -222,7 +222,7 @@ Pour enregister une vue :
 this.addView(
       new CounterViewSimple(
         new ViewParameters(COUNTER_VIEW, this),
-        new ContainerStore(this.stores.counterStore)
+        new NavbarStoreManager(this.stores.counterStore)
       )
     )
 ```
@@ -331,8 +331,8 @@ Le component va également enregistrer les `ActionsUtil` qu'il a besoin d'écout
 
 ```javascript
 export const initActionModifyCounter = (component) => {
-  return ActionBuilder.build(
-    new ActionParams(
+  return ActionDispatcherBuilder.build(
+    new ActionDispatcherConfig(
       ActionIncrement,
       (payload) => {
         assert(
@@ -374,7 +374,7 @@ Il peut également contenir des `StoresBuilder` même si cela n'est pas obligato
 qui vont être utilisé par le `viewContainer` :
 
 ```javascript
-export class ContainerStore {
+export class NavbarStoreManager {
   constructor(counterStore) {
     assert(
       counterStore.isTypeOf(StoreCounter),

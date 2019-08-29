@@ -19,16 +19,17 @@ export class ComponentDocPublic {
 
   /**
    *
-   * @returns {ComponentDocPublic}
+   * @param {Element} parentNode
+   * @returns {this}
    */
-  mountView() {
-    this[__component].mountView()
+  mountView(parentNode) {
+    this[__component].mountView(parentNode)
     return this
   }
 
   /**
    *
-   * @returns {ComponentDocPublic}
+   * @returns {this}
    */
   delete() {
     this[__component].unmountView()
@@ -40,7 +41,7 @@ export class ComponentDocPublic {
    *
    * @param {String} component
    * @param {String} mode
-   * @returns {ComponentDoc}
+   * @returns {this}
    */
   dispatchActionInitialize(component, mode) {
     this[__component].dispatchActionInitialize(component, mode)

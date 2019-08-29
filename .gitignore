@@ -6,3 +6,5 @@ node_modules/
 .vscode/
 .idea/
 *.iml
+generated/
+package-lock.json

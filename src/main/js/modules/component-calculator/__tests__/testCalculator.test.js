@@ -2,10 +2,10 @@
 
 import {TestCase} from 'code-altimeter-js'
 import {HotBalloonApplication, Dispatcher, ExecutorInline} from '@flexio-oss/hotballoon'
-import {OperatorPlus} from '../component/workers/operator/OperatorPlus'
-import {OperatorNull} from '../component/workers/operator/OperatorNull'
+import {OperatorPlus} from '../jobs/workers/operator/OperatorPlus'
+import {OperatorNull} from '../jobs/workers/operator/OperatorNull'
 import {ComponentCalculator} from '../index'
-import {OperatorDiv} from '../component/workers/operator/OperatorDiv'
+import {OperatorDiv} from '../jobs/workers/operator/OperatorDiv'
 
 import {globalFlexioImport} from '@flexio-oss/global-import-registry'
 

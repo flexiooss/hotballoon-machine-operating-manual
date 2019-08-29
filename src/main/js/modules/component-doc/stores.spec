@@ -1,10 +1,10 @@
-SchemaLink:
-  url: string
-  name: String
-
-
 StoreNavbar:
   selected: int
   linkCollection:
     $list:
-      $value-object: org.generated.io.flexio.component-doc.SchemaLink
+      $value-object: io.flexio.component_doc.stores.SchemaLink
+
+SchemaLink:
+  url:
+    $value-object: io.flexio.component_router.types.URLExtended
+  name: String

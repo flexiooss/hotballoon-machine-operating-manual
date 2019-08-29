@@ -1,23 +1,20 @@
 'use strict'
 import '../import'
 import {isNode, assert, isBoolean} from '@flexio-oss/assert'
-import {TypeCheck} from '@flexio-oss/hotballoon'
-import {ActionModifyCounterUtils} from '../actions/ActionModifyCounter/ActionModifyCounterUtils'
-import {StoreCounterUtils} from '../stores/CounterStore/StoreCounterUtils'
-import {ViewContainerCounterUtils} from '../views/counter/ViewContainerCounterUtils'
+import {TypeCheck, ViewContainerParameters} from '@flexio-oss/hotballoon'
+import {ActionModifyCounterMaker} from '../actions/ActionModifyCounterMaker'
+import {StoreCounterMaker} from '../stores/StoreCounterMaker'
+import {CounterActionManager} from '../views/utils/CounterActionManager'
+import {CounterStoreManager} from '../views/utils/CounterStoreManager'
+import {ViewContainerCounter} from '../views/ViewContainerCounter'
 
 export class ComponentCounter {
   /**
    *
    * @param {ComponentContext} componentContext
-   * @param {Node} parentNode
    * @param {boolean} withSubView
    */
-  constructor(componentContext, parentNode, withSubView) {
-    assert(!!isNode(parentNode),
-      'component-counter:constructor: `parentNode` argument should be NodeType, %s given',
-      typeof parentNode)
-
+  constructor(componentContext, withSubView) {
     assert(
       TypeCheck.isComponentContext(componentContext),
       'component-counter:constructor: `parentNode` argument should be NodeType, %s given',
@@ -29,63 +26,47 @@ export class ComponentCounter {
       typeof withSubView)
 
     this.__componentContext = componentContext
-    this.__parentNode = parentNode
     this.__withSubView = withSubView
-    this.__actionModifyCounter = null
-    this.__counterStore = null
-    this.__viewContainer = null
+    this.__actionModifyCounter = ActionModifyCounterMaker.create(this.__componentContext.dispatcher())
+    this.__counterStore = StoreCounterMaker.create(this.__componentContext)
 
-    this.__addStoreCounter()
-    this.__addActionModifyCounter()
+    this.__actionModifyCounter.listen(this.__counterStore.store())
   }
 
   /**
    *
-   * @returns {ComponentCounter}
-   * @private
+   * @param {Element} parentNode
+   * @returns {this}
    */
-  __addActionModifyCounter() {
-    this.__actionModifyCounter = new ActionModifyCounterUtils(
-      this.__componentContext.dispatcher(),
-      this.__counterStore.store()
-    ).init().listen()
-    return this
-  }
-
-  /**
-   *
-   * @returns {ComponentCounter}
-   * @private
-   */
-  __addStoreCounter() {
-    this.__counterStore = new StoreCounterUtils(this.__componentContext).build()
-    return this
-  }
-
-  /**
-   *
-   * @returns {ComponentCounter}
-   */
-  mountView() {
-    this.__viewContainer = new ViewContainerCounterUtils(
-      this.__componentContext,
-      this.__parentNode,
-      this.__actionModifyCounter.action(),
-      this.__counterStore.storePublic(),
+  mountView(parentNode) {
+    assert(!!isNode(parentNode),
+      'component-counter:constructor: `parentNode` argument should be NodeType, %s given',
+      typeof parentNode
+    )
+    this.__viewContainer = new ViewContainerCounter(
+      new ViewContainerParameters(
+        this.__componentContext,
+        this.__componentContext.nextID(),
+        parentNode
+      ),
+      new CounterStoreManager(this.__counterStore.storePublic()),
+      new CounterActionManager(this.__actionModifyCounter.action()),
       this.__withSubView
-    ).init()
+    )
+    this.__componentContext.addViewContainer(this.__viewContainer)
+    this.__viewContainer.renderAndMount()
     return this
   }
 
   /**
    *
-   * @returns {ComponentCounter}
+   * @returns {this}
    */
   unmountView() {
-    assert(TypeCheck.isViewContainer(this.__viewContainer.viewContainer()),
-      'ComponentDoc:unmountView: `viewContainer` should be a instanciate before use it'
+    assert(TypeCheck.isViewContainer(this.__viewContainer),
+      'ComponentDoc:unmountView: `viewContainer` should be a instanciate before using it'
     )
-    this.__componentContext.removeViewContainer(this.__viewContainer.ID())
+    this.__componentContext.removeViewContainer(this.__viewContainer.ID)
 
     return this
   }
@@ -94,15 +75,15 @@ export class ComponentCounter {
    *
    * @return {ComponentContext}
    */
-  get componentContext() {
+  componentContext() {
     return this.__componentContext
   }
 
   /**
    *
-   * @return {Store}
+   * @return {Store<StoreCounter>}
    */
-  get counterStore() {
+  counterStore() {
     return this.__counterStoreHandler
   }
 }

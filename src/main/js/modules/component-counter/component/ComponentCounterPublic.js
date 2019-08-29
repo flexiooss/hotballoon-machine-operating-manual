@@ -21,16 +21,17 @@ export class ComponentCounterPublic {
 
   /**
    *
-   * @returns {ComponentCounterPublic}
+   * @param {Element} parentNode
+   * @returns {this}
    */
-  mountView() {
-    this[__component].mountView()
+  mountView(parentNode) {
+    this[__component].mountView(parentNode)
     return this
   }
 
   /**
    *
-   * @returns {ComponentCounterPublic}
+   * @returns {this}
    */
   delete() {
     this[__component].unmountView()

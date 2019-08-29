@@ -1,53 +1,48 @@
 'use strict'
 import '../import'
-import {TypeCheck} from '@flexio-oss/hotballoon'
+import {TypeCheck, ViewContainerParameters} from '@flexio-oss/hotballoon'
 import {isNode, assertType} from '@flexio-oss/assert'
-import {ActionTransactionUtils} from '../actions/ActionTransaction/ActionTransactionUtils'
-import {StoreTransactionUtils} from '../stores/StoreTransaction/StoreTransactionUtils'
-import {ViewContainerTransactionUtils} from '../views/Transaction/ViewContainerTransactionUtils'
+import {ActionTransactionMaker} from '../actions/ActionTransactionMaker'
+import {StoreTransactionMaker} from '../stores/StoreTransactionMaker'
+import {ViewContainerTransaction} from '../views/ViewContainerTransaction'
+import {TransactionStoreManager} from '../views/utils/TransactionStoreManager'
 
 export class ComponentTransaction {
   /**
    *
    * @param {ComponentContext} componentContext
-   * @param {Node} parentNode
    */
-  constructor(componentContext, parentNode) {
-    assertType(!!isNode(parentNode),
-      'ComponentTransaction:constructor: `parentNode` argument should be NodeType'
-    )
+  constructor(componentContext) {
     assertType(
       TypeCheck.isComponentContext(componentContext),
       'ComponentTransaction:constructor: `componentContext` argument should be ComponentContext'
     )
-    this.__parentNode = parentNode
     this.__componentContext = componentContext
+    this.__actionTransaction = ActionTransactionMaker.create(this.__componentContext.dispatcher())
+    this.__transactionStore = StoreTransactionMaker.create(this.__componentContext)
 
-    this.__addStoreTransaction()
-    this.__addActionTransaction()
-  }
-
-  __addStoreTransaction() {
-    this.__transactionStore = new StoreTransactionUtils(this.__componentContext).build()
-    return this
+    this.__actionTransaction.listen(this.__transactionStore.store())
   }
 
   /**
    *
+   * @param {Element} parentNode
    * @returns {ComponentTransaction}
    */
-  __addActionTransaction() {
-    this.__actionTransaction = new ActionTransactionUtils(
-      this.__componentContext.dispatcher(),
-      this.__transactionStore.store(),
-      this.__transactionStore.storePublic()
-    ).init().listen()
-    return this
-  }
-
-  mountView() {
-    new ViewContainerTransactionUtils(this.__componentContext, this.__parentNode, this.__transactionStore.storePublic())
-      .init()
+  mountView(parentNode) {
+    assertType(!!isNode(parentNode),
+      'ComponentTransaction:constructor: `parentNode` argument should be NodeType'
+    )
+    this.__viewContainer = new ViewContainerTransaction(
+      new ViewContainerParameters(
+        this.__componentContext,
+        this.__componentContext.nextID(),
+        parentNode
+      ),
+      new TransactionStoreManager(this.__transactionStore.storePublic())
+    )
+    this.__componentContext.addViewContainer(this.__viewContainer)
+    this.__viewContainer.renderAndMount()
     return this
   }
 
@@ -69,7 +64,7 @@ export class ComponentTransaction {
 
   /**
    *
-   * @returns {!Action<ActionTransaction>}
+   * @returns {!ActionDispatcher<ActionTransaction>}
    */
   get actionTransaction() {
     return this.__actionTransaction.action()

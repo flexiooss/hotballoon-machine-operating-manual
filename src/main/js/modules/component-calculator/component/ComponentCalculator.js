@@ -1,109 +1,71 @@
 'use strict'
 import '../import'
-import {TypeCheck} from '@flexio-oss/hotballoon'
+import {TypeCheck, ViewContainerParameters} from '@flexio-oss/hotballoon'
 import {isNode, assert} from '@flexio-oss/assert'
-import {ActionNumberInputUtils} from '../actions/ActionNumberInputUtils/ActionNumberInputUtils'
-import {ActionOperatorInputUtils} from '../actions/ActionOperatorInput/ActionOperatorInputUtils'
-import {ActionResultInputUtils} from '../actions/ActionResultInput/ActionResultInputUtils'
-import {StoreResultUtils} from '../stores/StoreResult/StoreResultUtils'
-import {ViewContainerCalculatorUtils} from '../views/calculator/ViewContainerCalculatorUtils'
+import {ActionNumberInputMaker} from '../actions/ActionNumberInputMaker'
+import {ActionOperatorInputMaker} from '../actions/ActionOperatorInputMaker'
+import {ActionResultInputMaker} from '../actions/ActionResultInputMaker'
+import {StoreResultMaker} from '../stores/StoreResultMaker'
+import {ViewContainerCalculator} from '../views/ViewContainerCalculator'
+import {CalculatorActionManager} from '../views/utils/CalculatorActionManager'
+import {CalculatorStoreManager} from '../views/utils/CalculatorStoreManager'
 
 export class ComponentCalculator {
   /**
    *
    * @param {ComponentContext} componentContext
-   * @param {Node} parentNode
    * @param {ExecutorInterface} executor
    * @param {TransactionActionDispatcher} transactionActionDispatcher
    */
-  constructor(componentContext, parentNode, executor, transactionActionDispatcher) {
-    assert(!!isNode(parentNode),
-      'ComponentCalculator:constructor: `parentNode` argument should be NodeType'
-    )
+  constructor(componentContext, executor, transactionActionDispatcher) {
     assert(
       TypeCheck.isComponentContext(componentContext),
       'ComponentCalculator:constructor: `componentContext` argument should be ComponentContext'
     )
-
     this.__executor = executor
-    this.__parentNode = parentNode
     this.__componentContext = componentContext
     this.__transactionActionDispatcher = transactionActionDispatcher
-    this.__resultStore = null
-    this.__actionNumberInput = null
-    this.__actionOperatorInput = null
-    this.__actionResultInput = null
-    this.__viewContainer = null
+    this.__actionNumberInput = ActionNumberInputMaker.create(this.__componentContext.dispatcher())
+    this.__actionResultInput = ActionResultInputMaker.create(this.__componentContext.dispatcher())
+    this.__actionOperatorInput = ActionOperatorInputMaker.create(this.__componentContext.dispatcher())
+    this.__resultStore = StoreResultMaker.create(this.__componentContext)
 
-    this.__addResultStore()
-    this.__addActionInput()
+    this.__actionNumberInput.listen(this.__resultStore.store())
+    this.__actionResultInput.listen(this.__resultStore.store(), this.__transactionActionDispatcher, this.__executor, this.__componentContext.nextID())
+    this.__actionOperatorInput.listen(this.__resultStore.store(), this.__actionResultInput.action())
   }
 
   /**
-   *
-   * @returns {ComponentCalculator}
-   * @private
+   * @param {Element} parentNode
+   * @returns {this}
    */
-  __addResultStore() {
-    this.__resultStore = new StoreResultUtils(this.__componentContext).build()
+  mountView(parentNode) {
+    assert(!!isNode(parentNode),
+      'ComponentCalculator:constructor: `parentNode` argument should be NodeType'
+    )
+    this.__viewContainer = new ViewContainerCalculator(
+      new ViewContainerParameters(this.__componentContext, this.__componentContext.nextID(), parentNode),
+      new CalculatorStoreManager(this.__resultStore.storePublic()),
+      new CalculatorActionManager(
+        this.__actionNumberInput.action(),
+        this.__actionOperatorInput.action(),
+        this.__actionResultInput.action()
+      )
+    )
+    this.__componentContext.addViewContainer(this.__viewContainer)
+    this.__viewContainer.renderAndMount(parentNode)
     return this
   }
 
   /**
    *
-   * @returns {ComponentCalculator}
-   * @private
-   */
-  __addActionInput() {
-    this.__actionNumberInput = new ActionNumberInputUtils(
-      this.__componentContext.dispatcher(),
-      this.__resultStore.store(),
-      this.__resultStore.storePublic()
-    ).init()
-    this.__actionResultInput = new ActionResultInputUtils(
-      this.__componentContext,
-      this.__resultStore.store(),
-      this.__resultStore.storePublic(),
-      this.__transactionActionDispatcher,
-      this.__executor
-    ).init()
-    this.__actionOperatorInput = new ActionOperatorInputUtils(
-      this.__componentContext.dispatcher(),
-      this.__resultStore.store(),
-      this.__resultStore.storePublic(),
-      this.__actionResultInput.action()
-    ).init()
-    this.__actionNumberInput.listen()
-    this.__actionResultInput.listen()
-    this.__actionOperatorInput.listen()
-    return this
-  }
-
-  /**
-   *
-   * @returns {ComponentCalculator}
-   */
-  mountView() {
-    this.__viewContainer = new ViewContainerCalculatorUtils(
-      this.__componentContext,
-      this.__parentNode,
-      this.__actionNumberInput.action(),
-      this.__actionOperatorInput.action(),
-      this.__actionResultInput.action(),
-      this.__resultStore.storePublic()
-    ).init()
-    return this
-  }
-
-  /**
-   *
-   * @returns {ComponentCalculator}
+   * @returns {this}
    */
   unmountView() {
-    assert(TypeCheck.isViewContainer(this.__viewContainer.viewContainer()),
+    assert(TypeCheck.isViewContainer(this.__viewContainer),
       'ComponentCalculator:unmountView: `viewContainer` should be a instanciate before use it'
     )
-    this.__componentContext.removeViewContainer(this.__viewContainer.ID())
+    this.__componentContext.removeViewContainer(this.__viewContainer.ID)
     return this
   }
 

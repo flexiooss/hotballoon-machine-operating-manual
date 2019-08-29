@@ -1,30 +1,27 @@
 {
   "name": "hotballoon-machine-operating-manual",
-  "version": "0.1.0",
+  "version": "0.0.0-dev",
   "main": "index.js",
   "repository": "git@github.com:flexiooss/hotballoon-machine-operating-manual.git",
   "author": "Antoine Bachetti (https://github.com/Basheitan)",
   "devDependencies": {
     "code-altimeter-js": "https://github.com/flexiooss/code-altimeter-js.git",
-    "eslint": "^5.2.0",
+    "eslint": "^5.13.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-plugin-html": "^4.0.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "hotballoon-test-dummies": "https://github.com/flexiooss/hotballoon-test-dummies.git",
-    "stylelint": "^9.6.0",
-    "stylelint-config-standard": "^18.2.0"
+    "eslint-plugin-standard": "^3.0.1"
   },
   "dependencies": {
     "@flexio-oss/hotballoon": "0.1.0-dev",
-    "@flexio-oss/assert": "0.1.0-dev",
+    "@flexio-oss/assert": "0.0.0",
     "@flexio-oss/js-generator-helpers": "0.0.0",
     "@flexio-oss/global-import-registry": "0.0.0",
     "@flexio-oss/js-logger": "0.1.0-dev",
-    "@flexio-oss/extended-flex-types": "0.1.0-dev",
+    "@flexio-oss/extended-flex-types": "0.2.0",
     "flexio-jsrouter": "https://github.com/flexiooss/flexio-jsrouter.git"
   },
   "hotballoon-shed": {
@@ -37,8 +34,15 @@
       "output": "./dist"
     },
     "dev": {
+      "entries": [
+        "src/main/js/bootstrap.js"
+      ],
       "server": {
-        "host": "ui.flexio.io"
+        "host": "172.17.0.1",
+        "disableHostCheck": true,
+        "publicPath": "/",
+        "public": "https://dev.flexio.io/devui",
+        "sockPath": "/socketjs"
       }
     },
     "test": {
@@ -46,7 +50,7 @@
       "path": "src/test"
     },
     "modules": {
-      "component-router": "src/main/js/modules/_component-router",
+      "component-router": "src/main/js/modules/component-router",
       "component-calculator": "src/main/js/modules/component-calculator",
       "component-counter": "src/main/js/modules/component-counter",
       "component-doc": "src/main/js/modules/component-doc",

@@ -17,10 +17,11 @@ export class ComponentTransactionPublic {
 
   /**
    *
+   * @param {Element} parentNode
    * @returns {ComponentTransactionPublic}
    */
-  mountView() {
-    this[__component].mountView()
+  mountView(parentNode) {
+    this[__component].mountView(parentNode)
     return this
   }
 
