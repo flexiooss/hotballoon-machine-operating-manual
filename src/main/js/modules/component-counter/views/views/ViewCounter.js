@@ -2,6 +2,7 @@ import {View, ElementEventListenerBuilder, e, ViewPublicEventHandler, EventListe
 import balloon from '../../../../assets/img/balloon.svg'
 import {ViewPeer} from './subViews/ViewPeer'
 import {assertType, isFunction} from '@flexio-oss/assert'
+import style from '../../../../assets/css/style.css'
 
 export const INCREMENT_EVENT = 'INCREMENT_EVENT'
 export const DECREMENT_EVENT = 'DECREMENT_EVENT'
@@ -21,12 +22,12 @@ export class ViewCounter extends View {
     this.__stores = counterStoreManager
     this.subscribeToStore(this.__stores.counterStore())
     this.__subView = this.html(
-      e('section#' + PEER_SUBVIEW + '.section')
+      e('section#' + PEER_SUBVIEW)
     )
     if (withSubView) {
       this.__viewPeer = this.addView(new ViewPeer(this, this.__stores))
       this.__subView = this.html(
-        e('section#' + PEER_SUBVIEW + '.section')
+        e('section#' + PEER_SUBVIEW)
           .views(this.__viewPeer)
       )
     }
@@ -57,11 +58,13 @@ export class ViewCounter extends View {
 
                 this.html(
                   e('span#views.counter')
+                    .className(style.counter)
                     .text(this.__stores.counterStore().data().count())
                 ),
 
                 this.html(
-                  e('input#decrement.button')
+                  e('input#decrement')
+                    .className(style.button)
                     .attributes({ value: 'Dec', type: 'button' })
                     .listenEvent(
                       ElementEventListenerBuilder.listen('click')
@@ -74,7 +77,8 @@ export class ViewCounter extends View {
                 ),
 
                 this.html(
-                  e('input#increment.button')
+                  e('input#increment')
+                    .className(style.button)
                     .attributes({ value: 'Inc', type: 'button' })
                     .listenEvent(
                       ElementEventListenerBuilder.listen('click')
@@ -99,7 +103,7 @@ export class ViewCounter extends View {
                 ),
 
                 this.html(
-                  e('img#hotballoon.hotballoon')
+                  e('img#hotballoon')
                     .attributes({ src: balloon })
                     .styles({'marginLeft': this.__stores.counterStore().data().count() + 'em',
                       'position': 'relative'}

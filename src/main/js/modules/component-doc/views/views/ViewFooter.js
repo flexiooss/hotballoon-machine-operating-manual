@@ -1,6 +1,6 @@
 import {View, e} from '@flexio-oss/hotballoon'
 import * as demoComponentPackage from '../../../../../../../package.json'
-
+import '../../assets/css/normalize.css'
 export default class ViewFooter extends View {
   /**
    *
@@ -8,7 +8,7 @@ export default class ViewFooter extends View {
    */
   template() {
     return this.html(
-      e('footer#footer.wrapper.tag')
+      e('footer#footer')
         .childNodes(
 
           this.html(

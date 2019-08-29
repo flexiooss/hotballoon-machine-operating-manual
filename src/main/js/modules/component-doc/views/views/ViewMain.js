@@ -10,11 +10,11 @@ export default class ViewMain extends View {
       e('main#main')
         .childNodes(
           this.html(
-            e('h2#subtitle.subtitle')
+            e('h2#subtitle')
               .text('Description')
           ),
           this.html(
-            e('div#demo.demo')
+            e('div#demo')
               .attributes()
           )
         )

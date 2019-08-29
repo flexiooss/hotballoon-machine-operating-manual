@@ -1,9 +1,5 @@
 'use strict'
 import {ViewContainer} from '@flexio-oss/hotballoon'
-
-import '../../../assets/css/style.css'
-import '../assets/css/normalize.css'
-import '../assets/css/navbar.css'
 import ViewHeader from './views/ViewHeader'
 import ViewNavbar from './views/ViewNavbar'
 import ViewMain from './views/ViewMain'

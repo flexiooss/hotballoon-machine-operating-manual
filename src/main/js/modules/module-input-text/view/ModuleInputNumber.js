@@ -1,16 +1,16 @@
-import {e, StoreBuilder, View} from '@flexio-oss/hotballoon'
+import {e, View} from '@flexio-oss/hotballoon'
 import {initStoreInputText} from '../proxyStore/InitStoreInputText'
 import {StoreHandlerInputText} from '../proxyStore/StoreHandlerInputText'
 
 export class ModuleInputNumber extends View {
   /**
    *
-   * @param {} container
+   * @param {ViewContainerBase} viewContainer
    * @param {StoreInterface} store
    * @param {function} mapper
    */
-  constructor(container, store, mapper) {
-    super(container)
+  constructor(viewContainer, store, mapper) {
+    super(viewContainer)
     this.__store = store
     this.__mapper = mapper
     this.__storeInputText = initStoreInputText(this)

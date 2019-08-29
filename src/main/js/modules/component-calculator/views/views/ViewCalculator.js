@@ -159,7 +159,7 @@ export class ViewCalculator extends View {
     let res = Array(3)
     for (i = 0; i < 3; i++) {
       res[i] = this.html(
-        e('td#column' + (i + 1) + '.column')
+        e('td#column' + (i + 1))
           .childNodes(
 
             this.html(
