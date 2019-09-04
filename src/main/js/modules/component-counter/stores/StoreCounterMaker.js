@@ -59,7 +59,7 @@ export class StoreCounterMaker {
     let storePublic = new PublicStoreHandler(store)
     return new StoreCounterMaker(store, storePublic)
   }
-  
+
   /**
    *
    * @returns {Store<StoreCounterBuilder>}
@@ -70,7 +70,7 @@ export class StoreCounterMaker {
 
   /**
    *
-   * @returns {StoreHandlerCounter<StoreCounterBuilder>}
+   * @returns {PublicStoreHandler<StoreCounterBuilder>}
    */
   storePublic() {
     return this.__storePublic
